@@ -56,7 +56,7 @@ class AcademicAchievementCode(models.Model):
         verbose_name = "Academic Achievment Code"
 
 
-class TeacherPerfomanceData(models.Model):
+class TeacherPerformanceData(models.Model):
     gender = models.CharField(max_length=6, verbose_name=u'Gender')
     age = models.IntegerField()
     years_experience = models.CharField(max_length=5)
@@ -82,10 +82,10 @@ class TeacherPerfomanceData(models.Model):
         return "%s" % self.emis
 
     class Meta:
-        verbose_name_plural = "Teacher Perfomance Data"
+        verbose_name_plural = "Teacher Performance Data"
 
 
-class LearnerPerfomanceData(models.Model):
+class LearnerPerformanceData(models.Model):
     gender = models.CharField(max_length=6, verbose_name=u'Gender')
     total_number_pupils = models.IntegerField()
     phonetic_awareness = models.IntegerField()
@@ -105,7 +105,7 @@ class LearnerPerfomanceData(models.Model):
         return "%s" % self.emis
 
     class Meta:
-        verbose_name_plural = "Learner Perfomance Data"
+        verbose_name_plural = "Learner Performance Data"
 
 
 class InboundSMS(models.Model):
@@ -127,7 +127,7 @@ class GenderGenerator(ChoiceGenerator):
     choices = [u"male", u"female"]
 
 
-class TeacherPerfomanceDataFactory(mockups.Factory):
+class TeacherPerformanceDataFactory(mockups.Factory):
     gender = GenderGenerator()
     age = IntegerGenerator(min_value=29, max_value=50)
     years_experience = IntegerGenerator(min_value=1, max_value=30)
@@ -144,14 +144,14 @@ class TeacherPerfomanceDataFactory(mockups.Factory):
     ts_number = IntegerGenerator(min_value=10000, max_value=99999)
 
 
-class TeacherPerfomanceDataMockup(mockups.Mockup):
-    factory = TeacherPerfomanceDataFactory
+class TeacherPerformanceDataMockup(mockups.Mockup):
+    factory = TeacherPerformanceDataFactory
 
 
-mockups.register(TeacherPerfomanceData, TeacherPerfomanceDataMockup)
+mockups.register(TeacherPerformanceData, TeacherPerformanceDataMockup)
 
 
-class LearnerPerfomanceDataFactory(mockups.Factory):
+class LearnerPerformanceDataFactory(mockups.Factory):
     gender = GenderGenerator()
     total_number_pupils = IntegerGenerator(min_value=1, max_value=30)
     phonetic_awareness = IntegerGenerator(min_value=1, max_value=10)
@@ -164,8 +164,8 @@ class LearnerPerfomanceDataFactory(mockups.Factory):
     outstanding_results = IntegerGenerator(min_value=1, max_value=10)
 
 
-class LearnerPerfomanceDataMockup(mockups.Mockup):
-    factory = LearnerPerfomanceDataFactory
+class LearnerPerformanceDataMockup(mockups.Mockup):
+    factory = LearnerPerformanceDataFactory
 
 
-mockups.register(LearnerPerfomanceData, LearnerPerfomanceDataMockup)
+mockups.register(LearnerPerformanceData, LearnerPerformanceDataMockup)
