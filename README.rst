@@ -1,9 +1,9 @@
-go-jsbox-skeleton
-=================
+go-rts-zambia
+=============
 
 |travis|_
 
-Skeleton for a vumi javascript sandbox app. Use this as a starting point for writing a sandbox app using the `vumi-jssandbox-toolkit`_.
+RTS Zambia vumi javascript sandbox app, rebuilt in v2.
 
 ::
 
