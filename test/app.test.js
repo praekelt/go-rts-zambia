@@ -27,10 +27,10 @@ describe("app", function() {
                 return tester
                     .start()
                     .check.interaction({
-                        state: 'states:start',
+                        state: 'state_lp_start',
                         reply: [
                             'Hi there! What do you want to do?',
-                            '1. Show this menu again',
+                            '1. Go to next state',
                             '2. Exit'
                         ].join('\n')
                     })
@@ -38,16 +38,16 @@ describe("app", function() {
             });
         });
 
-        describe("when the user asks to see the menu again", function() {
-            it("should show the menu again", function() {
+        describe("when the user asks to go to the next state", function() {
+            it("should go to next state", function() {
                 return tester
-                    .setup.user.state('states:start')
+                    .setup.user.state('state_lp_start')
                     .input('1')
                     .check.interaction({
-                        state: 'states:start',
+                        state: 'state_lp_next',
                         reply: [
                             'Hi there! What do you want to do?',
-                            '1. Show this menu again',
+                            '1. Switch to TeacherPerformance',
                             '2. Exit'
                         ].join('\n')
                     })
@@ -58,15 +58,33 @@ describe("app", function() {
         describe("when the user asks to exit", function() {
             it("should say thank you and end the session", function() {
                 return tester
-                    .setup.user.state('states:start')
+                    .setup.user.state('state_lp_start')
                     .input('2')
                     .check.interaction({
-                        state: 'states:end',
+                        state: 'state_lp_exit',
                         reply: 'Thanks, cheers!'
                     })
                     .check.reply.ends_session()
                     .run();
             });
         });
+
+        describe("when the user asks to switch to tp", function() {
+            it("should switch to state_tp_start", function() {
+                return tester
+                    .setup.user.state('state_lp_next')
+                    .input('1')
+                    .check.interaction({
+                        state: 'state_tp_start',
+                        reply: [
+                            'Hi there! What do you want to do?',
+                            '1. Go to next state',
+                            '2. Exit'
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
     });
 });
