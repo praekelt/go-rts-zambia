@@ -1,33 +1,44 @@
 go.app = function() {
     var vumigo = require('vumigo_v02');
     var App = vumigo.App;
-    var Choice = vumigo.states.Choice;
-    var ChoiceState = vumigo.states.ChoiceState;
-    var EndState = vumigo.states.EndState;
 
     var GoApp = App.extend(function(self) {
-        App.call(self, 'states:start');
+        App.call(self, 'state_lp_start');
 
-        self.states.add('states:start', function(name) {
-            return new ChoiceState(name, {
-                question: 'Hi there! What do you want to do?',
 
-                choices: [
-                    new Choice('states:start', 'Show this menu again'),
-                    new Choice('states:end', 'Exit')],
 
-                next: function(choice) {
-                    return choice.value;
-                }
-            });
+        // LEARNER PERFORMANCE STATES
+        // --------------------------
+
+        self.states.add('state_lp_start', function(name) {
+            return go.lp.state_lp_start(name);
         });
 
-        self.states.add('states:end', function(name) {
-            return new EndState(name, {
-                text: 'Thanks, cheers!',
-                next: 'states:start'
-            });
+        self.states.add('state_lp_next', function(name) {
+            return go.lp.state_lp_next(name);
         });
+
+        self.states.add('state_lp_exit', function(name) {
+            return go.lp.state_lp_exit(name);
+        });
+
+
+
+        // TEACHER PERFORMANCE STATES
+        // --------------------------
+
+        self.states.add('state_tp_start', function(name) {
+            return go.tp.state_tp_start(name);
+        });
+
+        self.states.add('state_tp_next', function(name) {
+            return go.tp.state_tp_next(name);
+        });
+
+        self.states.add('state_tp_exit', function(name) {
+            return go.tp.state_tp_exit(name);
+        });
+
     });
 
     return {
