@@ -1,14 +1,14 @@
 {
-  "name": "go-jsbox-skeleton",
+  "name": "go-rts-zambia",
   "version": "0.2.0",
-  "description": "Skeleton for a vumi javascript sandbox app",
-  "main": "lib/app.js",
+  "description": "RTS Zambia",
+  "main": "src/app.js",
   "scripts": {
     "test": "grunt test"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/praekelt/go-jsbox-skeleton.git"
+    "url": "git://github.com/praekelt/go-rts-zambia.git"
   },
   "keywords": [
     "vumi",
@@ -17,9 +17,9 @@
   "author": "Praekelt Foundation",
   "license": "BSD",
   "bugs": {
-    "url": "https://github.com/praekelt/go-jsbox-skeleton/issues"
+    "url": "https://github.com/praekelt/go-rts-zambia/issues"
   },
-  "homepage": "https://github.com/praekelt/go-jsbox-skeleton",
+  "homepage": "https://github.com/praekelt/go-rts-zambia",
   "dependencies": {
     "vumigo_v02": "~0.2",
     "q": "~0.9",
