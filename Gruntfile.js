@@ -12,8 +12,12 @@ module.exports = function (grunt) {
                 ],
                 prd: [
                     'src/index.js',
+                    'src/regheadteacher.js',
+                    'src/regdistrictofficial.js',
+                    'src/changemanagement.js',
                     'src/learnerperformance.js',
                     'src/teacherperformance.js',
+                    'src/schoolperformance.js',
                     '<%= paths.src.app %>',
                     'src/init.js'
                 ],
@@ -26,8 +30,12 @@ module.exports = function (grunt) {
             },
             test: [
                 'test/setup.js',
+                'src/regheadteacher.js',
+                'src/regdistrictofficial.js',
+                'src/changemanagement.js',
                 'src/learnerperformance.js',
                 'src/teacherperformance.js',
+                'src/schoolperformance.js',
                 '<%= paths.src.app %>',
                 'test/**/*.test.js'
             ]
