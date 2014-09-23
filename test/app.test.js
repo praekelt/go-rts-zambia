@@ -1,6 +1,8 @@
 var vumigo = require('vumigo_v02');
 var fixtures = require('./fixtures');
 var AppTester = vumigo.AppTester;
+var messagestore = require('./messagestore');
+var DummyMessageStoreResource = messagestore.DummyMessageStoreResource;
 
 
 describe("app", function() {
@@ -14,77 +16,245 @@ describe("app", function() {
             tester = new AppTester(app);
 
             tester
+                .setup.char_limit(160)
                 .setup.config.app({
-                    name: 'test_app'
+                    name: 'test_app',
+                    env: 'test',
+                    cms_api_root: 'http://qa/api/v1/',
                 })
                 .setup(function(api) {
-                    fixtures().forEach(api.http.fixtures.add);
+                    api.resources.add(new DummyMessageStoreResource());
+                    api.resources.attach(api);
+                })
+                .setup(function(api) {
+                    fixtures().forEach(function(d) {
+                        d.repeatable = true;
+                        api.http.fixtures.add(d);
+                    });
                 });
         });
 
-        describe("when the user starts a session", function() {
-            it("should ask them want they want to do", function() {
+
+// start broken indentation to save whitespace
+
+
+// REGISTRATION
+// ------------
+
+// uu = unregistered user
+
+describe("when an unregistered user logs on", function() {
+    
+    describe("when uu starts a session", function() {
+        it("should ask them want they want to do", function() {
+            return tester
+                .setup.user.addr('097123')
+                .inputs('start')
+                .check.interaction({
+                    state: 'initial_state',
+                    reply: [
+                        'Welcome to the Zambia School Gateway! Options:',
+                        '1. Register as Head Teacher',
+                        '2. Register as District Official',
+                        '3. Change my school',
+                        '4. Change my primary cell number'
+                    ].join('\n')
+                })
+                .run();
+        });
+    });
+
+
+    // DISTRICT OFFICIAL REGISTRATION
+    // ------------------------------
+
+    describe("when uu chooses to register as district official", function() {
+        
+        it("should ask for district name", function() {
+            return tester
+                .setup.user.addr('097123')
+                .inputs('start', '2')
+                .check.interaction({
+                    state: 'reg_district_official',
+                    reply: [
+                        'Please enter your district name.',
+                        '1. Chembe',
+                        '2. Chinsali',
+                        '3. Chipata',
+                        '4. Chipili',
+                        '5. Isoka',
+                        '6. Limulunga',
+                        '7. Lundazi',
+                        '8. Mansa',
+                        '9. More'
+                    ].join('\n')
+                })
+                .run();
+        });
+
+        describe("when uu enters their district name", function() {
+
+            describe("if their choice is valid", function() {
+                it("should ask for their first name", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs('start', '2', '1')
+                        .check.interaction({
+                            state: 'reg_district_official_first_name',
+                            reply: "Please enter your FIRST name."
+                        })
+                        .run();
+                });
+            });
+
+            describe("if they choose 9. More", function() {
+                it("should show the next page of districts", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs('start', '2', '9')
+                        .check.interaction({
+                            state: 'reg_district_official',
+                            reply: [
+                                'Please enter your district name.',
+                                '1. Chembe',
+                                '2. Chinsali',
+                                '3. Chipata',
+                                '4. Chipili',
+                                '5. Isoka',
+                                '6. Limulunga',
+                                '7. Lundazi',
+                                '8. Mansa',
+                                '9. More'
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+        });
+
+        describe("when uu enters their first name", function() {
+            it("should ask for their surname", function() {
                 return tester
-                    .start()
+                    .setup.user.addr('097123')
+                    .setup.user.state('reg_district_official_first_name')
+                    .input('Michael')
                     .check.interaction({
-                        state: 'state_lp_start',
-                        reply: [
-                            'Hi there! What do you want to do?',
-                            '1. Go to next state',
-                            '2. Exit'
-                        ].join('\n')
+                        state: 'reg_district_official_surname',
+                        reply: "Please enter your SURNAME."
                     })
                     .run();
             });
         });
 
-        describe("when the user asks to go to the next state", function() {
-            it("should go to next state", function() {
+        describe("when uu enters their surname", function() {
+            it("should ask for their id number", function() {
                 return tester
-                    .setup.user.state('state_lp_start')
-                    .input('1')
+                    .setup.user.addr('097123')
+                    .setup.user.state('reg_district_official_first_name')
+                    .inputs('Michael', 'Sherwin')
                     .check.interaction({
-                        state: 'state_lp_next',
-                        reply: [
-                            'Hi there! What do you want to do?',
-                            '1. Switch to TeacherPerformance',
-                            '2. Exit'
-                        ].join('\n')
+                        state: 'reg_district_official_id_number',
+                        reply: "Please enter your ID number."
                     })
                     .run();
             });
         });
 
-        describe("when the user asks to exit", function() {
-            it("should say thank you and end the session", function() {
+        describe("when uu enters their id number", function() {
+            it("should ask for their date of birth", function() {
                 return tester
-                    .setup.user.state('state_lp_start')
-                    .input('2')
+                    .setup.user.addr('097123')
+                    .setup.user.state('reg_district_official_first_name')
+                    .inputs('Michael', 'Sherwin', '123456')
                     .check.interaction({
-                        state: 'state_lp_exit',
-                        reply: 'Thanks, cheers!'
+                        state: 'reg_district_official_dob',
+                        reply:
+                            "Please enter your date of birth. Start with the day," +
+                            " followed by the month and year, e.g. 27111980."
                     })
-                    .check.reply.ends_session()
                     .run();
             });
         });
 
-        describe("when the user asks to switch to tp", function() {
-            it("should switch to state_tp_start", function() {
-                return tester
-                    .setup.user.state('state_lp_next')
-                    .input('1')
-                    .check.interaction({
-                        state: 'state_tp_start',
-                        reply: [
-                            'Hi there! What do you want to do?',
-                            '1. Go to next state',
-                            '2. Exit'
-                        ].join('\n')
-                    })
-                    .run();
+        describe("when uu enters their date of birth", function() {
+
+            describe("if their dob input is valid", function() {
+                it("should congratulate them on registering", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .setup.user.state('reg_district_official_first_name')
+                        .inputs('Michael', 'Sherwin', '123456', '27111980')
+                        .check.interaction({
+                            state: 'reg_district_official_thanks',
+                            reply:
+                                "Congratulations! You are now registered as a user of the" +
+                                " Gateway! Please dial in again when you are ready to start" +
+                                " reporting on teacher and learner performance."
+                        })
+                        .run();
+                });
             });
+
         });
+
+    });
+});
+
+
+
+// OTHER
+// -----
+
+describe("when the user asks to go to the next state", function() {
+    it("should go to next state", function() {
+        return tester
+            .setup.user.state('state_lp_start')
+            .input('1')
+            .check.interaction({
+                state: 'state_lp_next',
+                reply: [
+                    'Hi there! What do you want to do?',
+                    '1. Switch to TeacherPerformance',
+                    '2. Exit'
+                ].join('\n')
+            })
+            .run();
+    });
+});
+
+describe("when the user asks to exit", function() {
+    it("should say thank you and end the session", function() {
+        return tester
+            .setup.user.state('state_lp_start')
+            .input('2')
+            .check.interaction({
+                state: 'state_lp_exit',
+                reply: 'Thanks, cheers!'
+            })
+            .check.reply.ends_session()
+            .run();
+    });
+});
+
+describe("when the user asks to switch to tp", function() {
+    it("should switch to state_tp_start", function() {
+        return tester
+            .setup.user.state('state_lp_next')
+            .input('1')
+            .check.interaction({
+                state: 'state_tp_start',
+                reply: [
+                    'Hi there! What do you want to do?',
+                    '1. Go to next state',
+                    '2. Exit'
+                ].join('\n')
+            })
+            .run();
+    });
+});
+
+// end broken indentation to save whitespace
 
     });
 });
