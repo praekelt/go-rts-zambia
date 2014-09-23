@@ -42,41 +42,116 @@ go.rht = {
 };
 
 var vumigo = require('vumigo_v02');
-var ChoiceState = vumigo.states.ChoiceState;
+var FreeText = vumigo.states.FreeText;
 var EndState = vumigo.states.EndState;
+var PaginatedChoiceState = vumigo.states.PaginatedChoiceState;
 var Choice = vumigo.states.Choice;
 
 
 go.rdo = {
-    // Registration of Head Teacher States
+    // Registration of District Official States
 
-    state_rdo_start: function(name) {
-        return new ChoiceState(name, {
-            question: 'Hi there! What do you want to do?',
+    reg_district_official: function(name, im) {
+        var choices = [];
+        var districts = im.config.districts;
 
-            choices: [
-                new Choice('next', 'Go to next state'),
-                new Choice('exit', 'Exit')],
+        for (var i=0; i<districts.length; i++) {
+            var district = districts[i];
+            choices[i] = new Choice(district.id, district.name);
+        }
 
-            next: function(choice) {
-                if(choice.value === 'next') {
-                    return 'state_rdo_exit';
-                } else {
-                    return 'state_rdo_exit';
-                }
-            }
+        return new PaginatedChoiceState(name, {
+            question: "Please enter your district name.",
+
+            choices: choices,
+
+            options_per_page: 8,
+
+            next: 'reg_district_official_first_name'
+        });
+        
+    },
+
+    reg_district_official_first_name: function(name) {
+        return new FreeText(name, {
+            question: "Please enter your FIRST name.",
+
+            next: "reg_district_official_surname"
         });
     },
 
-    state_rdo_exit: function(name) {
+    reg_district_official_surname: function(name) {
+        return new FreeText(name, {
+            question: "Please enter your SURNAME.",
+
+            next: "reg_district_official_id_number"
+        });
+    },
+
+    reg_district_official_id_number: function(name) {
+        return new FreeText(name, {
+            question: "Please enter your ID number.",
+
+            next: "reg_district_official_dob"
+        });
+    },
+
+    reg_district_official_dob: function(name) {
+        return new FreeText(name, {
+            question:
+                "Please enter your date of birth. Start with the day," +
+                " followed by the month and year, e.g. 27111980.",
+
+            next: "reg_district_official_thanks"
+        });
+    },
+
+    reg_district_official_thanks: function(name) {
         return new EndState(name, {
-            text: 'Thanks, cheers!',
-            next: 'state_rdo_start'
+            text:
+                "Congratulations! You are now registered as a user of the" +
+                " Gateway! Please dial in again when you are ready to start" +
+                " reporting on teacher and learner performance.",
+
+            next:
+                "initial_state"
+
         });
     }
 
 };
 
+
+
+
+// pasted states
+
+
+    // self.add_state(new FreeText(
+    //     "reg_district_official_dob",
+    //     "reg_thanks_district_admin",
+    //     "Please enter your date of birth. Start with the day,"+
+    //     " followed by the month and year, e.g. 27111980.",
+    //     function(content) {
+    //         // check that the value provided is date format we expect
+    //         return self.check_and_parse_date(content);
+    //     },
+    //     "Please enter your date of birth formatted DDMMYYYY"
+    // ));
+
+    // self.add_state(new EndState(
+    //         "reg_thanks_district_admin",
+    //         "Congratulations! You are now registered as a user of the" +
+    //         " Gateway! Please dial in again when you are ready to start" +
+    //         " reporting on teacher and learner performance.",
+    //         "initial_state",
+    //         {
+    //             on_enter: function(){
+    //                 return self.cms_district_admin_registration(im);
+    //             }
+    //         }
+    //     )
+    // );
 var vumigo = require('vumigo_v02');
 var ChoiceState = vumigo.states.ChoiceState;
 var EndState = vumigo.states.EndState;
@@ -275,12 +350,83 @@ go.sp = {
 
 };
 
+var vumigo = require('vumigo_v02');
+var ChoiceState = vumigo.states.ChoiceState;
+var Choice = vumigo.states.Choice;
+var JsonApi = vumigo.http.api.JsonApi;
+var Q = require('q');
+
+
+go.utils = {
+
+    // CMS INTERACTIONS
+    // ----------------
+
+    cms_district_load: function (im) {
+        return go.utils
+            .cms_get("district/", im)
+            .then(function(result) {
+                parsed_result = JSON.parse(result.body);
+                var districts = (parsed_result.objects);
+                districts.sort(
+                    function(a, b) {
+                        return ((a.name <    b.name) ? -1 : ((a.name > b.name) ? 1 : 0));
+                    }
+                );
+                im.config.districts = districts;
+                return Q();
+            });
+    },
+
+
+    // SHARED HELPERS
+    // --------------
+
+    cms_get: function(path, im) {
+        var json_api = new JsonApi(im);
+        var url = im.config.cms_api_root + path;
+        return json_api.get(url);
+    }
+
+};
+
+
+
 go.app = function() {
     var vumigo = require('vumigo_v02');
     var App = vumigo.App;
 
     var GoApp = App.extend(function(self) {
-        App.call(self, 'state_lp_start');
+
+        
+
+        App.call(self, 'initial_state');
+
+
+
+        // INITIAL STATE
+        // -------------
+
+        self.states.add('initial_state', function(name) {
+            return go.utils
+                .cms_district_load(self.im)
+                .then(function() {
+                    return new ChoiceState(name, {
+                        question: 'Welcome to the Zambia School Gateway! Options:',
+
+                        choices: [
+                            new Choice("reg_emis", "Register as Head Teacher"),
+                            new Choice("reg_district_official", "Register as District Official"),
+                            new Choice("manage_change_emis_error", "Change my school"),
+                            new Choice("manage_change_msisdn_emis", "Change my primary cell number")
+                        ],
+
+                        next: function(choice) {
+                            return choice.value;
+                        }
+                    });
+                });
+        });
 
 
 
@@ -300,14 +446,29 @@ go.app = function() {
         // REGISTER DISTRICT OFFICIAL STATES
         // ---------------------------------
 
-        self.states.add('state_rdo_start', function(name) {
-            return go.rdo.state_rdo_start(name);
+        self.states.add('reg_district_official', function(name) {
+            return go.rdo.reg_district_official(name, self.im);
         });
 
-        self.states.add('state_rdo_exit', function(name) {
-            return go.rdo.state_rdo_exit(name);
+        self.states.add('reg_district_official_first_name', function(name) {
+            return go.rdo.reg_district_official_first_name(name);
         });
 
+        self.states.add('reg_district_official_surname', function(name) {
+            return go.rdo.reg_district_official_surname(name);
+        });
+
+        self.states.add('reg_district_official_id_number', function(name) {
+            return go.rdo.reg_district_official_id_number(name);
+        });
+
+        self.states.add('reg_district_official_dob', function(name) {
+            return go.rdo.reg_district_official_dob(name);
+        });
+
+        self.states.add('reg_district_official_thanks', function(name) {
+            return go.rdo.reg_district_official_thanks(name);
+        });
 
 
         // CHANGE MANAGEMENT STATES
