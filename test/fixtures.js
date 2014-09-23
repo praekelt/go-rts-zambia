@@ -1,27 +1,9 @@
 module.exports = function() {
     return [
     
-    // EXAMPLE
-    // -------
-    {
-        "request": {
-            "method": "POST",
-            "url": "http://example.com",
-            "data": {
-                "bar": "baz"
-            }
-        },
-        "response": {
-            "code": 200,
-            "data": {
-                "foo": "spam"
-            }
-        }
-    },
 
-
-    // DISTRICT
-    // --------
+    // cms_district_load
+    // -----------------
     {
         "request": {
             "url": "http://qa/api/v1/district/",
@@ -222,6 +204,49 @@ module.exports = function() {
                 ]
             }
         },
+    },
+
+
+    // cms_district_admin_registration
+    // -------------------------------
+
+    {
+        "request": {
+            "method": "POST",
+            "headers": {
+                'Content-Type': ['application/json']
+            },
+            "url": "http://qa/api/v1/district_admin/",
+            "data": {
+                "first_name": "Michael",
+                "last_name": "Sherwin",
+                "date_of_birth": "1980-11-27",
+                "district": "/api/v1/district/1/",
+                "id_number": "123454321"
+            }
+        },
+        "response": {
+            "code": 201,
+            "data": {
+                "created_at": "2014-02-03T12:22:38.158000",
+                "date_of_birth": "1985-11-27T10:00:00",
+                "district": {
+                    "id": 1,
+                    "name": "Mporokoso",
+                    "province": {
+                        "id": 15,
+                        "name": "Northern Province",
+                        "resource_uri": "/api/v1/province/1/"
+                    },
+                    "resource_uri": "/api/v1/district/1/"
+                },
+                "first_name": "Michael",
+                "id": 2,
+                "id_number": "123454321",
+                "last_name": "Sherwin",
+                "resource_uri": "/api/v1/district_admin/2/"
+            }
+        }
     }
 
     ];
