@@ -1,8 +1,8 @@
 var vumigo = require('vumigo_v02');
+var moment = require('moment');
 var ChoiceState = vumigo.states.ChoiceState;
 var Choice = vumigo.states.Choice;
 var JsonApi = vumigo.http.api.JsonApi;
-var Q = require('q');
 
 
 go.utils = {
@@ -21,9 +21,24 @@ go.utils = {
                         return ((a.name < b.name) ? -1 : ((a.name > b.name) ? 1 : 0));
                     }
                 );
-                im.config.districts = districts;
-                return Q();
+                return districts;
             });
+    },
+
+    cms_district_admin_registration: function(im, contact) {
+        var district_official_data = go.utils.registration_official_admin_collect(im);
+        return go.utils
+            .cms_post("district_admin/", district_official_data, im)
+            .then(function(result) {
+                parsed_result = JSON.parse(result.body);
+                contact.extra.rts_id = parsed_result.id.toString();
+                contact.extra.rts_district_official_id_number = parsed_result.id_number;
+                contact.extra.rts_official_district_id = parsed_result.district.id.toString();
+                contact.name = district_official_data.first_name;
+                contact.surname = district_official_data.last_name;
+                return im.contacts.save(contact);
+            });
+
     },
 
 
@@ -34,6 +49,20 @@ go.utils = {
         var json_api = new JsonApi(im);
         var url = im.config.cms_api_root + path;
         return json_api.get(url);
+    },
+
+    cms_post: function(path, data, im) {
+        var json_api = new JsonApi(im);
+        var url = im.config.cms_api_root + path;
+        return json_api.post(
+            url, 
+            {
+                data: data, 
+                headers:{
+                    'Content-Type': ['application/json']
+                }
+            }
+        );
     },
 
     array_parse_ints: function(target){
@@ -59,6 +88,19 @@ go.utils = {
         } else {
             return false;
         }
+    },
+
+    registration_official_admin_collect: function(im) {
+        var dob = go.utils.check_and_parse_date(im.user.answers.reg_district_official_dob);
+
+        var district_admin_data = {
+            "first_name": im.user.answers.reg_district_official_first_name,
+            "last_name": im.user.answers.reg_district_official_surname,
+            "date_of_birth": moment(dob).format('YYYY-MM-DD'),
+            "district": "/api/v1/district/" + im.user.answers.reg_district_official +"/",
+            "id_number": im.user.answers.reg_district_official_id_number
+        };
+        return district_admin_data;
     }
 
 };
@@ -72,29 +114,35 @@ go.app = function() {
     var GoApp = App.extend(function(self) {
         App.call(self, 'initial_state');
 
+        self.init = function() {
+            self.env = self.im.config.env;
+            self.districts = go.utils.cms_district_load(self.im);
+            
+            return self.im.contacts
+                .for_user()
+                .then(function(user_contact) {
+                   self.contact = user_contact;
+                });
+        };
 
 
         // INITIAL STATE
         // -------------
 
         self.states.add('initial_state', function(name) {
-            return go.utils
-                .cms_district_load(self.im)
-                .then(function() {
-                    return new ChoiceState(name, {
-                        question: 'Welcome to the Zambia School Gateway! Options:',
+            return new ChoiceState(name, {
+                question: 'Welcome to the Zambia School Gateway! Options:',
 
-                        choices: [
-                            new Choice("reg_emis", "Register as Head Teacher"),
-                            new Choice("reg_district_official", "Register as District Official"),
-                            new Choice("manage_change_emis_error", "Change my school"),
-                            new Choice("manage_change_msisdn_emis", "Change my primary cell number")
-                        ],
+                choices: [
+                    new Choice("reg_emis", "Register as Head Teacher"),
+                    new Choice("reg_district_official", "Register as District Official"),
+                    new Choice("manage_change_emis_error", "Change my school"),
+                    new Choice("manage_change_msisdn_emis", "Change my primary cell number")
+                ],
 
-                        next: function(choice) {
-                            return choice.value;
-                        }
-                    });
+                next: function(choice) {
+                    return choice.value;
+                }
                 });
         });
 
@@ -117,7 +165,7 @@ go.app = function() {
         // ---------------------------------
 
         self.states.add('reg_district_official', function(name) {
-            return go.rdo.reg_district_official(name, self.im);
+            return go.rdo.reg_district_official(name, self.im, self.districts);
         });
 
         self.states.add('reg_district_official_first_name', function(name) {
@@ -133,7 +181,7 @@ go.app = function() {
         });
 
         self.states.add('reg_district_official_dob', function(name) {
-            return go.rdo.reg_district_official_dob(name);
+            return go.rdo.reg_district_official_dob(name, self.im, self.contact);
         });
 
         self.states.add('reg_district_official_thanks', function(name) {
