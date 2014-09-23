@@ -97,10 +97,20 @@ go.rdo = {
     },
 
     reg_district_official_dob: function(name) {
-        return new FreeText(name, {
-            question:
+        var error = "Please enter your date of birth formatted DDMMYYYY";
+
+        var question = 
                 "Please enter your date of birth. Start with the day," +
-                " followed by the month and year, e.g. 27111980.",
+                " followed by the month and year, e.g. 27111980.";
+
+        return new FreeText(name, {
+            question: question,
+
+            check: function(content) {
+                if (go.utils.check_and_parse_date(content) === false) {
+                    return error;    
+                }
+            },
 
             next: "reg_district_official_thanks"
         });
@@ -370,7 +380,7 @@ go.utils = {
                 var districts = (parsed_result.objects);
                 districts.sort(
                     function(a, b) {
-                        return ((a.name <    b.name) ? -1 : ((a.name > b.name) ? 1 : 0));
+                        return ((a.name < b.name) ? -1 : ((a.name > b.name) ? 1 : 0));
                     }
                 );
                 im.config.districts = districts;
@@ -386,6 +396,31 @@ go.utils = {
         var json_api = new JsonApi(im);
         var url = im.config.cms_api_root + path;
         return json_api.get(url);
+    },
+
+    array_parse_ints: function(target){
+        // returns false if fails to parse
+        for (var i = 0; i < target.length; i++) {
+            target[i] = parseInt(target[i],10);
+            if (isNaN(target[i])) return false;
+        }
+        return target;
+    },
+
+    check_and_parse_date: function(date_string){
+        // an opinionated data parser - expects "DDMMYYYY"
+        // returns false if fails to parse
+        if (date_string.length != 8) return false;
+        var da = [date_string.slice(0,2)];
+        da.push(date_string.slice(2,4));
+        da.push(date_string.slice(4));
+        da = go.utils.array_parse_ints(da);
+        if (da && da[0]<=31 && da[1] <= 12){
+            da[1] = da[1]-1; // JS dates are 0-bound
+            return new Date(da[2], da[1], da[0]);
+        } else {
+            return false;
+        }
     }
 
 };
@@ -397,9 +432,6 @@ go.app = function() {
     var App = vumigo.App;
 
     var GoApp = App.extend(function(self) {
-
-        
-
         App.call(self, 'initial_state');
 
 

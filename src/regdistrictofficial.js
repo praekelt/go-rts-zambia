@@ -54,10 +54,20 @@ go.rdo = {
     },
 
     reg_district_official_dob: function(name) {
-        return new FreeText(name, {
-            question:
+        var error = "Please enter your date of birth formatted DDMMYYYY";
+
+        var question = 
                 "Please enter your date of birth. Start with the day," +
-                " followed by the month and year, e.g. 27111980.",
+                " followed by the month and year, e.g. 27111980.";
+
+        return new FreeText(name, {
+            question: question,
+
+            check: function(content) {
+                if (go.utils.check_and_parse_date(content) === false) {
+                    return error;    
+                }
+            },
 
             next: "reg_district_official_thanks"
         });

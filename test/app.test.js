@@ -196,6 +196,20 @@ describe("when an unregistered user logs on", function() {
                 });
             });
 
+            describe("if their dob input is not valid", function() {
+                it("should ask them to re-enter dob", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .setup.user.state('reg_district_official_first_name')
+                        .inputs('Michael', 'Sherwin', '123456', '9999')
+                        .check.interaction({
+                            state: 'reg_district_official_dob',
+                            reply: "Please enter your date of birth formatted DDMMYYYY"
+                        })
+                        .run();
+                });
+            });
+
         });
 
     });
