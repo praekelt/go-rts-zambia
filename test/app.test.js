@@ -1,5 +1,6 @@
 var vumigo = require('vumigo_v02');
 var fixtures = require('./fixtures');
+var assert = require('assert');
 var AppTester = vumigo.AppTester;
 var messagestore = require('./messagestore');
 var DummyMessageStoreResource = messagestore.DummyMessageStoreResource;
@@ -108,10 +109,53 @@ describe("when an unregistered user logs on", function() {
             });
 
             describe("if they choose 9. More", function() {
-                it("should show the next page of districts", function() {
+                it("should show the second page of districts", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs('start', '2', '9')
+                        .check.interaction({
+                            state: 'reg_district_official',
+                            reply: [
+                                'Please enter your district name.',
+                                '1. Mongu',
+                                '2. Mporokoso',
+                                '3. Mufumbwe',
+                                '4. Mulobezi',
+                                '5. Mungwi',
+                                '6. Mwandi',
+                                '7. Mwense',
+                                '8. Sesheke',
+                                '9. More',
+                                '10. Back'
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            describe("if they choose 9. More twice", function() {
+                it("should show the third page of districts", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs('start', '2', '9', '9')
+                        .check.interaction({
+                            state: 'reg_district_official',
+                            reply: [
+                                'Please enter your district name.',
+                                "1. Shiwang'andu",
+                                '2. Solwezi',
+                                '3. Back'
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            describe("if they choose 9. More, then 10. Back", function() {
+                it("should show the first page of districts again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs('start', '2', '9', '10')
                         .check.interaction({
                             state: 'reg_district_official',
                             reply: [
@@ -131,14 +175,14 @@ describe("when an unregistered user logs on", function() {
                 });
             });
 
+
         });
 
         describe("when uu enters their first name", function() {
             it("should ask for their surname", function() {
                 return tester
                     .setup.user.addr('097123')
-                    .setup.user.state('reg_district_official_first_name')
-                    .input('Michael')
+                    .inputs('start', '2', '9', '2', 'Michael')
                     .check.interaction({
                         state: 'reg_district_official_surname',
                         reply: "Please enter your SURNAME."
@@ -151,8 +195,7 @@ describe("when an unregistered user logs on", function() {
             it("should ask for their id number", function() {
                 return tester
                     .setup.user.addr('097123')
-                    .setup.user.state('reg_district_official_first_name')
-                    .inputs('Michael', 'Sherwin')
+                    .inputs('start', '2', '9', '2', 'Michael', 'Sherwin')
                     .check.interaction({
                         state: 'reg_district_official_id_number',
                         reply: "Please enter your ID number."
@@ -165,8 +208,7 @@ describe("when an unregistered user logs on", function() {
             it("should ask for their date of birth", function() {
                 return tester
                     .setup.user.addr('097123')
-                    .setup.user.state('reg_district_official_first_name')
-                    .inputs('Michael', 'Sherwin', '123456')
+                    .inputs('start', '2', '9', '2', 'Michael', 'Sherwin', '123454321')
                     .check.interaction({
                         state: 'reg_district_official_dob',
                         reply:
@@ -183,8 +225,10 @@ describe("when an unregistered user logs on", function() {
                 it("should congratulate them on registering", function() {
                     return tester
                         .setup.user.addr('097123')
-                        .setup.user.state('reg_district_official_first_name')
-                        .inputs('Michael', 'Sherwin', '123456', '27111980')
+                        .setup.user.answers({
+                            'reg_district_official': '1'
+                        })
+                        .inputs('start', '2', '9', '2', 'Michael', 'Sherwin', '123454321', '27111980')
                         .check.interaction({
                             state: 'reg_district_official_thanks',
                             reply:
@@ -194,14 +238,31 @@ describe("when an unregistered user logs on", function() {
                         })
                         .run();
                 });
+
+                it("should save contact information", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .setup.user.answers({
+                            'reg_district_official': '1'
+                        })
+                        .inputs('start', '2', '9', '2', 'Michael', 'Sherwin', '123454321', '27111980')
+                        .check(function(api) {
+                            var contact = api.contacts.store[0];
+                            assert.equal(contact.extra.rts_id, '2');
+                            assert.equal(contact.extra.rts_district_official_id_number, '123454321');
+                            assert.equal(contact.extra.rts_official_district_id, '1');
+                            assert.equal(contact.name, 'Michael');
+                            assert.equal(contact.surname, 'Sherwin');
+                        })
+                        .run();
+                });
             });
 
             describe("if their dob input is not valid", function() {
                 it("should ask them to re-enter dob", function() {
                     return tester
                         .setup.user.addr('097123')
-                        .setup.user.state('reg_district_official_first_name')
-                        .inputs('Michael', 'Sherwin', '123456', '9999')
+                        .inputs('start', '2', '9', '2', 'Michael', 'Sherwin', '123454321', '9999')
                         .check.interaction({
                             state: 'reg_district_official_dob',
                             reply: "Please enter your date of birth formatted DDMMYYYY"
