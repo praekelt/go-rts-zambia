@@ -8,12 +8,11 @@ var Choice = vumigo.states.Choice;
 go.rdo = {
     // Registration of District Official States
 
-    reg_district_official: function(name, im) {
+    reg_district_official: function(name, im, districts) {
         var choices = [];
-        var districts = im.config.districts;
 
-        for (var i=0; i<districts.length; i++) {
-            var district = districts[i];
+        for (var i=0; i<districts.inspect().value.length; i++) {
+            var district = districts.inspect().value[i];
             choices[i] = new Choice(district.id, district.name);
         }
 
@@ -53,7 +52,7 @@ go.rdo = {
         });
     },
 
-    reg_district_official_dob: function(name) {
+    reg_district_official_dob: function(name, im, contact) {
         var error = "Please enter your date of birth formatted DDMMYYYY";
 
         var question = 
@@ -65,11 +64,17 @@ go.rdo = {
 
             check: function(content) {
                 if (go.utils.check_and_parse_date(content) === false) {
-                    return error;    
+                    return error;
                 }
             },
 
-            next: "reg_district_official_thanks"
+            next: function() {
+                return go.utils
+                    .cms_district_admin_registration(im, contact)
+                    .then(function() {
+                        return "reg_district_official_thanks";
+                    });
+            }
         });
     },
 
@@ -87,35 +92,3 @@ go.rdo = {
     }
 
 };
-
-
-
-
-// pasted states
-
-
-    // self.add_state(new FreeText(
-    //     "reg_district_official_dob",
-    //     "reg_thanks_district_admin",
-    //     "Please enter your date of birth. Start with the day,"+
-    //     " followed by the month and year, e.g. 27111980.",
-    //     function(content) {
-    //         // check that the value provided is date format we expect
-    //         return self.check_and_parse_date(content);
-    //     },
-    //     "Please enter your date of birth formatted DDMMYYYY"
-    // ));
-
-    // self.add_state(new EndState(
-    //         "reg_thanks_district_admin",
-    //         "Congratulations! You are now registered as a user of the" +
-    //         " Gateway! Please dial in again when you are ready to start" +
-    //         " reporting on teacher and learner performance.",
-    //         "initial_state",
-    //         {
-    //             on_enter: function(){
-    //                 return self.cms_district_admin_registration(im);
-    //             }
-    //         }
-    //     )
-    // );
