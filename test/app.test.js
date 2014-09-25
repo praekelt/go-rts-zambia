@@ -220,7 +220,28 @@ describe("when an unregistered user logs on", function() {
                         .run();
                 });
             });
-            
+
+            describe("if their date of birth does not validate", function() {
+                it("should ask for their date of birth again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11 Sep 1980'  // reg_date_of_birth
+                        )
+                        .check.interaction({
+                            state: 'reg_date_of_birth',
+                            reply: "Please enter your date of birth formatted DDMMYYYY"
+                        })
+                        .run();
+                });
+            });
         });
 
         describe("after the user enters their gender", function() {

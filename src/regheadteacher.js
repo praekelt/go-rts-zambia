@@ -58,10 +58,19 @@ go.rht = {
     },
 
     reg_date_of_birth: function(name) {
+        var error = "Please enter your date of birth formatted DDMMYYYY";
+
+        var question = "Please enter your date of birth. Start with the day, followed by " +
+                        "the month and year, e.g. 27111980";
+
         return new FreeText(name, {
-            question: 
-                "Please enter your date of birth. Start with the day, followed by " +
-                "the month and year, e.g. 27111980",
+            question: question,
+
+            check: function(content) {
+                if (go.utils.check_and_parse_date(content) === false) {
+                    return error;
+                }
+            },
 
             next: "reg_gender"
         });
