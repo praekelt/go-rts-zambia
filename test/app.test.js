@@ -610,6 +610,7 @@ describe("when an unregistered user logs on", function() {
             });
         });
 
+    });
 
 
 
