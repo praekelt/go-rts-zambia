@@ -51,7 +51,7 @@ var Choice = vumigo.states.Choice;
 go.rdo = {
     // Registration of District Official States
 
-    reg_district_official: function(name, im, districts) {
+    reg_district_official: function(name, districts) {
         var choices = [];
 
         for (var i=0; i<districts.inspect().value.length; i++) {
@@ -501,7 +501,7 @@ go.app = function() {
         // ---------------------------------
 
         self.states.add('reg_district_official', function(name) {
-            return go.rdo.reg_district_official(name, self.im, self.districts);
+            return go.rdo.reg_district_official(name, self.districts);
         });
 
         self.states.add('reg_district_official_first_name', function(name) {
