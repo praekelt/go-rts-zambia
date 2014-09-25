@@ -43,7 +43,11 @@ function GoRtsZambia() {
     // The first state to enter
     StateCreator.call(self, 'initial_state');
 
-    // START Shared helpers
+
+
+// Shared Helpers
+/*******************************/
+
 
     self.log_result = function() {
         return function (result) {
@@ -224,7 +228,6 @@ function GoRtsZambia() {
         return district_admin_data;
     };
 
-
     self.performance_data_teacher_collect_by_head = function(emis, id){
         var data = self.performance_data_teacher_collect(emis);
         data["created_by"] = "/api/v1/data/headteacher/" + id + "/";
@@ -236,7 +239,6 @@ function GoRtsZambia() {
         data["created_by_da"] = "/api/v1/district_admin/" + id + "/";
         return data;
     };
-
 
     self.performance_data_teacher_collect = function(emis){
         var data = {
@@ -371,9 +373,9 @@ function GoRtsZambia() {
     };
 
 
-    // END Shared helpers
 
-    // START CMS Interactions
+// CMS Interactions
+/*******************************/
 
     self.cms_registration = function(im) {
         var headteacher_data;
@@ -565,9 +567,11 @@ function GoRtsZambia() {
         return p;
     };
 
-    // END CMS Interactions
 
-    // START Shared creators
+
+// Shared Creators
+/*******************************/
+
 
     self.error_state = function() {
         return new EndState(
@@ -653,6 +657,12 @@ function GoRtsZambia() {
     };
 
 
+
+// Initial state (INITIAL)
+/********************************************************************************************/
+
+
+    // INITIAL
     self.add_creator('initial_state', function(state_name, im) {
         var p = self.get_contact(im);
 
@@ -710,10 +720,13 @@ function GoRtsZambia() {
         return p;
     });
 
-    // END Shared creators
 
-// District official
+
+// Register as District official (RADO)
 /********************************************************************************************/
+
+
+    // RADO
     self.add_creator('reg_district_official', function(state_name, im){
         var choices = [];
 
@@ -732,24 +745,28 @@ function GoRtsZambia() {
                                         {});
     });
 
+    // RADO
     self.add_state(new FreeText(
         "reg_district_official_first_name",
         "reg_district_official_surname",
         "Please enter your FIRST name."
     ));
 
+    // RADO
     self.add_state(new FreeText(
         "reg_district_official_surname",
         "reg_district_official_id_number",
         "Now please enter your SURNAME."
     ));
 
+    // RADO
     self.add_state(new FreeText(
         "reg_district_official_id_number",
         "reg_district_official_dob",
         "Please enter your ID number."
     ));
 
+    // RADO
     self.add_state(new FreeText(
         "reg_district_official_dob",
         "reg_thanks_district_admin",
@@ -762,6 +779,7 @@ function GoRtsZambia() {
         "Please enter your date of birth formatted DDMMYYYY"
     ));
 
+    // RADO
     self.add_state(new EndState(
             "reg_thanks_district_admin",
             "Congratulations! You are now registered as a user of the" +
@@ -776,50 +794,27 @@ function GoRtsZambia() {
         )
     );
 
+
+
+// Register as Head Teacher (RAHT)
 /********************************************************************************************/
 
-    self.add_state(new FreeText(
-        "add_emis_perf_teacher_ts_number",
-        "perf_teacher_ts_number",
-        "Please enter the school's EMIS number that you would like to report on. This should have 4-6 digits e.g 4351.",
-        function(content){
-            return self.check_valid_emis(content);
-        },
-        "The emis does not exist, please try again. This should have 4-6 digits e.g 4351.",
-        {
-            on_exit: function(){
-                return self.add_emis_district_official_to_contacts("add_emis_perf_teacher_ts_number");
-            }
-        }
-    ));
 
-    self.add_state(new FreeText(
-        "add_emis_perf_learner_boys_total",
-        "perf_learner_boys_total",
-        "Please enter the school's EMIS number that you would like to report on. This should have 4-6 digits e.g 4351.",
-        function(content){
-            return self.check_valid_emis(content);
-        },
-        "The emis does not exist, please try again. This should have 4-6 digits e.g 4351.",
-        {
-            on_exit: function(){
-                return self.add_emis_district_official_to_contacts("add_emis_perf_learner_boys_total");
-            }
-        }
-    ));
-
+    // RAHT
     self.add_state(new FreeText(
         "reg_emis",
         "reg_emis_validator",
         "Please enter your school's EMIS number. This should have 4-6 digits e.g 4351."
     ));
 
+    // RAHT
     self.add_state(new FreeText(
         "reg_emis_try_2",
         "reg_emis_validator",
         "Please enter your school's EMIS number. This should have 4-6 digits e.g 4351."
     ));
 
+    // RAHT
     self.add_creator('reg_emis_validator', function(state_name, im){
         var EMIS;
         if (im.get_user_answer('reg_emis_try_2')) {
@@ -828,6 +823,8 @@ function GoRtsZambia() {
             EMIS = im.get_user_answer('reg_emis');
         }
         if (self.check_valid_emis(EMIS)) { // EMIS valid
+
+            // RAHT
             return new ChoiceState(
                 "reg_emis_validator",
                 "reg_school_name",
@@ -839,6 +836,8 @@ function GoRtsZambia() {
             );
         } else {
             if (im.get_user_answer('reg_emis_try_2')) { // Second failure - force exit
+
+                // RAHT
                 return new EndState(
                     "reg_exit_emis",
                     "We don't recognise your EMIS number. Please send a SMS with" +
@@ -847,6 +846,8 @@ function GoRtsZambia() {
                     "initial_state"
                 );
             } else { // First invalid EMIS - request again
+
+                // RAHT
                 return new ChoiceState(
                     "reg_emis_error",
                     function(choice) {
@@ -862,6 +863,198 @@ function GoRtsZambia() {
         }
     });
 
+    // RAHT
+    self.add_state(new FreeText(
+        "reg_school_name",
+        "reg_first_name",
+        "Please enter the name of your school, e.g. Kapililonga"
+    ));
+
+    // RAHT
+    self.add_state(new FreeText(
+        "reg_first_name",
+        "reg_surname",
+        "Please enter your FIRST name."
+    ));
+
+    // RAHT
+    self.add_state(new FreeText(
+        "reg_surname",
+        "reg_date_of_birth",
+        "Now please enter your SURNAME."
+    ));
+
+    // RAHT
+    self.add_state(new FreeText(
+        "reg_date_of_birth",
+        "reg_gender",
+        "Please enter your date of birth. Start with the day, followed by " +
+            "the month and year, e.g. 27111980",
+        function(content) {
+            // check that the value provided is date format we expect
+            return self.check_and_parse_date(content);
+        },
+        "Please enter your date of birth formatted DDMMYYYY"
+    ));
+
+    // RAHT
+    self.add_state(new ChoiceState(
+        'reg_gender',
+        'reg_school_boys',
+        "What is your gender?",
+        [
+            new Choice("female", "Female"),
+            new Choice("male", "Male")
+        ]
+    ));
+
+    // RAHT
+    self.add_state(new FreeText(
+        "reg_school_boys",
+        "reg_school_girls",
+        "How many boys do you have in your school?",
+        function(content) {
+            // check that the value provided is actually decimal-ish.
+            return self.check_valid_number(content);
+        },
+        'Please provide a number value for how many boys you have in your school.'
+    ));
+
+    // RAHT
+    self.add_state(new FreeText(
+        "reg_school_girls",
+        "reg_school_classrooms",
+        "How many girls do you have in your school?",
+        function(content) {
+            // check that the value provided is actually decimal-ish.
+            return self.check_valid_number(content);
+        },
+        'Please provide a number value for how many girls you have in your school.'
+    ));
+
+    // RAHT
+    self.add_state(new FreeText(
+        "reg_school_classrooms",
+        "reg_school_teachers",
+        "How many classrooms do you have in your school?",
+        function(content) {
+            // check that the value provided is actually decimal-ish.
+            return self.check_valid_number(content);
+        },
+        'Please provide a number value for how many classrooms you have in your school.'
+    ));
+
+    // RAHT
+    self.add_state(new FreeText(
+        "reg_school_teachers",
+        "reg_school_teachers_g1",
+        "How many teachers are presently working in your school, including the head teacher?",
+        function(content) {
+            // check that the value provided is actually decimal-ish.
+            return self.check_valid_number(content);
+        },
+        'Please provide a number value for how many teachers in total you have in your school.'
+    ));
+
+    // RAHT
+    self.add_state(new FreeText(
+        "reg_school_teachers_g1",
+        "reg_school_teachers_g2",
+        "How many teachers teach Grade 1 local language?",
+        function(content) {
+            // check that the value provided is actually decimal-ish.
+            return self.check_valid_number(content);
+        },
+        'Please provide a number value for how many teachers teach G1 local language literacy.'
+    ));
+
+    // RAHT
+    self.add_state(new FreeText(
+        "reg_school_teachers_g2",
+        "reg_school_students_g2_boys",
+        "How many teachers teach Grade 2 local language?",
+        function(content) {
+            // check that the value provided is actually decimal-ish.
+            return self.check_valid_number(content);
+        },
+        'Please provide a number value for how many teachers teach G2 local language literacy.'
+    ));
+
+    // RAHT
+    self.add_state(new FreeText(
+        "reg_school_students_g2_boys",
+        "reg_school_students_g2_girls",
+        "How many boys are ENROLLED in Grade 2 at your school?",
+        function(content) {
+            // check that the value provided is actually decimal-ish.
+            return self.check_valid_number(content);
+        },
+        'Please provide a number value for the total number of G2 boys enrolled.'
+    ));
+
+    // RAHT
+    self.add_state(new FreeText(
+        "reg_school_students_g2_girls",
+        "reg_zonal_head",
+        "How many girls are ENROLLED in Grade 2 at your school?",
+        function(content) {
+            // check that the value provided is actually decimal-ish.
+            return self.check_valid_number(content);
+        },
+        'Please provide a number value for the total number of G2 girls enrolled.'
+    ));
+
+    // RAHT
+    self.add_state(new ChoiceState(
+        'reg_zonal_head',
+        function(choice) {
+            return choice.value;
+        },
+        "Are you a Zonal Head Teacher?",
+        [
+            new Choice("reg_thanks_zonal_head", "Yes"),
+            new Choice("reg_zonal_head_name", "No")
+        ]
+    ));
+
+    // RAHT
+    self.add_state(new FreeText(
+        "reg_zonal_head_name",
+        "reg_thanks_head_teacher",
+        "Please enter the name and surname of your ZONAL HEAD TEACHER."
+    ));
+
+    // RAHT
+    self.add_state(new EndState(
+            "reg_thanks_head_teacher",
+            "Congratulations! You are now registered as a user of the" +
+            " Gateway! Please dial in again when you are ready to start" +
+            " reporting on teacher and learner performance.",
+            "initial_state",
+            {
+                on_enter: function(){
+                    return self.cms_registration(im);
+                }
+            }
+        )
+    );
+
+    // RAHT
+    self.add_state(new EndState(
+            "reg_thanks_zonal_head",
+            "Well done! You are now registered as a Zonal Head Teacher." +
+            " When you are ready, dial in to start reporting. You will" +
+            " also receive monthly SMS's from your zone.",
+            "initial_state",
+            {
+                on_enter: function(){
+                    return self.cms_registration(im);
+                }
+            }
+        )
+    );
+
+    // RAHT
     self.add_state(new ChoiceState(
         "reg_emis_error",
         function(choice) {
@@ -874,31 +1067,26 @@ function GoRtsZambia() {
         ]
     ));
 
+
+
+// Change My Primary Cell Number (CMPCN)
+/********************************************************************************************/
+
+    // CMPCN
     self.add_state(new FreeText(
         "manage_change_msisdn_emis",
         "manage_change_msisdn_emis_validator",
         "Please enter the school's EMIS number that you are currently registered with. This should have 4-6 digits e.g 4351."
     ));
 
+    // CMPCN
     self.add_state(new FreeText(
         "manage_change_msisdn_emis_try_2",
         "manage_change_msisdn_emis_validator",
         "Please enter the school's EMIS number that you are currently registered with. This should have 4-6 digits e.g 4351."
     ));
 
-    self.add_state(new ChoiceState(
-        "manage_change_emis_error",
-        function(choice) {
-                return choice.value;
-            },
-        "Your cell phone number is unrecognised. Please associate your new number with " +
-        "your old EMIS first before requesting to change school.",
-        [
-            new Choice("initial_state", "Main menu."),
-            new Choice("end_state", "Exit.")
-        ]
-    ));
-
+    // CMPCN
     self.add_creator('manage_change_msisdn_emis_validator', function(state_name, im) {
         var EMIS;
         if (im.get_user_answer('manage_change_msisdn_emis_try_2')) {
@@ -908,6 +1096,8 @@ function GoRtsZambia() {
         }
         if (self.check_valid_emis(EMIS)) {
             // EMIS valid
+
+            // CMPCN
             return new EndState(
                 state_name,
                 "Thank you! Your cell phone number is now the official number" +
@@ -923,6 +1113,8 @@ function GoRtsZambia() {
         } else {
             // Invalid EMIS - request again
             if (im.get_user_answer('reg_emis_try_2')) { // Second failure - force exit
+
+                // CMPCN
                 return new EndState(
                     "reg_exit_emis",
                     "We don't recognise your EMIS number. Please send a SMS with" +
@@ -931,6 +1123,8 @@ function GoRtsZambia() {
                     "initial_state"
                 );
             } else { // First invalid EMIS - request again
+
+                // CMPCN
                 return new ChoiceState(
                     "manage_change_msisdn_emis_error",
                     function(choice) {
@@ -946,6 +1140,7 @@ function GoRtsZambia() {
         }
     });
 
+    // CMPCN
     self.add_state(new ChoiceState(
         "manage_change_msisdn_emis_error",
         function(choice) {
@@ -958,6 +1153,68 @@ function GoRtsZambia() {
         ]
     ));
 
+
+// Change My School - Not Registered (CMSNR)
+/********************************************************************************************/
+
+
+    // CMSNR
+    self.add_state(new ChoiceState(
+        "manage_change_emis_error",
+        function(choice) {
+                return choice.value;
+            },
+        "Your cell phone number is unrecognised. Please associate your new number with " +
+        "your old EMIS first before requesting to change school.",
+        [
+            new Choice("initial_state", "Main menu."),
+            new Choice("end_state", "Exit.")
+        ]
+    ));
+
+
+
+// Report performance - Head Teacher (RPHT)
+/********************************************************************************************/
+
+
+    // RTPHT
+    self.add_state(new FreeText(
+        "add_emis_perf_teacher_ts_number",
+        "perf_teacher_ts_number",
+        "Please enter the school's EMIS number that you would like to report on. This should have 4-6 digits e.g 4351.",
+        function(content){
+            return self.check_valid_emis(content);
+        },
+        "The emis does not exist, please try again. This should have 4-6 digits e.g 4351.",
+        {
+            on_exit: function(){
+                return self.add_emis_district_official_to_contacts("add_emis_perf_teacher_ts_number");
+            }
+        }
+    ));
+
+    // RTPHT
+    self.add_state(new FreeText(
+        "add_emis_perf_learner_boys_total",
+        "perf_learner_boys_total",
+        "Please enter the school's EMIS number that you would like to report on. This should have 4-6 digits e.g 4351.",
+        function(content){
+            return self.check_valid_emis(content);
+        },
+        "The emis does not exist, please try again. This should have 4-6 digits e.g 4351.",
+        {
+            on_exit: function(){
+                return self.add_emis_district_official_to_contacts("add_emis_perf_learner_boys_total");
+            }
+        }
+    ));
+
+
+// Update School Registration Data (USRD)
+/********************************************************************************************/
+
+    // USRD
     self.add_state(new ChoiceState(
         "manage_update_school_data",
         function(choice) {
@@ -969,18 +1226,27 @@ function GoRtsZambia() {
         ]
     ));
 
+
+
+// Change My School (CMS)
+/********************************************************************************************/
+
+
+    // CMS
     self.add_state(new FreeText(
         "manage_change_emis",
         "manage_change_emis_validator",
         "Please enter your school's EMIS number. This should have 4-6 digits e.g 4351."
     ));
 
+    // CMS
     self.add_state(new FreeText(
         "manage_change_emis_try_2",
         "manage_change_emis_validator",
         "Please enter your school's EMIS number. This should have 4-6 digits e.g 4351."
     ));
 
+    // CMS
     self.add_creator('manage_change_emis_validator', function(state_name, im){
         var EMIS;
         if (im.get_user_answer('manage_change_emis_try_2')) {
@@ -989,6 +1255,8 @@ function GoRtsZambia() {
             EMIS = im.get_user_answer('manage_change_emis');
         }
         if (self.check_valid_emis(EMIS)) { // EMIS valid
+
+            // CMS
             return new ChoiceState(
                 "manage_change_emis_validator",
                 "reg_school_boys",
@@ -1000,6 +1268,8 @@ function GoRtsZambia() {
             );
         } else {
             if (im.get_user_answer('manage_change_emis_try_2')) { // Second failure - force exit
+
+                // CMS
                 return new EndState(
                     "reg_exit_emis",
                     "We don't recognise your EMIS number. Please send a SMS with" +
@@ -1008,6 +1278,8 @@ function GoRtsZambia() {
                     "initial_state"
                 );
             } else { // First invalid EMIS - request again
+
+                // CMS
                 return new ChoiceState(
                     "manage_change_emis_enter_error",
                     function(choice) {
@@ -1023,6 +1295,7 @@ function GoRtsZambia() {
         }
     });
 
+    // CMS
     self.add_state(new ChoiceState(
         "manage_change_emis_enter_error",
         function(choice) {
@@ -1035,7 +1308,7 @@ function GoRtsZambia() {
         ]
     ));
 
-
+    // CMS
     self.add_state(new EndState(
         "reg_exit_emis",
         "We don't recognise your EMIS number. Please send a SMS with" +
@@ -1044,184 +1317,12 @@ function GoRtsZambia() {
         "initial_state"
     ));
 
-    self.add_state(new FreeText(
-        "reg_school_name",
-        "reg_first_name",
-        "Please enter the name of your school, e.g. Kapililonga"
-    ));
 
-    self.add_state(new FreeText(
-        "reg_first_name",
-        "reg_surname",
-        "Please enter your FIRST name."
-    ));
 
-    self.add_state(new FreeText(
-        "reg_surname",
-        "reg_date_of_birth",
-        "Now please enter your SURNAME."
-    ));
+// Report Teacher Performance (RTP)
+/********************************************************************************************/
 
-    self.add_state(new FreeText(
-        "reg_date_of_birth",
-        "reg_gender",
-        "Please enter your date of birth. Start with the day, followed by " +
-            "the month and year, e.g. 27111980",
-        function(content) {
-            // check that the value provided is date format we expect
-            return self.check_and_parse_date(content);
-        },
-        "Please enter your date of birth formatted DDMMYYYY"
-    ));
-
-    self.add_state(new ChoiceState(
-        'reg_gender',
-        'reg_school_boys',
-        "What is your gender?",
-        [
-            new Choice("female", "Female"),
-            new Choice("male", "Male")
-        ]
-    ));
-
-    self.add_state(new FreeText(
-        "reg_school_boys",
-        "reg_school_girls",
-        "How many boys do you have in your school?",
-        function(content) {
-            // check that the value provided is actually decimal-ish.
-            return self.check_valid_number(content);
-        },
-        'Please provide a number value for how many boys you have in your school.'
-    ));
-
-    self.add_state(new FreeText(
-        "reg_school_girls",
-        "reg_school_classrooms",
-        "How many girls do you have in your school?",
-        function(content) {
-            // check that the value provided is actually decimal-ish.
-            return self.check_valid_number(content);
-        },
-        'Please provide a number value for how many girls you have in your school.'
-    ));
-
-    self.add_state(new FreeText(
-        "reg_school_classrooms",
-        "reg_school_teachers",
-        "How many classrooms do you have in your school?",
-        function(content) {
-            // check that the value provided is actually decimal-ish.
-            return self.check_valid_number(content);
-        },
-        'Please provide a number value for how many classrooms you have in your school.'
-    ));
-
-    self.add_state(new FreeText(
-        "reg_school_teachers",
-        "reg_school_teachers_g1",
-        "How many teachers are presently working in your school, including the head teacher?",
-        function(content) {
-            // check that the value provided is actually decimal-ish.
-            return self.check_valid_number(content);
-        },
-        'Please provide a number value for how many teachers in total you have in your school.'
-    ));
-
-    self.add_state(new FreeText(
-        "reg_school_teachers_g1",
-        "reg_school_teachers_g2",
-        "How many teachers teach Grade 1 local language?",
-        function(content) {
-            // check that the value provided is actually decimal-ish.
-            return self.check_valid_number(content);
-        },
-        'Please provide a number value for how many teachers teach G1 local language literacy.'
-    ));
-
-    self.add_state(new FreeText(
-        "reg_school_teachers_g2",
-        "reg_school_students_g2_boys",
-        "How many teachers teach Grade 2 local language?",
-        function(content) {
-            // check that the value provided is actually decimal-ish.
-            return self.check_valid_number(content);
-        },
-        'Please provide a number value for how many teachers teach G2 local language literacy.'
-    ));
-
-    self.add_state(new FreeText(
-        "reg_school_students_g2_boys",
-        "reg_school_students_g2_girls",
-        "How many boys are ENROLLED in Grade 2 at your school?",
-        function(content) {
-            // check that the value provided is actually decimal-ish.
-            return self.check_valid_number(content);
-        },
-        'Please provide a number value for the total number of G2 boys enrolled.'
-    ));
-
-    self.add_state(new FreeText(
-        "reg_school_students_g2_girls",
-        "reg_zonal_head",
-        "How many girls are ENROLLED in Grade 2 at your school?",
-        function(content) {
-            // check that the value provided is actually decimal-ish.
-            return self.check_valid_number(content);
-        },
-        'Please provide a number value for the total number of G2 girls enrolled.'
-    ));
-
-    self.add_state(new ChoiceState(
-        'reg_zonal_head',
-        function(choice) {
-            return choice.value;
-        },
-        "Are you a Zonal Head Teacher?",
-        [
-            new Choice("reg_thanks_zonal_head", "Yes"),
-            new Choice("reg_zonal_head_name", "No")
-        ]
-    ));
-
-    self.add_state(new FreeText(
-        "reg_zonal_head_name",
-        "reg_thanks_head_teacher",
-        "Please enter the name and surname of your ZONAL HEAD TEACHER."
-    ));
-
-    self.add_state(new EndState(
-            "reg_thanks_head_teacher",
-            "Congratulations! You are now registered as a user of the" +
-            " Gateway! Please dial in again when you are ready to start" +
-            " reporting on teacher and learner performance.",
-            "initial_state",
-            {
-                on_enter: function(){
-                    return self.cms_registration(im);
-                }
-            }
-        )
-    );
-
-    self.add_state(new EndState(
-            "reg_thanks_zonal_head",
-            "Well done! You are now registered as a Zonal Head Teacher." +
-            " When you are ready, dial in to start reporting. You will" +
-            " also receive monthly SMS's from your zone.",
-            "initial_state",
-            {
-                on_enter: function(){
-                    return self.cms_registration(im);
-                }
-            }
-        )
-    );
-
-    /////////////////////////////////////////////////////////////////
-    // Start of Performance Management - Teachers
-    /////////////////////////////////////////////////////////////////
-
+    // RTP
     self.add_state(new FreeText(
         "perf_teacher_ts_number",
         "perf_teacher_gender",
@@ -1234,6 +1335,7 @@ function GoRtsZambia() {
         null, null
     ));
 
+    // RTP
     self.add_state(new ChoiceState(
         'perf_teacher_gender',
         'perf_teacher_age',
@@ -1244,6 +1346,7 @@ function GoRtsZambia() {
         ]
     ));
 
+    // RTP
     self.add_state(new FreeText(
         "perf_teacher_age",
         "perf_teacher_academic_level",
@@ -1255,6 +1358,7 @@ function GoRtsZambia() {
         "Please provide a valid number value for the teacher's age."
     ));
 
+    // RTP
     self.add_state(new ChoiceState(
         "perf_teacher_academic_level",
         "perf_teacher_years_experience",
@@ -1273,6 +1377,7 @@ function GoRtsZambia() {
         ]
     ));
 
+    // RTP
     self.add_state(new ChoiceState(
         "perf_teacher_years_experience",
         "perf_teacher_g2_pupils_present",
@@ -1285,6 +1390,7 @@ function GoRtsZambia() {
         ]
     ));
 
+    // RTP
     self.add_state(new FreeText(
         "perf_teacher_g2_pupils_present",
         "perf_teacher_g2_pupils_registered",
@@ -1296,6 +1402,7 @@ function GoRtsZambia() {
         'Please provide a number value for pupils present.'
     ));
 
+    // RTP
     self.add_state(new FreeText(
         "perf_teacher_g2_pupils_registered",
         "perf_teacher_classroom_environment_score",
@@ -1307,6 +1414,7 @@ function GoRtsZambia() {
         'Please provide a number value for pupils enrolled.'
     ));
 
+    // RTP
     self.add_state(new FreeText(
         "perf_teacher_classroom_environment_score",
         "perf_teacher_t_l_materials",
@@ -1319,6 +1427,7 @@ function GoRtsZambia() {
         "Please provide a valid number value for the Classroom Environment subtotal."
     ));
 
+    // RTP
     self.add_state(new FreeText(
         "perf_teacher_t_l_materials",
         "perf_teacher_pupils_books_number",
@@ -1331,6 +1440,7 @@ function GoRtsZambia() {
         'Please provide a valid number value for the Teaching and Learning Materials subtotal.'
     ));
 
+    // RTP
     self.add_state(new FreeText(
         "perf_teacher_pupils_books_number",
         "perf_teacher_pupils_materials_score",
@@ -1343,6 +1453,7 @@ function GoRtsZambia() {
         "Please provide a number value for number of learners' books."
     ));
 
+    // RTP
     self.add_state(new FreeText(
         "perf_teacher_pupils_materials_score",
         "perf_teacher_reading_lesson",
@@ -1355,6 +1466,7 @@ function GoRtsZambia() {
         "Please provide a valid number value for the Learner Materials subtotal."
     ));
 
+    // RTP
     self.add_state(new FreeText(
         "perf_teacher_reading_lesson",
         "perf_teacher_pupil_engagement_score",
@@ -1367,6 +1479,7 @@ function GoRtsZambia() {
         "Please provide a valid number value for the Time on Task and Reading Practice subtotal."
     ));
 
+    // RTP
     self.add_state(new FreeText(
         "perf_teacher_pupil_engagement_score",
         "perf_teacher_attitudes_and_beliefs",
@@ -1379,6 +1492,7 @@ function GoRtsZambia() {
         "Please provide a valid number value for the Learner Engagement subtotal."
     ));
 
+    // RTP
     self.add_state(new FreeText(
         "perf_teacher_attitudes_and_beliefs",
         "perf_teacher_training_subtotal",
@@ -1391,6 +1505,7 @@ function GoRtsZambia() {
         "Please provide a valid number value for the Teacher Attitudes and Beliefs subtotal."
     ));
 
+    // RTP
     self.add_state(new FreeText(
         "perf_teacher_training_subtotal",
         "perf_teacher_reading_assessment",
@@ -1403,6 +1518,7 @@ function GoRtsZambia() {
         "Please provide a valid number value for the Teacher Training interview subtotal."
     ));
 
+    // RTP
     self.add_state(new FreeText(
         "perf_teacher_reading_assessment",
         "perf_teacher_reading_total",
@@ -1415,6 +1531,7 @@ function GoRtsZambia() {
         "Please provide a valid number value for the Reading Assessment subtotal."
     ));
 
+    // RTP
     self.add_state(new FreeText(
         "perf_teacher_reading_total",
         "perf_teacher_completed",
@@ -1433,6 +1550,7 @@ function GoRtsZambia() {
         }
     ));
 
+    // RTP
     self.add_state(new ChoiceState(
         "perf_teacher_completed",
         function(choice) {
@@ -1448,11 +1566,11 @@ function GoRtsZambia() {
 
 
 
-    /////////////////////////////////////////////////////////////////
-    // Start of Performance Management - Learners
-    /////////////////////////////////////////////////////////////////
+// Report Learner Performance (RLP)
+/********************************************************************************************/
 
-// boys total
+    // RLP
+    // boys total
     self.add_state(new FreeText(
         "perf_learner_boys_total",
         "perf_learner_boys_outstanding_results",
@@ -1464,7 +1582,8 @@ function GoRtsZambia() {
         "Please provide a number value for total boys assessed."
     ));
 
-// boys 16-20
+    // RLP
+    // boys 16-20
     self.add_state(new FreeText(
         "perf_learner_boys_outstanding_results",
         "perf_learner_boys_desirable_results",
@@ -1476,7 +1595,8 @@ function GoRtsZambia() {
         "Please provide a valid number value for total boys achieving 16 out of 20 or more."
     ));
 
-// boys 12-15
+    // RLP
+    // boys 12-15
     self.add_creator("perf_learner_boys_desirable_results", function (state_name, im) {
         var boys_states_completed = [
             "perf_learner_boys_outstanding_results"
@@ -1492,7 +1612,8 @@ function GoRtsZambia() {
         );
     });
 
-// boys 8-11
+    // RLP
+    // boys 8-11
     self.add_creator("perf_learner_boys_minimum_results", function (state_name, im) {
         var boys_states_completed = [
             "perf_learner_boys_outstanding_results",
@@ -1509,7 +1630,8 @@ function GoRtsZambia() {
         );
     });
 
-// boys 0-7
+    // RLP
+    // boys 0-7
     self.add_creator("perf_learner_boys_below_minimum_results", function (state_name, im) {
         var boys_states_completed = [
             "perf_learner_boys_outstanding_results",
@@ -1527,7 +1649,8 @@ function GoRtsZambia() {
         );
     });
 
-// girls total
+    // RLP
+    // girls total
     self.add_creator("perf_learner_girls_total", function (state_name, im) {
         var boys_states_completed = [
             "perf_learner_boys_outstanding_results",
@@ -1548,7 +1671,8 @@ function GoRtsZambia() {
         );
     });
 
-// girls 16-20
+    // RLP
+    // girls 16-20
     self.add_state(new FreeText(
         "perf_learner_girls_outstanding_results",
         "perf_learner_girls_desirable_results",
@@ -1560,7 +1684,8 @@ function GoRtsZambia() {
         "Please provide a valid number value for total girls achieving 16 out of 20 or more."
     ));
 
-// girls 12-15
+    // RLP
+    // girls 12-15
     self.add_creator("perf_learner_girls_desirable_results", function (state_name, im) {
         var girls_states_completed = [
             "perf_learner_girls_outstanding_results"
@@ -1577,7 +1702,8 @@ function GoRtsZambia() {
     });
 
 
-// girls 8-11
+    // RLP
+    // girls 8-11
     self.add_creator("perf_learner_girls_minimum_results", function (state_name, im) {
         var girls_states_completed = [
             "perf_learner_girls_outstanding_results",
@@ -1594,7 +1720,8 @@ function GoRtsZambia() {
             );
     });
 
-// girls 0-7
+    // RLP
+    // girls 0-7
     self.add_creator("perf_learner_girls_below_minimum_results", function (state_name, im) {
         var girls_states_completed = [
             "perf_learner_girls_outstanding_results",
@@ -1612,7 +1739,8 @@ function GoRtsZambia() {
         );
     });
 
-// boys phonetic
+    // RLP
+    // boys phonetic
     self.add_creator("perf_learner_boys_phonetic_awareness", function (state_name, im) {
         var girls_states_completed = [
             "perf_learner_girls_outstanding_results",
@@ -1638,7 +1766,8 @@ function GoRtsZambia() {
         );
     });
 
-// girls phonetic
+    // RLP
+    // girls phonetic
     self.add_state(new FreeText(
         "perf_learner_girls_phonetic_awareness",
         "perf_learner_boys_vocabulary",
@@ -1652,7 +1781,8 @@ function GoRtsZambia() {
         " correctly out of 6 for Phonics and Phonemic Awareness."
     ));
 
-// boys vocab
+    // RLP
+    // boys vocab
     self.add_state(new FreeText(
         "perf_learner_boys_vocabulary",
         "perf_learner_girls_vocabulary",
@@ -1665,7 +1795,8 @@ function GoRtsZambia() {
         " for Vocabulary."
     ));
 
-// girls vocab
+    // RLP
+    // girls vocab
     self.add_state(new FreeText(
         "perf_learner_girls_vocabulary",
         "perf_learner_boys_reading_comprehension",
@@ -1678,7 +1809,8 @@ function GoRtsZambia() {
         " for Vocabulary."
     ));
 
-// boys reading comprehension
+    // RLP
+    // boys reading comprehension
     self.add_state(new FreeText(
         "perf_learner_boys_reading_comprehension",
         "perf_learner_girls_reading_comprehension",
@@ -1691,7 +1823,8 @@ function GoRtsZambia() {
         " for Comprehension."
     ));
 
-// girls reading comprehension
+    // RLP
+    // girls reading comprehension
     self.add_state(new FreeText(
         "perf_learner_girls_reading_comprehension",
         "perf_learner_boys_writing_diction",
@@ -1704,7 +1837,8 @@ function GoRtsZambia() {
         " for Comprehension."
     ));
 
-// boys writing
+    // RLP
+    // boys writing
     self.add_state(new FreeText(
         "perf_learner_boys_writing_diction",
         "perf_learner_girls_writing_diction",
@@ -1717,7 +1851,8 @@ function GoRtsZambia() {
         " correct answers for Writing."
     ));
 
-// girls writing
+    // RLP
+    // girls writing
     self.add_state(new FreeText(
         "perf_learner_girls_writing_diction",
         "perf_learner_completed",
@@ -1736,8 +1871,8 @@ function GoRtsZambia() {
         }
     ));
 
-
-// completed
+    // RLP
+    // completed
     self.add_state(new ChoiceState(
         "perf_learner_completed",
         function(choice) {
@@ -1756,6 +1891,9 @@ function GoRtsZambia() {
     // End of Performance Management - Learners
     /////////////////////////////////////////////////////////////////
 
+    // RLP
+    // RTP
+    // CMSNR
     self.add_state(new EndState(
         "end_state",
         "Goodbye! Thank you for using the Gateway.",
