@@ -1,5 +1,6 @@
 var vumigo = require('vumigo_v02');
 var moment = require('moment');
+// var _ = require('lodash');
 var ChoiceState = vumigo.states.ChoiceState;
 var Choice = vumigo.states.Choice;
 var JsonApi = vumigo.http.api.JsonApi;
@@ -31,7 +32,7 @@ go.utils = {
             .then(function(result) {
                 parsed_result = JSON.parse(result.body);
                 var array_emis = [];
-                for (var i=0;i<parsed_result.objects.length;i++){
+                for (var i=0; i<parsed_result.objects.length; i++) {
                     array_emis.push(parsed_result.objects[i].emis);
                 }
                 return array_emis;
@@ -112,6 +113,16 @@ go.utils = {
         }
     },
 
+    check_valid_emis: function(user_emis, array_emis) {
+        // returns false if fails to find
+        var numbers_only = new RegExp('^\\d+$');
+        if (numbers_only.test(user_emis)) {
+            return array_emis.inspect().value.indexOf(parseInt(user_emis, 10)) != -1;
+        } else {
+            return false;
+        }
+    },
+
     registration_official_admin_collect: function(im) {
         var dob = go.utils.check_and_parse_date(im.user.answers.reg_district_official_dob);
 
@@ -164,7 +175,16 @@ go.app = function() {
                 ],
 
                 next: function(choice) {
-                    return choice.value;
+                    if (choice.value != 'reg_emis') {
+                        return choice.value;
+                    } else {
+                        return {
+                            name: 'reg_emis',
+                            creator_opts: {
+                                retry: false
+                            }
+                        };
+                    }
                 }
                 });
         });
@@ -174,12 +194,20 @@ go.app = function() {
         // REGISTER HEAD TEACHER STATES
         // ----------------------------
 
-        self.states.add('reg_emis', function(name) {
-            return go.rht.reg_emis(name);
+        self.states.add('reg_emis', function(name, opts) {
+            return go.rht.reg_emis(name, self.array_emis, opts);
         });
 
         self.states.add('reg_emis_validates', function(name) {
             return go.rht.reg_emis_validates(name);
+        });
+
+        self.states.add('reg_emis_retry_exit', function(name) {
+            return go.rht.reg_emis_retry_exit(name);
+        });
+
+        self.states.add('reg_exit_emis', function(name) {
+            return go.rht.reg_exit_emis(name);
         });
 
         self.states.add('reg_school_name', function(name) {

@@ -9,13 +9,23 @@ go.rht = function() {
     var rht = {
         // Registration of Head Teacher States
 
-        reg_emis: function(name) {
+        reg_emis: function(name, array_emis, opts) {
             return new FreeText(name, {
                 question: 
                     "Please enter your school's EMIS number. " +
                     "This should have 4-6 digits e.g. 4351.",
 
-                next: "reg_emis_validates"
+                next: function(content) {
+                    // console.log(content);
+                    // console.log(array_emis.inspect().value);
+                    if (go.utils.check_valid_emis(content, array_emis)) {
+                        return "reg_emis_validates";
+                    } else if (opts.retry === false) {
+                        return "reg_emis_retry_exit";
+                    } else if (opts.retry === true) {
+                        return "reg_exit_emis";
+                    }
+                }
             });
         },
 
@@ -31,6 +41,40 @@ go.rht = function() {
                 ],
 
                 next: "reg_school_name"
+            });
+        },
+
+        reg_emis_retry_exit: function(name) {
+            return new ChoiceState(name, {
+                question: "There is a problem with the EMIS number you have entered.",
+
+                choices: [
+                    new Choice('retry', "Try again"),
+                    new Choice('exit', "Exit")
+                ],
+
+                next: function(content) {
+                    if (content.value === 'retry') {
+                        return {
+                            name: "reg_emis",
+                            creator_opts: {
+                                retry: true
+                            }
+                        };
+                    } else {
+                        return "reg_exit_emis";
+                    }
+                }
+            });
+        },
+
+        reg_exit_emis: function(name) {
+            return new EndState(name, {
+                text: "We don't recognise your EMIS number. Please send a SMS with" +
+                        " the words EMIS ERROR to 739 and your DEST will contact you" +
+                        " to resolve the problem.",
+
+                next: "initial_state"
             });
         },
 
