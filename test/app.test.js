@@ -293,6 +293,29 @@ describe("when an unregistered user logs on", function() {
                 });
             });
 
+            describe("if the number of boys does not validate", function() {
+                it("should ask for number of boys again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            'fifty'  // reg_school_boys
+                        )
+                        .check.interaction({
+                            state: 'reg_school_boys',
+                            reply: "Please provide a number value for how many boys you have in your school."
+                        })
+                        .run();
+                });
+            });
         });
 
         describe("after the user enters the number of girls", function() {
@@ -322,6 +345,30 @@ describe("when an unregistered user logs on", function() {
                 });
             });
 
+            describe("if the number of girls does not validate", function() {
+                it("should ask for number of girls again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51g'  // reg_school_girls
+                        )
+                        .check.interaction({
+                            state: 'reg_school_girls',
+                            reply: "Please provide a number value for how many girls you have in your school."
+                        })
+                        .run();
+                });
+            });
         });
 
         describe("after the user enters the number of classrooms", function() {
@@ -354,6 +401,31 @@ describe("when an unregistered user logs on", function() {
                 });
             });
 
+            describe("if the number of classrooms does not validate", function() {
+                it("should ask for the number of classrooms again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            'five'  // reg_school_classrooms
+                        )
+                        .check.interaction({
+                            state: 'reg_school_classrooms',
+                            reply: "Please provide a number value for how many classrooms you have in your school"
+                        })
+                        .run();
+                });
+            });
         });
 
         describe("after the user enters the number of teachers", function() {
@@ -385,6 +457,33 @@ describe("when an unregistered user logs on", function() {
                 });
             });
 
+            describe("if the number of teachers does not validate", function() {
+                it("should ask for the number of teachers again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5',  // reg_school_classrooms
+                            'few'  // reg_school_teachers
+                        )
+                        .check.interaction({
+                            state: 'reg_school_teachers',
+                            reply: "Please provide a number value for how many teachers in total you have " +
+                                    "in your school."
+                        })
+                        .run();
+                });
+            });
         });
 
         describe("after the user enters the number of g1 teachers", function() {
@@ -417,6 +516,34 @@ describe("when an unregistered user logs on", function() {
                 });
             });
 
+            describe("if the number of G1 teachers does not validate", function() {
+                it("should ask for the number of G1 teachers again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5',  // reg_school_classrooms
+                            '5',  // reg_school_teachers
+                            'two'  // reg_school_teachers_g1
+                        )
+                        .check.interaction({
+                            state: 'reg_school_teachers_g1',
+                            reply: "Please provide a number value for how many teachers teach G1 local " +
+                                    "language literacy."
+                        })
+                        .run();
+                });
+            });
         });
 
         describe("after the user enters the number of g2 teachers", function() {
@@ -450,6 +577,35 @@ describe("when an unregistered user logs on", function() {
                 });
             });
 
+            describe("if the number of G2 teachers does not validate", function() {
+                it("should ask for the number of G2 teachers again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5',  // reg_school_classrooms
+                            '5',  // reg_school_teachers
+                            '2',  // reg_school_teachers_g1
+                            'two'  // reg_school_teachers_g2
+                        )
+                        .check.interaction({
+                            state: 'reg_school_teachers_g2',
+                            reply: "Please provide a number value for how many teachers teach G2 local" +
+                                    " language literacy."
+                        })
+                        .run();
+                });
+            });
         });
 
         describe("after the user enters the number of g2 boys", function() {
@@ -479,6 +635,36 @@ describe("when an unregistered user logs on", function() {
                         .check.interaction({
                             state: 'reg_school_students_g2_girls',
                             reply: "How many girls are ENROLLED in Grade 2 at your school?"
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the number of G2 boys does not validate", function() {
+                it("should ask for the number of G2 boys again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5',  // reg_school_classrooms
+                            '5',  // reg_school_teachers
+                            '2',  // reg_school_teachers_g1
+                            '2',  // reg_school_teachers_g2
+                            'ten'  // reg_school_students_g2_boys
+                        )
+                        .check.interaction({
+                            state: 'reg_school_students_g2_boys',
+                            reply: "Please provide a number value for the total number of G2 boys enrolled."
                         })
                         .run();
                 });
@@ -518,6 +704,37 @@ describe("when an unregistered user logs on", function() {
                                 "1. Yes",
                                 "2. No"
                             ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the number of G2 girls does not validate", function() {
+                it("should ask for the G2 girls again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5',  // reg_school_classrooms
+                            '5',  // reg_school_teachers
+                            '2',  // reg_school_teachers_g1
+                            '2',  // reg_school_teachers_g2
+                            '10',  // reg_school_students_g2_boys
+                            'eleven'  // reg_school_students_g2_girls
+                        )
+                        .check.interaction({
+                            state: 'reg_school_students_g2_girls',
+                            reply: "Please provide a number value for the total number of G2 girls enrolled."
                         })
                         .run();
                 });

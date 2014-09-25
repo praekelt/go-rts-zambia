@@ -90,66 +90,148 @@ go.rht = {
     },
 
     reg_school_boys: function(name) {
+        var question = "How many boys do you have in your school?";
+
+        var error = "Please provide a number value for how many boys you have in your school.";
+
         return new FreeText(name, {
-            question: "How many boys do you have in your school?",
+            question: question,
+
+            check: function(content) {
+                if (!go.utils.check_valid_number(content)) {
+                    return error;
+                }
+            },
 
             next: "reg_school_girls"
         });
     },
 
     reg_school_girls: function(name) {
+        var question = "How many girls do you have in your school?";
+
+        var error = "Please provide a number value for how many girls you have in your school.";
+
         return new FreeText(name, {
-            question: "How many girls do you have in your school?",
+            question: question,
+
+            check: function(content) {
+                if (!go.utils.check_valid_number(content)) {
+                    return error;
+                }
+            },
 
             next: "reg_school_classrooms"
         });
     },
 
     reg_school_classrooms: function(name) {
+        var question = "How many classrooms do you have in your school?";
+
+        var error = "Please provide a number value for how many classrooms you have in your school";
+
         return new FreeText(name, {
-            question: "How many classrooms do you have in your school?",
+            question: question,
+
+            check: function(content) {
+                if (!go.utils.check_valid_number(content)) {
+                    return error;
+                }
+            },
 
             next: "reg_school_teachers"
         });
     },
 
     reg_school_teachers: function(name) {
+        var question = "How many teachers are presently working in your school, " +
+                        "including the head teacher?";
+
+        var error = "Please provide a number value for how many teachers in total you have " +
+                    "in your school.";
+
         return new FreeText(name, {
-            question:
-                "How many teachers are presently working in your school, " +
-                "including the head teacher?",
+            question: question,
+
+            check: function(content) {
+                if (!go.utils.check_valid_number(content)) {
+                    return error;
+                }
+            },
 
             next: "reg_school_teachers_g1"
         });
     },
 
     reg_school_teachers_g1: function(name) {
+        var question = "How many teachers teach Grade 1 local language?";
+
+        var error = "Please provide a number value for how many teachers teach G1 local " +
+                    "language literacy.";
+
         return new FreeText(name, {
-            question: "How many teachers teach Grade 1 local language?",
+            question: question,
+
+            check: function(content) {
+                if (!go.utils.check_valid_number(content)) {
+                    return error;
+                }
+            },
 
             next: "reg_school_teachers_g2"
         });
     },
 
     reg_school_teachers_g2: function(name) {
+        var question = "How many teachers teach Grade 2 local language?";
+
+        var error = "Please provide a number value for how many teachers teach G2 local" +
+                    " language literacy.";
+
         return new FreeText(name, {
-            question: "How many teachers teach Grade 2 local language?",
+            question: question,
+
+            check: function(content) {
+                if (!go.utils.check_valid_number(content)) {
+                    return error;
+                }
+            },
 
             next: "reg_school_students_g2_boys"
         });
     },
 
     reg_school_students_g2_boys: function(name) {
+        var question = "How many boys are ENROLLED in Grade 2 at your school?";
+
+        var error = "Please provide a number value for the total number of G2 boys enrolled.";
+
         return new FreeText(name, {
-            question: "How many boys are ENROLLED in Grade 2 at your school?",
+            question: question,
+
+            check: function(content) {
+                if (!go.utils.check_valid_number(content)) {
+                    return error;
+                }
+            },
 
             next: "reg_school_students_g2_girls"
         });
     },
 
     reg_school_students_g2_girls: function(name) {
+        var question = "How many girls are ENROLLED in Grade 2 at your school?";
+
+        var error = "Please provide a number value for the total number of G2 girls enrolled.";
+
         return new FreeText(name, {
-            question: "How many girls are ENROLLED in Grade 2 at your school?",
+            question: question,
+
+            check: function(content) {
+                if (!go.utils.check_valid_number(content)) {
+                    return error;
+                }
+            },
 
             next: "reg_zonal_head"
         });

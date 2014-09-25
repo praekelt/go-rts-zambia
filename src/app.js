@@ -90,6 +90,16 @@ go.utils = {
         }
     },
 
+    check_valid_number: function(input) {
+        // an attempt to solve the insanity of JavaScript numbers
+        var numbers_only = new RegExp('^\\d+$');
+        if (input !== '' && numbers_only.test(input) && !Number.isNaN(Number(input))){
+            return true;
+        } else {
+            return false;
+        }
+    },
+
     registration_official_admin_collect: function(im) {
         var dob = go.utils.check_and_parse_date(im.user.answers.reg_district_official_dob);
 
