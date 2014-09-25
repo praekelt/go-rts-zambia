@@ -397,203 +397,225 @@ go.rdo = function() {
 
 }();
 
-var vumigo = require('vumigo_v02');
-var ChoiceState = vumigo.states.ChoiceState;
-var EndState = vumigo.states.EndState;
-var Choice = vumigo.states.Choice;
+go.cm = function() {
+
+    var vumigo = require('vumigo_v02');
+    var ChoiceState = vumigo.states.ChoiceState;
+    var EndState = vumigo.states.EndState;
+    var Choice = vumigo.states.Choice;
 
 
-go.cm = {
-    // Registration of Head Teacher States
+    var cm = {
+        // Registration of Head Teacher States
 
-    state_cm_start: function(name) {
-        return new ChoiceState(name, {
-            question: 'Hi there! What do you want to do?',
+        state_cm_start: function(name) {
+            return new ChoiceState(name, {
+                question: 'Hi there! What do you want to do?',
 
-            choices: [
-                new Choice('next', 'Go to next state'),
-                new Choice('exit', 'Exit')],
+                choices: [
+                    new Choice('next', 'Go to next state'),
+                    new Choice('exit', 'Exit')],
 
-            next: function(choice) {
-                if(choice.value === 'next') {
-                    return 'state_cm_exit';
-                } else {
-                    return 'state_cm_exit';
+                next: function(choice) {
+                    if(choice.value === 'next') {
+                        return 'state_cm_exit';
+                    } else {
+                        return 'state_cm_exit';
+                    }
                 }
-            }
-        });
-    },
+            });
+        },
 
-    state_cm_exit: function(name) {
-        return new EndState(name, {
-            text: 'Thanks, cheers!',
-            next: 'state_cm_start'
-        });
-    }
+        state_cm_exit: function(name) {
+            return new EndState(name, {
+                text: 'Thanks, cheers!',
+                next: 'state_cm_start'
+            });
+        }
 
-};
+    };
 
-var vumigo = require('vumigo_v02');
-var ChoiceState = vumigo.states.ChoiceState;
-var EndState = vumigo.states.EndState;
-var Choice = vumigo.states.Choice;
+    return cm;
+
+}();
+
+go.lp = function() {
+
+    var vumigo = require('vumigo_v02');
+    var ChoiceState = vumigo.states.ChoiceState;
+    var EndState = vumigo.states.EndState;
+    var Choice = vumigo.states.Choice;
 
 
-go.lp = {
-    // LearnerPerformance States
+    var lp = {
+        // LearnerPerformance States
 
-    state_lp_start: function(name) {
-        return new ChoiceState(name, {
-            question: 'Hi there! What do you want to do?',
+        state_lp_start: function(name) {
+            return new ChoiceState(name, {
+                question: 'Hi there! What do you want to do?',
 
-            choices: [
-                new Choice('next', 'Go to next state'),
-                new Choice('exit', 'Exit')],
+                choices: [
+                    new Choice('next', 'Go to next state'),
+                    new Choice('exit', 'Exit')],
 
-            next: function(choice) {
-                if(choice.value === 'next') {
-                    return 'state_lp_next';
-                } else {
-                    return 'state_lp_exit';
+                next: function(choice) {
+                    if(choice.value === 'next') {
+                        return 'state_lp_next';
+                    } else {
+                        return 'state_lp_exit';
+                    }
                 }
-            }
-        });
-    },
+            });
+        },
 
-    state_lp_next: function(name) {
-        return new ChoiceState(name, {
-            question: 'Hi there! What do you want to do?',
+        state_lp_next: function(name) {
+            return new ChoiceState(name, {
+                question: 'Hi there! What do you want to do?',
 
-            choices: [
-                new Choice('to_tp', 'Switch to TeacherPerformance'),
-                new Choice('exit', 'Exit')],
+                choices: [
+                    new Choice('to_tp', 'Switch to TeacherPerformance'),
+                    new Choice('exit', 'Exit')],
 
-            next: function(choice) {
-                if(choice.value === 'to_tp') {
-                    return 'state_tp_start'; // Switch to TP
-                } else {
-                    return 'state_lp_exit';
+                next: function(choice) {
+                    if(choice.value === 'to_tp') {
+                        return 'state_tp_start'; // Switch to TP
+                    } else {
+                        return 'state_lp_exit';
+                    }
                 }
-            }
-        });
-    },
+            });
+        },
 
-    state_lp_exit: function(name) {
-        return new EndState(name, {
-            text: 'Thanks, cheers!',
-            next: 'state_lp_start'
-        });
-    }
+        state_lp_exit: function(name) {
+            return new EndState(name, {
+                text: 'Thanks, cheers!',
+                next: 'state_lp_start'
+            });
+        }
 
-};
+    };
 
-var vumigo = require('vumigo_v02');
-var ChoiceState = vumigo.states.ChoiceState;
-var EndState = vumigo.states.EndState;
-var Choice = vumigo.states.Choice;
+    return lp;
+
+}();
+
+go.tp = function() {
+    var vumigo = require('vumigo_v02');
+    var ChoiceState = vumigo.states.ChoiceState;
+    var EndState = vumigo.states.EndState;
+    var Choice = vumigo.states.Choice;
 
 
-go.tp = {
-    // TeacherPerformance States
+    var tp = {
+        // TeacherPerformance States
 
-    state_tp_start: function(name) {
-        return new ChoiceState(name, {
-            question: 'Hi there! What do you want to do?',
+        state_tp_start: function(name) {
+            return new ChoiceState(name, {
+                question: 'Hi there! What do you want to do?',
 
-            choices: [
-                new Choice('next', 'Go to next state'),
-                new Choice('exit', 'Exit')],
+                choices: [
+                    new Choice('next', 'Go to next state'),
+                    new Choice('exit', 'Exit')],
 
-            next: function(choice) {
-                if(choice.value === 'next') {
-                    return 'state_tp_next';
-                } else {
-                    return 'state_tp_exit';
+                next: function(choice) {
+                    if(choice.value === 'next') {
+                        return 'state_tp_next';
+                    } else {
+                        return 'state_tp_exit';
+                    }
                 }
-            }
-        });
-    },
+            });
+        },
 
-    state_tp_next: function(name) {
-        return new ChoiceState(name, {
-            question: 'Hi there! What do you want to do?',
+        state_tp_next: function(name) {
+            return new ChoiceState(name, {
+                question: 'Hi there! What do you want to do?',
 
-            choices: [
-                new Choice('again', 'Back to beginning'),
-                new Choice('exit', 'Exit')],
+                choices: [
+                    new Choice('again', 'Back to beginning'),
+                    new Choice('exit', 'Exit')],
 
-            next: function(choice) {
-                if(choice.value === 'again') {
-                    return 'state_tp_start';
-                } else {
-                    return 'state_tp_exit';
+                next: function(choice) {
+                    if(choice.value === 'again') {
+                        return 'state_tp_start';
+                    } else {
+                        return 'state_tp_exit';
+                    }
                 }
-            }
-        });
-    },
+            });
+        },
 
-    state_tp_exit: function(name) {
-        return new EndState(name, {
-            text: 'Thanks, cheers!',
-            next: 'state_tp_start'
-        });
-    }
+        state_tp_exit: function(name) {
+            return new EndState(name, {
+                text: 'Thanks, cheers!',
+                next: 'state_tp_start'
+            });
+        }
 
-};
+    };
 
-var vumigo = require('vumigo_v02');
-var ChoiceState = vumigo.states.ChoiceState;
-var EndState = vumigo.states.EndState;
-var Choice = vumigo.states.Choice;
+    return tp;
+
+}();
+
+go.sp = function() {
+    var vumigo = require('vumigo_v02');
+    var ChoiceState = vumigo.states.ChoiceState;
+    var EndState = vumigo.states.EndState;
+    var Choice = vumigo.states.Choice;
 
 
-go.sp = {
-    // LearnerPerformance States
+    var sp = {
+        // LearnerPerformance States
 
-    state_sp_start: function(name) {
-        return new ChoiceState(name, {
-            question: 'Hi there! What do you want to do?',
+        state_sp_start: function(name) {
+            return new ChoiceState(name, {
+                question: 'Hi there! What do you want to do?',
 
-            choices: [
-                new Choice('next', 'Go to next state'),
-                new Choice('exit', 'Exit')],
+                choices: [
+                    new Choice('next', 'Go to next state'),
+                    new Choice('exit', 'Exit')],
 
-            next: function(choice) {
-                if(choice.value === 'next') {
-                    return 'state_sp_next';
-                } else {
-                    return 'state_sp_exit';
+                next: function(choice) {
+                    if(choice.value === 'next') {
+                        return 'state_sp_next';
+                    } else {
+                        return 'state_sp_exit';
+                    }
                 }
-            }
-        });
-    },
+            });
+        },
 
-    state_sp_next: function(name) {
-        return new ChoiceState(name, {
-            question: 'Hi there! What do you want to do?',
+        state_sp_next: function(name) {
+            return new ChoiceState(name, {
+                question: 'Hi there! What do you want to do?',
 
-            choices: [
-                new Choice('to_tp', 'Switch to TeacherPerformance'),
-                new Choice('exit', 'Exit')],
+                choices: [
+                    new Choice('to_tp', 'Switch to TeacherPerformance'),
+                    new Choice('exit', 'Exit')],
 
-            next: function(choice) {
-                if(choice.value === 'to_tp') {
-                    return 'state_tp_start'; // Switch to TP
-                } else {
-                    return 'state_sp_exit';
+                next: function(choice) {
+                    if(choice.value === 'to_tp') {
+                        return 'state_tp_start'; // Switch to TP
+                    } else {
+                        return 'state_sp_exit';
+                    }
                 }
-            }
-        });
-    },
+            });
+        },
 
-    state_sp_exit: function(name) {
-        return new EndState(name, {
-            text: 'Thanks, cheers!',
-            next: 'state_sp_start'
-        });
-    }
+        state_sp_exit: function(name) {
+            return new EndState(name, {
+                text: 'Thanks, cheers!',
+                next: 'state_sp_start'
+            });
+        }
 
-};
+    };
+
+    return sp;
+
+}();
 
 var vumigo = require('vumigo_v02');
 var moment = require('moment');
