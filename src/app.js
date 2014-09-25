@@ -151,13 +151,81 @@ go.app = function() {
         // REGISTER HEAD TEACHER STATES
         // ----------------------------
 
-        self.states.add('state_rht_start', function(name) {
-            return go.rht.state_rht_start(name);
+        self.states.add('reg_emis', function(name) {
+            return go.rht.reg_emis(name);
         });
 
-        self.states.add('state_rht_exit', function(name) {
-            return go.rht.state_rht_exit(name);
+        self.states.add('reg_emis_validates', function(name) {
+            return go.rht.reg_emis_validates(name);
         });
+
+        self.states.add('reg_school_name', function(name) {
+            return go.rht.reg_school_name(name);
+        });
+
+        self.states.add('reg_first_name', function(name) {
+            return go.rht.reg_first_name(name);
+        });
+
+        self.states.add('reg_surname', function(name) {
+            return go.rht.reg_surname(name);
+        });
+
+        self.states.add('reg_date_of_birth', function(name) {
+            return go.rht.reg_date_of_birth(name);
+        });
+
+        self.states.add('reg_gender', function(name) {
+            return go.rht.reg_gender(name);
+        });
+
+        self.states.add('reg_school_boys', function(name) {
+            return go.rht.reg_school_boys(name);
+        });
+
+        self.states.add('reg_school_girls', function(name) {
+            return go.rht.reg_school_girls(name);
+        });
+
+        self.states.add('reg_school_classrooms', function(name) {
+            return go.rht.reg_school_classrooms(name);
+        });
+
+        self.states.add('reg_school_teachers', function(name) {
+            return go.rht.reg_school_teachers(name);
+        });
+
+        self.states.add('reg_school_teachers_g1', function(name) {
+            return go.rht.reg_school_teachers_g1(name);
+        });
+
+        self.states.add('reg_school_teachers_g2', function(name) {
+            return go.rht.reg_school_teachers_g2(name);
+        });
+
+        self.states.add('reg_school_students_g2_boys', function(name) {
+            return go.rht.reg_school_students_g2_boys(name);
+        });
+
+        self.states.add('reg_school_students_g2_girls', function(name) {
+            return go.rht.reg_school_students_g2_girls(name);
+        });
+
+        self.states.add('reg_zonal_head', function(name) {
+            return go.rht.reg_zonal_head(name);
+        });
+
+        self.states.add('reg_thanks_zonal_head', function(name) {
+            return go.rht.reg_thanks_zonal_head(name);
+        });
+
+        self.states.add('reg_zonal_head_name', function(name) {
+            return go.rht.reg_zonal_head_name(name);
+        });
+
+        self.states.add('reg_thanks_head_teacher', function(name) {
+            return go.rht.reg_thanks_head_teacher(name);
+        });        
 
 
 
