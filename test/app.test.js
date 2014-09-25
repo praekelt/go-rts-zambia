@@ -111,6 +111,113 @@ describe("when an unregistered user logs on", function() {
                 });
             });
 
+            describe("if the user enters an invalid emis code once", function() {
+                it("should ask if they want to try again or exit", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '000A'  // reg_emis
+                        )
+                        .check.interaction({
+                            state: 'reg_emis_retry_exit',
+                            reply: [
+                                "There is a problem with the EMIS number you have entered.",
+                                "1. Try again",
+                                "2. Exit"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and chooses to exit", function() {
+                it("should instruct to send sms and exit", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '000A',  // reg_emis
+                            '2'  // reg_emis_retry_exit
+                        )
+                        .check.interaction({
+                            state: 'reg_exit_emis',
+                            reply: "We don't recognise your EMIS number. Please send a SMS with" +
+                                    " the words EMIS ERROR to 739 and your DEST will contact you" +
+                                    " to resolve the problem."
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and chooses to try again", function() {
+                it("should ask to enter emis number", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '000A',  // reg_emis
+                            '1'  // reg_emis_retry_exit
+                        )
+                        .check.interaction({
+                            state: 'reg_emis',
+                            reply: "Please enter your school's EMIS number. " +
+                                    "This should have 4-6 digits e.g. 4351."
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and then a valid emis", function() {
+                it("should thank and instruct them to redial on num change", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '000A',  // reg_emis
+                            '1',  // reg_emis_retry_exit
+                            '0001'
+                        )
+                        .check.interaction({
+                            state: 'reg_emis_validates',
+                            reply: [
+                                "Thanks for claiming this EMIS. Redial this number if you ever " +
+                                "change cellphone number to reclaim the EMIS and continue to receive " +
+                                "SMS updates.",
+                                "1. Continue"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code twice", function() {
+                it("should instruct to send sms and exit", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '000A',  // reg_emis
+                            '1',  // reg_emis_retry_exit
+                            '000B'  // reg_emis
+                        )
+                        .check.interaction({
+                            state: 'reg_exit_emis',
+                            reply: "We don't recognise your EMIS number. Please send a SMS with" +
+                                    " the words EMIS ERROR to 739 and your DEST will contact you" +
+                                    " to resolve the problem."
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
         });
 
         describe("if the user chooses 1. Continue when emis validates", function() {
@@ -669,7 +776,6 @@ describe("when an unregistered user logs on", function() {
                         .run();
                 });
             });
-
         });
 
         describe("after the user enters the number of g2 girls", function() {
@@ -739,7 +845,6 @@ describe("when an unregistered user logs on", function() {
                         .run();
                 });
             });
-
         });
 
         describe("after the user indicates that they ARE a zonal head", function() {
