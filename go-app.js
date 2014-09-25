@@ -597,7 +597,7 @@ go.utils = {
     // CMS INTERACTIONS
     // ----------------
 
-    cms_district_load: function (im) {
+    cms_district_load: function(im) {
         return go.utils
             .cms_get("district/", im)
             .then(function(result) {
@@ -609,6 +609,19 @@ go.utils = {
                     }
                 );
                 return districts;
+            });
+    },
+
+    cms_emis_load: function(im) {
+        return go.utils
+            .cms_get("hierarchy/", im)
+            .then(function(result) {
+                parsed_result = JSON.parse(result.body);
+                var array_emis = [];
+                for (var i=0;i<parsed_result.objects.length;i++){
+                    array_emis.push(parsed_result.objects[i].emis);
+                }
+                return array_emis;
             });
     },
 
@@ -625,7 +638,6 @@ go.utils = {
                 contact.surname = district_official_data.last_name;
                 return im.contacts.save(contact);
             });
-
     },
 
 
@@ -714,6 +726,7 @@ go.app = function() {
         self.init = function() {
             self.env = self.im.config.env;
             self.districts = go.utils.cms_district_load(self.im);
+            self.array_emis = go.utils.cms_emis_load(self.im);
             
             return self.im.contacts
                 .for_user()
