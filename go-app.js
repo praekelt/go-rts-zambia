@@ -84,7 +84,7 @@ var Choice = vumigo.states.Choice;
 
 
 go.cm = {
-    // Registration of Head Teacher States
+    // Registration of Change Management States
 
     state_cm_start: function(name) {
         return new ChoiceState(name, {
