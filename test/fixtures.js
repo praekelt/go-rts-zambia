@@ -4,11 +4,11 @@ module.exports = function() {
 
     // cms_district_load
     // -----------------
+    
     {
         "request": {
             "url": "http://qa/api/v1/district/",
             "method": "GET",
-
         },
         "response": {
             "code": 200,
@@ -200,6 +200,55 @@ module.exports = function() {
                             "resource_uri": "/api/v1/province/3/"
                         },
                         "resource_uri": "/api/v1/district/7/"
+                    }
+                ]
+            }
+        },
+    },
+
+
+    // cms_emis_load
+    // -------------
+    
+    {
+        "request": {
+            "url": "http://qa/api/v1/hierarchy/",
+            "method": "GET",
+        },
+        "response": {
+            "code": 200,
+            "data": {
+                "meta": {
+                    "limit": 1000,
+                    "next": null,
+                    "offset": 0,
+                    "previous": null,
+                    "total_count": 8
+                },
+                "objects": [
+                    {
+                        "emis": 1
+                    },
+                    {
+                        "emis": 2
+                    },
+                    {
+                        "emis": 45
+                    },
+                    {
+                        "emis": 777
+                    },
+                    {
+                        "emis": 7764
+                    },
+                    {
+                        "emis": 2334
+                    },
+                    {
+                        "emis": 2342
+                    },
+                    {
+                        "emis": 4342
                     }
                 ]
             }
