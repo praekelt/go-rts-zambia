@@ -66,6 +66,930 @@ describe("when an unregistered user logs on", function() {
     });
 
 
+    // HEAD TEACHER REGISTRATION
+    // -------------------------
+
+    describe("when uu chooses to register as head teacher", function() {
+        
+        it("should ask for emis code", function() {
+            return tester
+                .setup.user.addr('097123')
+                .inputs(
+                    'start',
+                    '1'  // initial_state
+                )
+                .check.interaction({
+                    state: 'reg_emis',
+                    reply:
+                        "Please enter your school's EMIS number. " +
+                        "This should have 4-6 digits e.g. 4351."
+                })
+                .run();
+        });
+
+        describe("when uu enters their emis code", function() {
+
+            describe("if their emis code is valid", function() {
+                it("should thank and instruct them to redial on num change", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001'  // reg_emis
+                        )
+                        .check.interaction({
+                            state: 'reg_emis_validates',
+                            reply: [
+                                "Thanks for claiming this EMIS. Redial this number if you ever " +
+                                "change cellphone number to reclaim the EMIS and continue to receive " +
+                                "SMS updates.",
+                                "1. Continue"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once", function() {
+                it("should ask if they want to try again or exit", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '000A'  // reg_emis
+                        )
+                        .check.interaction({
+                            state: 'reg_emis_retry_exit',
+                            reply: [
+                                "There is a problem with the EMIS number you have entered.",
+                                "1. Try again",
+                                "2. Exit"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and chooses to exit", function() {
+                it("should instruct to send sms and exit", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '000A',  // reg_emis
+                            '2'  // reg_emis_retry_exit
+                        )
+                        .check.interaction({
+                            state: 'reg_exit_emis',
+                            reply: "We don't recognise your EMIS number. Please send a SMS with" +
+                                    " the words EMIS ERROR to 739 and your DEST will contact you" +
+                                    " to resolve the problem."
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and chooses to try again", function() {
+                it("should ask to enter emis number", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '000A',  // reg_emis
+                            '1'  // reg_emis_retry_exit
+                        )
+                        .check.interaction({
+                            state: 'reg_emis',
+                            reply: "Please enter your school's EMIS number. " +
+                                    "This should have 4-6 digits e.g. 4351."
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and then a valid emis", function() {
+                it("should thank and instruct them to redial on num change", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '000A',  // reg_emis
+                            '1',  // reg_emis_retry_exit
+                            '0001'
+                        )
+                        .check.interaction({
+                            state: 'reg_emis_validates',
+                            reply: [
+                                "Thanks for claiming this EMIS. Redial this number if you ever " +
+                                "change cellphone number to reclaim the EMIS and continue to receive " +
+                                "SMS updates.",
+                                "1. Continue"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code twice", function() {
+                it("should instruct to send sms and exit", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '000A',  // reg_emis
+                            '1',  // reg_emis_retry_exit
+                            '000B'  // reg_emis
+                        )
+                        .check.interaction({
+                            state: 'reg_exit_emis',
+                            reply: "We don't recognise your EMIS number. Please send a SMS with" +
+                                    " the words EMIS ERROR to 739 and your DEST will contact you" +
+                                    " to resolve the problem."
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
+        });
+
+        describe("if the user chooses 1. Continue when emis validates", function() {
+            it("should ask for their school name", function() {
+                return tester
+                    .setup.user.addr('097123')
+                    .inputs(
+                        'start',
+                        '1',  // initial_state
+                        '0001',  // reg_emis
+                        '1'  // reg_emis_validates
+                    )
+                    .check.interaction({
+                        state: 'reg_school_name',
+                        reply: "Please enter the name of your school, e.g. Kapililonga"
+                    })
+                    .run();
+            });
+        });
+
+        describe("after the user enters their school name", function() {
+            it("should ask for their first name", function() {
+                return tester
+                    .setup.user.addr('097123')
+                    .inputs(
+                        'start',
+                        '1',  // initial_state
+                        '0001',  // reg_emis
+                        '1',  // reg_emis_validates
+                        'School One'  //reg_school_name
+                    )
+                    .check.interaction({
+                        state: 'reg_first_name',
+                        reply: "Please enter your FIRST name."
+                    })
+                    .run();
+            });
+        });
+
+        describe("after the user enters their first name", function() {
+            it("should ask for their surname", function() {
+                return tester
+                    .setup.user.addr('097123')
+                    .inputs(
+                        'start',
+                        '1',  // initial_state
+                        '0001',  // reg_emis
+                        '1',  // reg_emis_validates
+                        'School One',  //reg_school_name
+                        'Jack'  // reg_first_name
+                    )
+                    .check.interaction({
+                        state: 'reg_surname',
+                        reply: "Please enter your SURNAME."
+                    })
+                    .run();
+            });
+        });
+
+        describe("after the user enters their surname", function() {
+            it("should ask for their date of birth", function() {
+                return tester
+                    .setup.user.addr('097123')
+                    .inputs(
+                        'start',
+                        '1',  // initial_state
+                        '0001',  // reg_emis
+                        '1',  // reg_emis_validates
+                        'School One',  //reg_school_name
+                        'Jack',  // reg_first_name
+                        'Black'  // reg_surname
+                    )
+                    .check.interaction({
+                        state: 'reg_date_of_birth',
+                        reply: 
+                            "Please enter your date of birth. Start with the day, followed by " +
+                            "the month and year, e.g. 27111980"
+                    })
+                    .run();
+            });
+        });
+
+        describe("after the user enters their date of birth", function() {
+
+            describe("if their date of birth validates", function() {
+                it("should ask for their gender", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980'  // reg_date_of_birth
+                        )
+                        .check.interaction({
+                            state: 'reg_gender',
+                            reply: [
+                                "What is your gender?",
+                                "1. Female",
+                                "2. Male"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            describe("if their date of birth does not validate", function() {
+                it("should ask for their date of birth again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11 Sep 1980'  // reg_date_of_birth
+                        )
+                        .check.interaction({
+                            state: 'reg_date_of_birth',
+                            reply: "Please enter your date of birth formatted DDMMYYYY"
+                        })
+                        .run();
+                });
+            });
+        });
+
+        describe("after the user enters their gender", function() {
+            it("should ask for number of boys", function() {
+                return tester
+                    .setup.user.addr('097123')
+                    .inputs(
+                        'start',
+                        '1',  // initial_state
+                        '0001',  // reg_emis
+                        '1',  // reg_emis_validates
+                        'School One',  //reg_school_name
+                        'Jack',  // reg_first_name
+                        'Black',  // reg_surname
+                        '11091980',  // reg_date_of_birth
+                        '2'  // reg_gender
+                    )
+                    .check.interaction({
+                        state: 'reg_school_boys',
+                        reply: "How many boys do you have in your school?"
+                    })
+                    .run();
+            });
+        });
+
+        describe("after the user enters the number of boys", function() {
+
+            describe("if the number of boys validates", function() {
+                it("should ask for number of girls", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50'  // reg_school_boys
+                        )
+                        .check.interaction({
+                            state: 'reg_school_girls',
+                            reply: "How many girls do you have in your school?"
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the number of boys does not validate", function() {
+                it("should ask for number of boys again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            'fifty'  // reg_school_boys
+                        )
+                        .check.interaction({
+                            state: 'reg_school_boys',
+                            reply: "Please provide a number value for how many boys you have in your school."
+                        })
+                        .run();
+                });
+            });
+        });
+
+        describe("after the user enters the number of girls", function() {
+
+            describe("if the number of girls validates", function() {
+                it("should ask for the number of classrooms", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51'  // reg_school_girls
+                        )
+                        .check.interaction({
+                            state: 'reg_school_classrooms',
+                            reply: "How many classrooms do you have in your school?"
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the number of girls does not validate", function() {
+                it("should ask for number of girls again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51g'  // reg_school_girls
+                        )
+                        .check.interaction({
+                            state: 'reg_school_girls',
+                            reply: "Please provide a number value for how many girls you have in your school."
+                        })
+                        .run();
+                });
+            });
+        });
+
+        describe("after the user enters the number of classrooms", function() {
+
+            describe("if the number of classrooms validates", function() {
+                it("should ask for the number of teachers", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5'  // reg_school_classrooms
+                        )
+                        .check.interaction({
+                            state: 'reg_school_teachers',
+                            reply: 
+                                "How many teachers are presently working in your school, " +
+                                "including the head teacher?"
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the number of classrooms does not validate", function() {
+                it("should ask for the number of classrooms again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            'five'  // reg_school_classrooms
+                        )
+                        .check.interaction({
+                            state: 'reg_school_classrooms',
+                            reply: "Please provide a number value for how many classrooms you have in your school"
+                        })
+                        .run();
+                });
+            });
+        });
+
+        describe("after the user enters the number of teachers", function() {
+
+            describe("if the number of teachers validates", function() {
+                it("should ask for the number of G1 teachers", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5',  // reg_school_classrooms
+                            '5'  // reg_school_teachers
+                        )
+                        .check.interaction({
+                            state: 'reg_school_teachers_g1',
+                            reply: "How many teachers teach Grade 1 local language?"
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the number of teachers does not validate", function() {
+                it("should ask for the number of teachers again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5',  // reg_school_classrooms
+                            'few'  // reg_school_teachers
+                        )
+                        .check.interaction({
+                            state: 'reg_school_teachers',
+                            reply: "Please provide a number value for how many teachers in total you have " +
+                                    "in your school."
+                        })
+                        .run();
+                });
+            });
+        });
+
+        describe("after the user enters the number of g1 teachers", function() {
+
+            describe("if the number of G1 teachers validates", function() {
+                it("should ask for the number of G2 teachers", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5',  // reg_school_classrooms
+                            '5',  // reg_school_teachers
+                            '2'  // reg_school_teachers_g1
+                        )
+                        .check.interaction({
+                            state: 'reg_school_teachers_g2',
+                            reply: "How many teachers teach Grade 2 local language?"
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the number of G1 teachers does not validate", function() {
+                it("should ask for the number of G1 teachers again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5',  // reg_school_classrooms
+                            '5',  // reg_school_teachers
+                            'two'  // reg_school_teachers_g1
+                        )
+                        .check.interaction({
+                            state: 'reg_school_teachers_g1',
+                            reply: "Please provide a number value for how many teachers teach G1 local " +
+                                    "language literacy."
+                        })
+                        .run();
+                });
+            });
+        });
+
+        describe("after the user enters the number of g2 teachers", function() {
+
+            describe("if the number of G2 teachers validates", function() {
+                it("should ask for the number of G2 boys", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5',  // reg_school_classrooms
+                            '5',  // reg_school_teachers
+                            '2',  // reg_school_teachers_g1
+                            '2'  // reg_school_teachers_g2
+                        )
+                        .check.interaction({
+                            state: 'reg_school_students_g2_boys',
+                            reply: "How many boys are ENROLLED in Grade 2 at your school?"
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the number of G2 teachers does not validate", function() {
+                it("should ask for the number of G2 teachers again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5',  // reg_school_classrooms
+                            '5',  // reg_school_teachers
+                            '2',  // reg_school_teachers_g1
+                            'two'  // reg_school_teachers_g2
+                        )
+                        .check.interaction({
+                            state: 'reg_school_teachers_g2',
+                            reply: "Please provide a number value for how many teachers teach G2 local" +
+                                    " language literacy."
+                        })
+                        .run();
+                });
+            });
+        });
+
+        describe("after the user enters the number of g2 boys", function() {
+
+            describe("if the number of G2 boys validates", function() {
+                it("should ask for the number of G2 girls", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5',  // reg_school_classrooms
+                            '5',  // reg_school_teachers
+                            '2',  // reg_school_teachers_g1
+                            '2',  // reg_school_teachers_g2
+                            '10'  // reg_school_students_g2_boys
+                        )
+                        .check.interaction({
+                            state: 'reg_school_students_g2_girls',
+                            reply: "How many girls are ENROLLED in Grade 2 at your school?"
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the number of G2 boys does not validate", function() {
+                it("should ask for the number of G2 boys again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5',  // reg_school_classrooms
+                            '5',  // reg_school_teachers
+                            '2',  // reg_school_teachers_g1
+                            '2',  // reg_school_teachers_g2
+                            'ten'  // reg_school_students_g2_boys
+                        )
+                        .check.interaction({
+                            state: 'reg_school_students_g2_boys',
+                            reply: "Please provide a number value for the total number of G2 boys enrolled."
+                        })
+                        .run();
+                });
+            });
+        });
+
+        describe("after the user enters the number of g2 girls", function() {
+
+            describe("if the number of G2 girls validates", function() {
+                it("should ask if the user is a zonal head", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5',  // reg_school_classrooms
+                            '5',  // reg_school_teachers
+                            '2',  // reg_school_teachers_g1
+                            '2',  // reg_school_teachers_g2
+                            '10',  // reg_school_students_g2_boys
+                            '11'  // reg_school_students_g2_girls
+                        )
+                        .check.interaction({
+                            state: 'reg_zonal_head',
+                            reply: [
+                                "Are you a Zonal Head Teacher?",
+                                "1. Yes",
+                                "2. No"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the number of G2 girls does not validate", function() {
+                it("should ask for the G2 girls again", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5',  // reg_school_classrooms
+                            '5',  // reg_school_teachers
+                            '2',  // reg_school_teachers_g1
+                            '2',  // reg_school_teachers_g2
+                            '10',  // reg_school_students_g2_boys
+                            'eleven'  // reg_school_students_g2_girls
+                        )
+                        .check.interaction({
+                            state: 'reg_school_students_g2_girls',
+                            reply: "Please provide a number value for the total number of G2 girls enrolled."
+                        })
+                        .run();
+                });
+            });
+        });
+
+        describe("after the user indicates that they ARE a zonal head", function() {
+            it("should thank them and exit", function() {
+                return tester
+                    .setup.user.addr('097123')
+                    .inputs(
+                        'start',
+                        '1',  // initial_state
+                        '0001',  // reg_emis
+                        '1',  // reg_emis_validates
+                        'School One',  //reg_school_name
+                        'Jack',  // reg_first_name
+                        'Black',  // reg_surname
+                        '11091980',  // reg_date_of_birth
+                        '2',  // reg_gender
+                        '50',  // reg_school_boys
+                        '51',  // reg_school_girls
+                        '5',  // reg_school_classrooms
+                        '5',  // reg_school_teachers
+                        '2',  // reg_school_teachers_g1
+                        '2',  // reg_school_teachers_g2
+                        '10',  // reg_school_students_g2_boys
+                        '11',  // reg_school_students_g2_girls
+                        '1'  // reg_zonal_head
+                    )
+                    .check.interaction({
+                        state: 'reg_thanks_zonal_head',
+                        reply: 
+                            "Well done! You are now registered as a Zonal Head " +
+                            "Teacher. When you are ready, dial in to start " +
+                            "reporting. You will also receive monthly SMS's from " +
+                            "your zone."
+                    })
+                    .check.reply.ends_session()
+                    .run();
+            });
+
+            it("should save contact information", function() {
+                return tester
+                    .setup.user.addr('097123')
+                    .inputs(
+                        'start',
+                        '1',  // initial_state
+                        '0001',  // reg_emis
+                        '1',  // reg_emis_validates
+                        'School One',  //reg_school_name
+                        'Jack',  // reg_first_name
+                        'Black',  // reg_surname
+                        '11091980',  // reg_date_of_birth
+                        '2',  // reg_gender
+                        '50',  // reg_school_boys
+                        '51',  // reg_school_girls
+                        '5',  // reg_school_classrooms
+                        '5',  // reg_school_teachers
+                        '2',  // reg_school_teachers_g1
+                        '2',  // reg_school_teachers_g2
+                        '10',  // reg_school_students_g2_boys
+                        '11',  // reg_school_students_g2_girls
+                        '1'  // reg_zonal_head
+                    )
+                    .check(function(api) {
+                        var contact = api.contacts.store[0];
+                        assert.equal(contact.extra.rts_id, '2');
+                        assert.equal(contact.extra.rts_emis, '1');
+                        assert.equal(contact.name, 'Jack');
+                        assert.equal(contact.surname, 'Black');
+                    })
+                    .run();
+            });
+        });
+
+        describe("after the user indicates that they are NOT a zonal head", function() {
+            it("should ask for zonal head name", function() {
+                return tester
+                    .setup.user.addr('097123')
+                    .inputs(
+                        'start',
+                        '1',  // initial_state
+                        '0001',  // reg_emis
+                        '1',  // reg_emis_validates
+                        'School One',  //reg_school_name
+                        'Jack',  // reg_first_name
+                        'Black',  // reg_surname
+                        '11091980',  // reg_date_of_birth
+                        '2',  // reg_gender
+                        '50',  // reg_school_boys
+                        '51',  // reg_school_girls
+                        '5',  // reg_school_classrooms
+                        '5',  // reg_school_teachers
+                        '2',  // reg_school_teachers_g1
+                        '2',  // reg_school_teachers_g2
+                        '10',  // reg_school_students_g2_boys
+                        '11',  // reg_school_students_g2_girls
+                        '2'  // reg_zonal_head
+                    )
+                    .check.interaction({
+                        state: 'reg_zonal_head_name',
+                        reply: "Please enter the name and surname of your ZONAL HEAD TEACHER."
+                    })
+                    .run();
+            });
+        });
+
+        describe("after the user enters the zonal head name", function() {
+            it("should thank them and exit", function() {
+                return tester
+                    .setup.user.addr('097123')
+                    .inputs(
+                        'start',
+                        '1',  // initial_state
+                        '0001',  // reg_emis
+                        '1',  // reg_emis_validates
+                        'School One',  //reg_school_name
+                        'Jack',  // reg_first_name
+                        'Black',  // reg_surname
+                        '11091980',  // reg_date_of_birth
+                        '2',  // reg_gender
+                        '50',  // reg_school_boys
+                        '51',  // reg_school_girls
+                        '5',  // reg_school_classrooms
+                        '5',  // reg_school_teachers
+                        '2',  // reg_school_teachers_g1
+                        '2',  // reg_school_teachers_g2
+                        '10',  // reg_school_students_g2_boys
+                        '11',  // reg_school_students_g2_girls
+                        '2',  // reg_zonal_head
+                        'Jim Carey'  // reg_zonal_head_name
+                    )
+                    .check.interaction({
+                        state: 'reg_thanks_head_teacher',
+                        reply: 
+                            "Congratulations! You are now registered as a user of " +
+                            "the Gateway! Please dial in again when you are ready to " +
+                            "start reporting on teacher and learner performance."
+                    })
+                    .check.reply.ends_session()
+                    .run();
+            });
+        });
+
+    });
+
+
+
     // DISTRICT OFFICIAL REGISTRATION
     // ------------------------------
 
@@ -175,7 +1099,6 @@ describe("when an unregistered user logs on", function() {
                 });
             });
 
-
         });
 
         describe("when uu enters their first name", function() {
@@ -276,7 +1199,6 @@ describe("when an unregistered user logs on", function() {
 
     });
 });
-
 
 
 // MONITORING
@@ -495,7 +1417,7 @@ describe("when a registered user logs on", function() {
 
                     });
                 });
-
+            });
 
 
             // girls outstanding
@@ -724,6 +1646,7 @@ describe("when a registered user logs on", function() {
                 });
             });
 
+
             // completed - main menu
             describe("after completing report if user selects to go to main menu", function() {
                 it("should go back to main menu", function() {
@@ -745,57 +1668,6 @@ describe("when a registered user logs on", function() {
 
 });
 
-
-// OTHER
-// -----
-
-describe("when the user asks to go to the next state", function() {
-    it("should go to next state", function() {
-        return tester
-            .setup.user.state('state_lp_start')
-            .input('1')
-            .check.interaction({
-                state: 'state_lp_next',
-                reply: [
-                    'Hi there! What do you want to do?',
-                    '1. Switch to TeacherPerformance',
-                    '2. Exit'
-                ].join('\n')
-            })
-            .run();
-    });
-});
-
-describe("when the user asks to exit", function() {
-    it("should say thank you and end the session", function() {
-        return tester
-            .setup.user.state('state_lp_start')
-            .input('2')
-            .check.interaction({
-                state: 'state_lp_exit',
-                reply: 'Thanks, cheers!'
-            })
-            .check.reply.ends_session()
-            .run();
-    });
-});
-
-describe("when the user asks to switch to tp", function() {
-    it("should switch to state_tp_start", function() {
-        return tester
-            .setup.user.state('state_lp_next')
-            .input('1')
-            .check.interaction({
-                state: 'state_tp_start',
-                reply: [
-                    'Hi there! What do you want to do?',
-                    '1. Go to next state',
-                    '2. Exit'
-                ].join('\n')
-            })
-            .run();
-    });
-});
 
 // end broken indentation to save whitespace
 
