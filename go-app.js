@@ -23,8 +23,6 @@ go.rht = function() {
                     "This should have 4-6 digits e.g. 4351.",
 
                 next: function(content) {
-                    // console.log(content);
-                    // console.log(array_emis.inspect().value);
                     if (go.utils.check_valid_emis(content, array_emis)) {
                         return "reg_emis_validates";
                     } else if (opts.retry === false) {
@@ -289,7 +287,7 @@ go.rht = function() {
             });
         },
 
-        reg_zonal_head: function(name) {
+        reg_zonal_head: function(name, im, contact) {
             return new ChoiceState(name, {
                 question: "Are you a Zonal Head Teacher?",
 
@@ -299,7 +297,15 @@ go.rht = function() {
                 ],
 
                 next: function(choice) {
-                    return choice.value;
+                    if (choice.value === 'reg_thanks_zonal_head') {
+                        return go.utils
+                            .cms_head_teacher_registration(im, contact)
+                            .then(function() {
+                                return choice.value;
+                            });
+                    } else {
+                        return choice.value;
+                    }
                 }
             });
         },
@@ -316,11 +322,17 @@ go.rht = function() {
             });
         },
 
-        reg_zonal_head_name: function(name) {
+        reg_zonal_head_name: function(name, im, contact) {
             return new FreeText(name, {
                 question: "Please enter the name and surname of your ZONAL HEAD TEACHER.",
 
-                next: "reg_thanks_head_teacher"
+                next: function() {
+                    return go.utils
+                        .cms_head_teacher_registration(im, contact)
+                        .then(function() {
+                            return "reg_thanks_head_teacher";
+                        });
+                }
             });
         },
 
@@ -717,6 +729,30 @@ go.utils = {
             });
     },
 
+    cms_head_teacher_registration: function(im, contact) {
+        var headteacher_data = go.utils.registration_data_headteacher_collect(im);
+
+        return go.utils
+            .cms_post("data/headteacher/", headteacher_data, im)
+            .then(function(result) {
+                parsed_result = JSON.parse(result.body);
+                var headteacher_id = parsed_result.id;
+                var emis = parsed_result.emis.emis;
+                var school_data = go.utils.registration_data_school_collect(im);
+                school_data.created_by = "/api/v1/data/headteacher/" + headteacher_id + "/";
+                school_data.emis = "/api/v1/school/emis/" + emis + "/";
+                return go.utils
+                    .cms_post("data/school/", school_data, im)
+                    .then(function(result) {
+                        contact.extra.rts_id = headteacher_id.toString();
+                        contact.extra.rts_emis = emis.toString();
+                        contact.name = im.user.answers.reg_first_name;
+                        contact.surname = im.user.answers.reg_surname;
+                        return im.contacts.save(contact);
+                    });
+            });
+    },
+
 
     // SHARED HELPERS
     // --------------
@@ -793,10 +829,49 @@ go.utils = {
             "first_name": im.user.answers.reg_district_official_first_name,
             "last_name": im.user.answers.reg_district_official_surname,
             "date_of_birth": moment(dob).format('YYYY-MM-DD'),
-            "district": "/api/v1/district/" + im.user.answers.reg_district_official +"/",
+            "district": "/api/v1/district/" + im.user.answers.reg_district_official + "/",
             "id_number": im.user.answers.reg_district_official_id_number
         };
         return district_admin_data;
+    },
+
+    registration_data_headteacher_collect: function(im) {
+        var dob = go.utils.check_and_parse_date(im.user.answers.reg_date_of_birth);
+
+        var headteacher_data = {
+            "first_name": im.user.answers.reg_first_name,
+            "last_name": im.user.answers.reg_surname,
+            "msisdn": im.user.addr,
+            "date_of_birth": moment(dob).format('YYYY-MM-DD'),
+            "gender": im.user.answers.reg_gender,
+            "emis": "/api/v1/school/emis/" + parseInt(im.user.answers.reg_emis, 10) + "/"
+        };
+
+        if (im.user.answers.reg_zonal_head === "reg_zonal_head_name") {
+            headteacher_data.zonal_head_name = im.user.answers.reg_zonal_head_name;
+            headteacher_data.is_zonal_head = false;
+        } else {
+            headteacher_data.zonal_head_name = "self";
+            headteacher_data.is_zonal_head = true;
+        }
+
+        return headteacher_data;
+    },
+
+    registration_data_school_collect: function(im) {
+        var school_data = {
+            "name": im.user.answers.reg_school_name,
+            "classrooms": parseInt(im.user.answers.reg_school_classrooms,10),
+            "teachers": parseInt(im.user.answers.reg_school_teachers,10),
+            "teachers_g1": parseInt(im.user.answers.reg_school_teachers_g1,10),
+            "teachers_g2": parseInt(im.user.answers.reg_school_teachers_g2,10),
+            "boys_g2": parseInt(im.user.answers.reg_school_students_g2_boys,10),
+            "girls_g2": parseInt(im.user.answers.reg_school_students_g2_girls,10),
+            "boys": parseInt(im.user.answers.reg_school_boys,10),
+            "girls": parseInt(im.user.answers.reg_school_girls,10)
+        };
+
+        return school_data;
     }
 
 };
@@ -926,7 +1001,7 @@ go.app = function() {
         });
 
         self.states.add('reg_zonal_head', function(name) {
-            return go.rht.reg_zonal_head(name);
+            return go.rht.reg_zonal_head(name, self.im, self.contact);
         });
 
         self.states.add('reg_thanks_zonal_head', function(name) {
@@ -934,7 +1009,7 @@ go.app = function() {
         });
 
         self.states.add('reg_zonal_head_name', function(name) {
-            return go.rht.reg_zonal_head_name(name);
+            return go.rht.reg_zonal_head_name(name, self.im, self.contact);
         });
 
         self.states.add('reg_thanks_head_teacher', function(name) {

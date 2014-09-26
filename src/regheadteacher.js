@@ -16,8 +16,6 @@ go.rht = function() {
                     "This should have 4-6 digits e.g. 4351.",
 
                 next: function(content) {
-                    // console.log(content);
-                    // console.log(array_emis.inspect().value);
                     if (go.utils.check_valid_emis(content, array_emis)) {
                         return "reg_emis_validates";
                     } else if (opts.retry === false) {
@@ -282,7 +280,7 @@ go.rht = function() {
             });
         },
 
-        reg_zonal_head: function(name) {
+        reg_zonal_head: function(name, im, contact) {
             return new ChoiceState(name, {
                 question: "Are you a Zonal Head Teacher?",
 
@@ -292,7 +290,15 @@ go.rht = function() {
                 ],
 
                 next: function(choice) {
-                    return choice.value;
+                    if (choice.value === 'reg_thanks_zonal_head') {
+                        return go.utils
+                            .cms_head_teacher_registration(im, contact)
+                            .then(function() {
+                                return choice.value;
+                            });
+                    } else {
+                        return choice.value;
+                    }
                 }
             });
         },
@@ -309,11 +315,17 @@ go.rht = function() {
             });
         },
 
-        reg_zonal_head_name: function(name) {
+        reg_zonal_head_name: function(name, im, contact) {
             return new FreeText(name, {
                 question: "Please enter the name and surname of your ZONAL HEAD TEACHER.",
 
-                next: "reg_thanks_head_teacher"
+                next: function() {
+                    return go.utils
+                        .cms_head_teacher_registration(im, contact)
+                        .then(function() {
+                            return "reg_thanks_head_teacher";
+                        });
+                }
             });
         },
 
