@@ -7,7 +7,7 @@ go.cm = function() {
 
 
     var cm = {
-        // Registration of Head Teacher States
+        // Registration of Change Management States
 
         state_cm_start: function(name) {
             return new ChoiceState(name, {

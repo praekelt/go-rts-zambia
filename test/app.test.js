@@ -1146,7 +1146,7 @@ describe("when an unregistered user logs on", function() {
         describe("when uu enters their date of birth", function() {
 
             describe("if their dob input is valid", function() {
-                it("should congratulate them on registering", function() {
+                it("should congratulate them and exit", function() {
                     return tester
                         .setup.user.addr('097123')
                         .setup.user.answers({
@@ -1160,6 +1160,7 @@ describe("when an unregistered user logs on", function() {
                                 " Gateway! Please dial in again when you are ready to start" +
                                 " reporting on teacher and learner performance."
                         })
+                        .check.reply.ends_session()
                         .run();
                 });
 

@@ -9,7 +9,7 @@ go.rdo = function() {
     var rdo = {
         // Registration of District Official States
 
-        reg_district_official: function(name, im, districts) {
+        reg_district_official: function(name, districts) {
             var choices = [];
 
             for (var i=0; i<districts.inspect().value.length; i++) {

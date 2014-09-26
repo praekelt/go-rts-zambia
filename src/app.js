@@ -326,7 +326,7 @@ go.app = function() {
         // ---------------------------------
 
         self.states.add('reg_district_official', function(name) {
-            return go.rdo.reg_district_official(name, self.im, self.districts);
+            return go.rdo.reg_district_official(name, self.districts);
         });
 
         self.states.add('reg_district_official_first_name', function(name) {

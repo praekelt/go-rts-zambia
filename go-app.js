@@ -375,7 +375,7 @@ go.rdo = function() {
     var rdo = {
         // Registration of District Official States
 
-        reg_district_official: function(name, im, districts) {
+        reg_district_official: function(name, districts) {
             var choices = [];
 
             for (var i=0; i<districts.inspect().value.length; i++) {
@@ -484,7 +484,7 @@ go.cm = function() {
 
 
     var cm = {
-        // Registration of Head Teacher States
+        // Registration of Change Management States
 
         state_cm_start: function(name) {
             return new ChoiceState(name, {
@@ -1023,7 +1023,7 @@ go.app = function() {
         // ---------------------------------
 
         self.states.add('reg_district_official', function(name) {
-            return go.rdo.reg_district_official(name, self.im, self.districts);
+            return go.rdo.reg_district_official(name, self.districts);
         });
 
         self.states.add('reg_district_official_first_name', function(name) {
