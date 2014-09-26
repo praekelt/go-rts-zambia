@@ -1,10 +1,12 @@
 var vumigo = require('vumigo_v02');
 var moment = require('moment');
-// var _ = require('lodash');
+var _ = require('lodash');
 var ChoiceState = vumigo.states.ChoiceState;
 var Choice = vumigo.states.Choice;
 var JsonApi = vumigo.http.api.JsonApi;
 
+
+// tip: code fold level 2, then unfold var GoApp, then fold level 3
 
 go.utils = {
 
@@ -206,6 +208,18 @@ go.app = function() {
         // -------------
 
         self.states.add('initial_state', function(name) {
+            if (self.contact.name === null) {
+                // user is unregistered if doesn't have a contact.name
+                return self.states.create('initial_state_unregistered');
+            } else if (_.isUndefined(self.contact.extra.rts_official_district_id)) {
+                // registered user is head teacher if doesn't have district_id
+                return self.states.create('initial_state_head_teacher');
+            } else {
+                return self.states.create('initial_state_district_official');
+            }
+        });
+
+        self.states.add('initial_state_unregistered', function(name) {
             return new ChoiceState(name, {
                 question: 'Welcome to the Zambia School Gateway! Options:',
 
@@ -228,7 +242,39 @@ go.app = function() {
                         };
                     }
                 }
-                });
+            });
+        });
+
+        self.states.add('initial_state_district_official', function(name) {
+            return new ChoiceState(name, {
+                question: 'What would you like to do?',
+
+                choices: [
+                    new Choice("add_emis_perf_teacher_ts_number", "Report on teacher performance."),
+                    new Choice("add_emis_perf_learner_boys_total", "Report on learner performance."),
+                ],
+
+                next: function(choice) {
+                    return choice.value;
+                }
+            });
+        });
+
+        self.states.add('initial_state_head_teacher', function(name) {
+            return new ChoiceState(name, {
+                question: 'What would you like to do?',
+
+                choices: [
+                    new Choice("perf_teacher_ts_number", "Report on teacher performance."),
+                    new Choice("perf_learner_boys_total", "Report on learner performance."),
+                    new Choice("manage_change_emis", "Change my school."),
+                    new Choice("manage_update_school_data", "Update my school's registration data.")
+                ],
+
+                next: function(choice) {
+                    return choice.value;
+                }
+            });
         });
 
 
