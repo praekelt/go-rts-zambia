@@ -298,10 +298,16 @@ go.rht = function() {
 
                 next: function(choice) {
                     if (choice.value === 'reg_thanks_zonal_head') {
+                        var headteacher_data = go.utils.registration_data_headteacher_collect(im);
+
                         return go.utils
-                            .cms_head_teacher_registration(im, contact)
-                            .then(function() {
-                                return choice.value;
+                            .cms_post("data/headteacher/", headteacher_data, im)
+                            .then(function(result) {
+                                return go.utils
+                                    .cms_update_school_and_contact(result, im, contact)
+                                    .then(function() {
+                                        return choice.value;
+                                    });
                             });
                     } else {
                         return choice.value;
@@ -327,11 +333,16 @@ go.rht = function() {
                 question: "Please enter the name and surname of your ZONAL HEAD TEACHER.",
 
                 next: function() {
+                    var headteacher_data = go.utils.registration_data_headteacher_collect(im);
                     return go.utils
-                        .cms_head_teacher_registration(im, contact)
-                        .then(function() {
-                            return "reg_thanks_head_teacher";
-                        });
+                        .cms_post("data/headteacher/", headteacher_data, im)
+                            .then(function(result) {
+                                return go.utils
+                                    .cms_update_school_and_contact(result, im, contact)
+                                    .then(function() {
+                                        return "reg_thanks_head_teacher";
+                                    });
+                            });
                 }
             });
         },
@@ -425,10 +436,21 @@ go.rdo = function() {
                 },
 
                 next: function() {
+                    var district_official_data = go.utils.registration_official_admin_collect(im);
                     return go.utils
-                        .cms_district_admin_registration(im, contact)
-                        .then(function() {
-                            return "reg_district_official_thanks";
+                        .cms_post("district_admin/", district_official_data, im)
+                        .then(function(result) {
+                            parsed_result = JSON.parse(result.body);
+                            contact.extra.rts_id = parsed_result.id.toString();
+                            contact.extra.rts_district_official_id_number = parsed_result.id_number;
+                            contact.extra.rts_official_district_id = parsed_result.district.id.toString();
+                            contact.name = district_official_data.first_name;
+                            contact.surname = district_official_data.last_name;
+                            return im.contacts
+                                .save(contact)
+                                .then(function() {
+                                    return "reg_district_official_thanks";
+                                });
                         });
                 }
             });
@@ -714,42 +736,21 @@ go.utils = {
             });
     },
 
-    cms_district_admin_registration: function(im, contact) {
-        var district_official_data = go.utils.registration_official_admin_collect(im);
+    cms_update_school_and_contact: function(result, im, contact) {
+        parsed_result = JSON.parse(result.body);
+        var headteacher_id = parsed_result.id;
+        var emis = parsed_result.emis.emis;
+        var school_data = go.utils.registration_data_school_collect(im);
+        school_data.created_by = "/api/v1/data/headteacher/" + headteacher_id + "/";
+        school_data.emis = "/api/v1/school/emis/" + emis + "/";
         return go.utils
-            .cms_post("district_admin/", district_official_data, im)
+            .cms_post("data/school/", school_data, im)
             .then(function(result) {
-                parsed_result = JSON.parse(result.body);
-                contact.extra.rts_id = parsed_result.id.toString();
-                contact.extra.rts_district_official_id_number = parsed_result.id_number;
-                contact.extra.rts_official_district_id = parsed_result.district.id.toString();
-                contact.name = district_official_data.first_name;
-                contact.surname = district_official_data.last_name;
+                contact.extra.rts_id = headteacher_id.toString();
+                contact.extra.rts_emis = emis.toString();
+                contact.name = im.user.answers.reg_first_name;
+                contact.surname = im.user.answers.reg_surname;
                 return im.contacts.save(contact);
-            });
-    },
-
-    cms_head_teacher_registration: function(im, contact) {
-        var headteacher_data = go.utils.registration_data_headteacher_collect(im);
-
-        return go.utils
-            .cms_post("data/headteacher/", headteacher_data, im)
-            .then(function(result) {
-                parsed_result = JSON.parse(result.body);
-                var headteacher_id = parsed_result.id;
-                var emis = parsed_result.emis.emis;
-                var school_data = go.utils.registration_data_school_collect(im);
-                school_data.created_by = "/api/v1/data/headteacher/" + headteacher_id + "/";
-                school_data.emis = "/api/v1/school/emis/" + emis + "/";
-                return go.utils
-                    .cms_post("data/school/", school_data, im)
-                    .then(function(result) {
-                        contact.extra.rts_id = headteacher_id.toString();
-                        contact.extra.rts_emis = emis.toString();
-                        contact.name = im.user.answers.reg_first_name;
-                        contact.surname = im.user.answers.reg_surname;
-                        return im.contacts.save(contact);
-                    });
             });
     },
 

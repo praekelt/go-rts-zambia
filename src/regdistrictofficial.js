@@ -70,10 +70,21 @@ go.rdo = function() {
                 },
 
                 next: function() {
+                    var district_official_data = go.utils.registration_official_admin_collect(im);
                     return go.utils
-                        .cms_district_admin_registration(im, contact)
-                        .then(function() {
-                            return "reg_district_official_thanks";
+                        .cms_post("district_admin/", district_official_data, im)
+                        .then(function(result) {
+                            parsed_result = JSON.parse(result.body);
+                            contact.extra.rts_id = parsed_result.id.toString();
+                            contact.extra.rts_district_official_id_number = parsed_result.id_number;
+                            contact.extra.rts_official_district_id = parsed_result.district.id.toString();
+                            contact.name = district_official_data.first_name;
+                            contact.surname = district_official_data.last_name;
+                            return im.contacts
+                                .save(contact)
+                                .then(function() {
+                                    return "reg_district_official_thanks";
+                                });
                         });
                 }
             });
