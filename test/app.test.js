@@ -882,6 +882,39 @@ describe("when an unregistered user logs on", function() {
                     .check.reply.ends_session()
                     .run();
             });
+
+            it("should save contact information", function() {
+                return tester
+                    .setup.user.addr('097123')
+                    .inputs(
+                        'start',
+                        '1',  // initial_state
+                        '0001',  // reg_emis
+                        '1',  // reg_emis_validates
+                        'School One',  //reg_school_name
+                        'Jack',  // reg_first_name
+                        'Black',  // reg_surname
+                        '11091980',  // reg_date_of_birth
+                        '2',  // reg_gender
+                        '50',  // reg_school_boys
+                        '51',  // reg_school_girls
+                        '5',  // reg_school_classrooms
+                        '5',  // reg_school_teachers
+                        '2',  // reg_school_teachers_g1
+                        '2',  // reg_school_teachers_g2
+                        '10',  // reg_school_students_g2_boys
+                        '11',  // reg_school_students_g2_girls
+                        '1'  // reg_zonal_head
+                    )
+                    .check(function(api) {
+                        var contact = api.contacts.store[0];
+                        assert.equal(contact.extra.rts_id, '2');
+                        assert.equal(contact.extra.rts_emis, '1');
+                        assert.equal(contact.name, 'Jack');
+                        assert.equal(contact.surname, 'Black');
+                    })
+                    .run();
+            });
         });
 
         describe("after the user indicates that they are NOT a zonal head", function() {
