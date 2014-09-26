@@ -32,6 +32,31 @@ describe("app", function() {
                         d.repeatable = true;
                         api.http.fixtures.add(d);
                     });
+                })
+                .setup(function(api) {
+                    // registered district official
+                    api.contacts.add({
+                        msisdn: '+097444',
+                        name: 'Pete',
+                        surname: 'Yorn',
+                        extra: {
+                            rts_id: '444',
+                            rts_district_official_id_number: '444111',
+                            rts_official_district_id: '4'
+                        }
+                    });
+                })
+                .setup(function(api) {
+                    // registered head teacher
+                    api.contacts.add({
+                        msisdn: '+097555',
+                        name: 'Regina',
+                        surname: 'Spektor',
+                        extra: {
+                            rts_id: '555',
+                            rts_emis: '45'
+                        }
+                    });
                 });
         });
 
@@ -52,7 +77,7 @@ describe("when an unregistered user logs on", function() {
                 .setup.user.addr('097123')
                 .inputs('start')
                 .check.interaction({
-                    state: 'initial_state',
+                    state: 'initial_state_unregistered',
                     reply: [
                         'Welcome to the Zambia School Gateway! Options:',
                         '1. Register as Head Teacher',
@@ -907,7 +932,7 @@ describe("when an unregistered user logs on", function() {
                         '1'  // reg_zonal_head
                     )
                     .check(function(api) {
-                        var contact = api.contacts.store[0];
+                        var contact = api.contacts.store[2];
                         assert.equal(contact.extra.rts_id, '2');
                         assert.equal(contact.extra.rts_emis, '1');
                         assert.equal(contact.name, 'Jack');
@@ -1171,7 +1196,7 @@ describe("when an unregistered user logs on", function() {
                         })
                         .inputs('start', '2', '9', '2', 'Michael', 'Sherwin', '123454321', '27111980')
                         .check(function(api) {
-                            var contact = api.contacts.store[0];
+                            var contact = api.contacts.store[2];
                             assert.equal(contact.extra.rts_id, '2');
                             assert.equal(contact.extra.rts_district_official_id_number, '123454321');
                             assert.equal(contact.extra.rts_official_district_id, '1');
@@ -1212,11 +1237,11 @@ describe("when a registered user logs on", function() {
                 .setup.user.addr('097444')
                 .inputs('start')
                 .check.interaction({
-                    state: 'initial_state',
+                    state: 'initial_state_district_official',
                     reply: [
                         'What would you like to do?',
                         '1. Report on teacher performance.',
-                        '2. Report on learner performance',
+                        '2. Report on learner performance.',
                     ].join('\n')
                 })
                 .run();
@@ -1229,12 +1254,12 @@ describe("when a registered user logs on", function() {
                 .setup.user.addr('097555')
                 .inputs('start')
                 .check.interaction({
-                    state: 'initial_state',
+                    state: 'initial_state_head_teacher',
                     reply: [
                         'What would you like to do?',
                         '1. Report on teacher performance.',
-                        '2. Report on learner performance',
-                        '3. Change my school',
+                        '2. Report on learner performance.',
+                        '3. Change my school.',
                         "4. Update my school's registration data."
                     ].join('\n')
                 })
