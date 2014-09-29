@@ -412,17 +412,16 @@ go.app = function() {
         // LEARNER PERFORMANCE STATES
         // --------------------------
 
-        self.states.add('state_lp_start', function(name) {
-            return go.lp.state_lp_start(name);
+        self.states.add('add_emis_perf_learner_boys_total', function(name) {
+            return go.lp.add_emis_perf_learner_boys_total(name, self.array_emis, self.contact, self.im);
         });
 
-        self.states.add('state_lp_next', function(name) {
-            return go.lp.state_lp_next(name);
+        self.states.add('perf_learner_boys_total', function(name) {
+            return go.lp.perf_learner_boys_total(name);
         });
 
-        self.states.add('state_lp_exit', function(name) {
-            return go.lp.state_lp_exit(name);
-        });
+
+
 
 
 

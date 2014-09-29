@@ -1,49 +1,62 @@
 go.lp = function() {
 
     var vumigo = require('vumigo_v02');
-    var ChoiceState = vumigo.states.ChoiceState;
+    var FreeText = vumigo.states.FreeText;
+    // var ChoiceState = vumigo.states.ChoiceState;
     var EndState = vumigo.states.EndState;
-    var Choice = vumigo.states.Choice;
+    // var Choice = vumigo.states.Choice;
 
 
     var lp = {
         // LearnerPerformance States
 
-        state_lp_start: function(name) {
-            return new ChoiceState(name, {
-                question: 'Hi there! What do you want to do?',
+        add_emis_perf_learner_boys_total: function(name, array_emis, contact, im) {
+            var error = "The emis does not exist, please try again. " +
+                        "This should have 4-6 digits e.g 4351.";
 
-                choices: [
-                    new Choice('next', 'Go to next state'),
-                    new Choice('exit', 'Exit')],
+            var question = "Please enter the school's EMIS number that you would " +
+                        "like to report on. This should have 4-6 digits e.g 4351.";
 
-                next: function(choice) {
-                    if(choice.value === 'next') {
-                        return 'state_lp_next';
-                    } else {
-                        return 'state_lp_exit';
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_emis(content, array_emis) === false) {
+                        return error;
                     }
+                },
+
+                next: function(content) {
+                    contact.extra.rts_emis = content;
+                    return im.contacts
+                        .save(contact)
+                        .then(function() {
+                            return "perf_learner_boys_total";
+                        });
                 }
+
             });
         },
 
-        state_lp_next: function(name) {
-            return new ChoiceState(name, {
-                question: 'Hi there! What do you want to do?',
+        perf_learner_boys_total: function(name) {
+            var error = "Please provide a number value for total boys assessed.";
 
-                choices: [
-                    new Choice('to_tp', 'Switch to TeacherPerformance'),
-                    new Choice('exit', 'Exit')],
+            var question = "How many boys took part in the learner assessment?";
 
-                next: function(choice) {
-                    if(choice.value === 'to_tp') {
-                        return 'state_tp_start'; // Switch to TP
-                    } else {
-                        return 'state_lp_exit';
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_number(content) === false) {
+                        return error;
                     }
-                }
+                },
+
+                next: 'perf_learner_boys_outstanding_results'
             });
         },
+
+
 
         state_lp_exit: function(name) {
             return new EndState(name, {

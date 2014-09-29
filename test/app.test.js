@@ -69,7 +69,7 @@ describe("app", function() {
 
 // uu = unregistered user
 
-describe("when an unregistered user logs on", function() {
+describe.skip("when an unregistered user logs on", function() {
     
     describe("when uu starts a session", function() {
         it("should ask them want they want to do", function() {
@@ -1275,24 +1275,72 @@ describe("when a registered user logs on", function() {
 
         describe("if the user is a district official", function() {
             it("should ask for an emis code", function() {
-
+                return tester
+                    .setup.user.addr('097444')
+                    .inputs(
+                        'start',
+                        '2'  // initial_state_district_official
+                    )
+                    .check.interaction({
+                        state: 'add_emis_perf_learner_boys_total',
+                        reply: 
+                            "Please enter the school's EMIS number that you would like " +
+                            "to report on. This should have 4-6 digits e.g 4351."
+                    })
+                    .run();
             });
 
             describe("when the district official user enters an emis", function() {
 
                 describe("if the emis does not validate", function() {
                     it("should ask for the emis again", function() {
-
+                        return tester
+                            .setup.user.addr('097444')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_district_official
+                                '5555555'
+                            )
+                            .check.interaction({
+                                state: 'add_emis_perf_learner_boys_total',
+                                reply:
+                                    "The emis does not exist, please try again. This " +
+                                    "should have 4-6 digits e.g 4351."
+                            })
+                            .run();
                     });
                 });
 
                 describe("if the emis validates", function() {
                     it("should ask for boys total", function() {
-
+                        return tester
+                            .setup.user.addr('097444')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_district_official
+                                '0001'
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_total',
+                                reply:
+                                    "How many boys took part in the learner assessment?"
+                            })
+                            .run();
                     });
 
-                    it("should save certain data to the district official user's contact", function() {
-
+                    it("should save the emis to the district official user's contact", function() {
+                        return tester
+                            .setup.user.addr('097444')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_district_official
+                                '0001'
+                            )
+                            .check(function(api) {
+                                var contact = api.contacts.store[0];
+                                assert.equal(contact.extra.rts_emis, '0001');
+                            })
+                            .run();
                     });
                 });
 
