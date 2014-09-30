@@ -271,8 +271,8 @@ go.lp = function() {
         perf_learner_girls_calc_error: function(name, $, opts) {
             return new ChoiceState(name, {
                 question: 
-                    $("You've entered results for {{ calc_total }} girls ({{ calculation }}), but " +
-                        "you initially indicated {{ total }} girls participants. Please try again.")
+                    $("You've entered results for {{ calc_total }} girls ({{ calculation }}), " +
+                    "but you initially indicated {{ total }} girls participants. Please try again.")
                     .context({
                         calc_total: opts.calc_total,
                         calculation: opts.calculation,
@@ -459,7 +459,8 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || (Number(boys_total) < Number(content))) {
+                    if ((go.utils.check_valid_number(content) === false) || 
+                            (Number(boys_total) < Number(content))) {
                         return error;
                     }
                 },
@@ -479,7 +480,8 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || (Number(girls_total) < Number(content))) {
+                    if ((go.utils.check_valid_number(content) === false) || 
+                            (Number(girls_total) < Number(content))) {
                         return error;
                     }
                 },
@@ -499,7 +501,8 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || (Number(boys_total) < Number(content))) {
+                    if ((go.utils.check_valid_number(content) === false) || 
+                            (Number(boys_total) < Number(content))) {
                         return error;
                     }
                 },
@@ -519,7 +522,8 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || (Number(girls_total) < Number(content))) {
+                    if ((go.utils.check_valid_number(content) === false) || 
+                            (Number(girls_total) < Number(content))) {
                         return error;
                     }
                 },
@@ -539,7 +543,8 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || (Number(boys_total) < Number(content))) {
+                    if ((go.utils.check_valid_number(content) === false) || 
+                            (Number(boys_total) < Number(content))) {
                         return error;
                     }
                 },
@@ -559,7 +564,8 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || (Number(girls_total) < Number(content))) {
+                    if ((go.utils.check_valid_number(content) === false) || 
+                            (Number(girls_total) < Number(content))) {
                         return error;
                     }
                 },
@@ -579,7 +585,8 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || (Number(boys_total) < Number(content))) {
+                    if ((go.utils.check_valid_number(content) === false) || 
+                            (Number(boys_total) < Number(content))) {
                         return error;
                     }
                 },
@@ -599,7 +606,8 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || (Number(girls_total) < Number(content))) {
+                    if ((go.utils.check_valid_number(content) === false) || 
+                            (Number(girls_total) < Number(content))) {
                         return error;
                     }
                 },
