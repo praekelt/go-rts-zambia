@@ -985,9 +985,7 @@ go.lp = function() {
                     }
                 },
 
-                next: function(content) {
-                    return 'perf_learner_girls_phonics';
-                }
+                next: 'perf_learner_girls_phonics'
             });
         },
 
@@ -1007,9 +1005,7 @@ go.lp = function() {
                     }
                 },
 
-                next: function(content) {
-                    return 'perf_learner_boys_vocab';
-                }
+                next: 'perf_learner_boys_vocab'
             });
         },
 
@@ -1029,9 +1025,7 @@ go.lp = function() {
                     }
                 },
 
-                next: function(content) {
-                    return 'perf_learner_girls_vocab';
-                }
+                next: 'perf_learner_girls_vocab'
             });
         },
 
@@ -1051,9 +1045,7 @@ go.lp = function() {
                     }
                 },
 
-                next: function(content) {
-                    return 'perf_learner_boys_comprehension';
-                }
+                next: 'perf_learner_boys_comprehension'
             });
         },
 
@@ -1073,9 +1065,7 @@ go.lp = function() {
                     }
                 },
 
-                next: function(content) {
-                    return 'perf_learner_girls_comprehension';
-                }
+                next: 'perf_learner_girls_comprehension'
             });
         },
 
@@ -1095,9 +1085,7 @@ go.lp = function() {
                     }
                 },
 
-                next: function(content) {
-                    return 'perf_learner_boys_writing';
-                }
+                next: 'perf_learner_boys_writing'
             });
         },
 
@@ -1117,9 +1105,7 @@ go.lp = function() {
                     }
                 },
 
-                next: function(content) {
-                    return 'perf_learner_girls_writing';
-                }
+                next: 'perf_learner_girls_writing'
             });
         },
 
