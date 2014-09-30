@@ -69,7 +69,7 @@ describe("app", function() {
 
 // uu = unregistered user
 
-describe.skip("when an unregistered user logs on", function() {
+describe("when an unregistered user logs on", function() {
     
     describe("when uu starts a session", function() {
         it("should ask them want they want to do", function() {
