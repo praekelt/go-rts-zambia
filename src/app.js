@@ -2,6 +2,7 @@ var vumigo = require('vumigo_v02');
 var moment = require('moment');
 var _ = require('lodash');
 var ChoiceState = vumigo.states.ChoiceState;
+var EndState = vumigo.states.EndState;
 var Choice = vumigo.states.Choice;
 var JsonApi = vumigo.http.api.JsonApi;
 
@@ -205,8 +206,8 @@ go.app = function() {
         };
 
 
-        // INITIAL STATE
-        // -------------
+        // INITIAL STATES & END STATE
+        // --------------------------
 
         self.states.add('initial_state', function(name) {
             if (self.contact.name === null) {
@@ -275,6 +276,14 @@ go.app = function() {
                 next: function(choice) {
                     return choice.value;
                 }
+            });
+        });
+
+        self.states.add('end_state', function(name) {
+            return new EndState(name, {
+                text: "Goodbye! Thank you for using the Gateway.",
+
+                next: "initial_state"
             });
         });
 
@@ -470,7 +479,39 @@ go.app = function() {
 
         self.states.add('perf_learner_boys_phonics', function(name) {
             return go.lp.perf_learner_boys_phonics(name, $, self.im.user.answers.perf_learner_boys_total);
-        });        
+        });
+
+        self.states.add('perf_learner_girls_phonics', function(name) {
+            return go.lp.perf_learner_girls_phonics(name, $, self.im.user.answers.perf_learner_girls_total);
+        });
+
+        self.states.add('perf_learner_boys_vocab', function(name) {
+            return go.lp.perf_learner_boys_vocab(name, $, self.im.user.answers.perf_learner_boys_total);
+        });
+
+        self.states.add('perf_learner_girls_vocab', function(name) {
+            return go.lp.perf_learner_girls_vocab(name, $, self.im.user.answers.perf_learner_girls_total);
+        });
+
+        self.states.add('perf_learner_boys_comprehension', function(name) {
+            return go.lp.perf_learner_boys_comprehension(name, $, self.im.user.answers.perf_learner_boys_total);
+        });
+
+        self.states.add('perf_learner_girls_comprehension', function(name) {
+            return go.lp.perf_learner_girls_comprehension(name, $, self.im.user.answers.perf_learner_girls_total);
+        });
+
+        self.states.add('perf_learner_boys_writing', function(name) {
+            return go.lp.perf_learner_boys_writing(name, $, self.im.user.answers.perf_learner_boys_total);
+        });
+
+        self.states.add('perf_learner_girls_writing', function(name) {
+            return go.lp.perf_learner_girls_writing(name, $, self.im.user.answers.perf_learner_girls_total);
+        });
+
+        self.states.add('perf_learner_completed', function(name) {
+            return go.lp.perf_learner_completed(name, $);
+        });
 
 
 

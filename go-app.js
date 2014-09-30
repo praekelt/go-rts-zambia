@@ -991,6 +991,175 @@ go.lp = function() {
             });
         },
 
+        perf_learner_girls_phonics: function(name, $, girls_total) {
+            var error = $("Please provide a valid number value for total girls scoring 4 or more" +
+                        " correctly out of 6 for Phonics and Phonemic Awareness.");
+
+            var question = $("How many girls scored 4 or more correctly out of 6 for Section " +
+                            "1 (Phonics and Phonemic Awareness)?");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if ((go.utils.check_valid_number(content) === false) || (Number(girls_total) < Number(content))) {
+                        return error;
+                    }
+                },
+
+                next: function(content) {
+                    return 'perf_learner_boys_vocab';
+                }
+            });
+        },
+
+        perf_learner_boys_vocab: function(name, $, boys_total) {
+            var error = $("Please provide a valid number value for boys scoring 3 or more " +
+                        "correctly out of 6 for Vocabulary.");
+
+            var question = $("How many boys scored 3 or more correctly out of 6 for Section 2 " +
+                            "(Vocabulary)?");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if ((go.utils.check_valid_number(content) === false) || (Number(boys_total) < Number(content))) {
+                        return error;
+                    }
+                },
+
+                next: function(content) {
+                    return 'perf_learner_girls_vocab';
+                }
+            });
+        },
+
+        perf_learner_girls_vocab: function(name, $, girls_total) {
+            var error = $("Please provide a valid number value for girls scoring 3 or more " +
+                        "correctly out of 6 for Vocabulary.");
+
+            var question = $("How many girls scored 3 or more correctly out of 6 for Section 2 " +
+                            "(Vocabulary)?");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if ((go.utils.check_valid_number(content) === false) || (Number(girls_total) < Number(content))) {
+                        return error;
+                    }
+                },
+
+                next: function(content) {
+                    return 'perf_learner_boys_comprehension';
+                }
+            });
+        },
+
+        perf_learner_boys_comprehension: function(name, $, boys_total) {
+            var error = $("Please provide a valid number value for boys scoring 2 or more " +
+                        "correctly out of 4 for Comprehension.");
+
+            var question = $("How many boys scored 2 or more correctly out of 4 for Section 3 " +
+                            "(Comprehension)?");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if ((go.utils.check_valid_number(content) === false) || (Number(boys_total) < Number(content))) {
+                        return error;
+                    }
+                },
+
+                next: function(content) {
+                    return 'perf_learner_girls_comprehension';
+                }
+            });
+        },
+
+        perf_learner_girls_comprehension: function(name, $, girls_total) {
+            var error = $("Please provide a valid number value for girls scoring 2 or more " +
+                        "correctly out of 4 for Comprehension.");
+
+            var question = $("How many girls scored 2 or more correctly out of 4 for Section 3 " +
+                            "(Comprehension)?");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if ((go.utils.check_valid_number(content) === false) || (Number(girls_total) < Number(content))) {
+                        return error;
+                    }
+                },
+
+                next: function(content) {
+                    return 'perf_learner_boys_writing';
+                }
+            });
+        },
+
+        perf_learner_boys_writing: function(name, $, boys_total) {
+            var error = $("Please provide a valid number value for total boys achieving 2 out" +
+                        " of 4 correct answers for Writing.");
+
+            var question = $("How many boys scored 2 or more correctly out of 4 for Section 4 " +
+                            "(Writing)?");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if ((go.utils.check_valid_number(content) === false) || (Number(boys_total) < Number(content))) {
+                        return error;
+                    }
+                },
+
+                next: function(content) {
+                    return 'perf_learner_girls_writing';
+                }
+            });
+        },
+
+        perf_learner_girls_writing: function(name, $, girls_total) {
+            var error = $("Please provide a valid number value for total girls achieving 2 out" +
+                        " of 4 correct answers for Writing.");
+
+            var question = $("How many girls scored 2 or more correctly out of 4 for Section 4 " +
+                            "(Writing)?");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if ((go.utils.check_valid_number(content) === false) || (Number(girls_total) < Number(content))) {
+                        return error;
+                    }
+                },
+
+                next: function(content) {
+                    return 'perf_learner_completed';
+                }
+            });
+        },
+
+        perf_learner_completed: function(name, $) {
+            return new ChoiceState(name, {
+                question: "Congratulations. You have finished reporting on the learner assessment.",
+
+                choices: [
+                    new Choice('initial_state', 'Go back to the main menu.'),
+                    new Choice('end_state', 'Exit.')
+                ],
+
+                next: function(choice) {
+                    return choice.value;
+                }
+            });
+        },
+
 
         'commas': 'commas'
 
@@ -1122,6 +1291,7 @@ var vumigo = require('vumigo_v02');
 var moment = require('moment');
 var _ = require('lodash');
 var ChoiceState = vumigo.states.ChoiceState;
+var EndState = vumigo.states.EndState;
 var Choice = vumigo.states.Choice;
 var JsonApi = vumigo.http.api.JsonApi;
 
@@ -1325,8 +1495,8 @@ go.app = function() {
         };
 
 
-        // INITIAL STATE
-        // -------------
+        // INITIAL STATES & END STATE
+        // --------------------------
 
         self.states.add('initial_state', function(name) {
             if (self.contact.name === null) {
@@ -1395,6 +1565,14 @@ go.app = function() {
                 next: function(choice) {
                     return choice.value;
                 }
+            });
+        });
+
+        self.states.add('end_state', function(name) {
+            return new EndState(name, {
+                text: "Goodbye! Thank you for using the Gateway.",
+
+                next: "initial_state"
             });
         });
 
@@ -1590,7 +1768,39 @@ go.app = function() {
 
         self.states.add('perf_learner_boys_phonics', function(name) {
             return go.lp.perf_learner_boys_phonics(name, $, self.im.user.answers.perf_learner_boys_total);
-        });        
+        });
+
+        self.states.add('perf_learner_girls_phonics', function(name) {
+            return go.lp.perf_learner_girls_phonics(name, $, self.im.user.answers.perf_learner_girls_total);
+        });
+
+        self.states.add('perf_learner_boys_vocab', function(name) {
+            return go.lp.perf_learner_boys_vocab(name, $, self.im.user.answers.perf_learner_boys_total);
+        });
+
+        self.states.add('perf_learner_girls_vocab', function(name) {
+            return go.lp.perf_learner_girls_vocab(name, $, self.im.user.answers.perf_learner_girls_total);
+        });
+
+        self.states.add('perf_learner_boys_comprehension', function(name) {
+            return go.lp.perf_learner_boys_comprehension(name, $, self.im.user.answers.perf_learner_boys_total);
+        });
+
+        self.states.add('perf_learner_girls_comprehension', function(name) {
+            return go.lp.perf_learner_girls_comprehension(name, $, self.im.user.answers.perf_learner_girls_total);
+        });
+
+        self.states.add('perf_learner_boys_writing', function(name) {
+            return go.lp.perf_learner_boys_writing(name, $, self.im.user.answers.perf_learner_boys_total);
+        });
+
+        self.states.add('perf_learner_girls_writing', function(name) {
+            return go.lp.perf_learner_girls_writing(name, $, self.im.user.answers.perf_learner_girls_total);
+        });
+
+        self.states.add('perf_learner_completed', function(name) {
+            return go.lp.perf_learner_completed(name, $);
+        });
 
 
 
