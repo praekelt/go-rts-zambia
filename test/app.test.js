@@ -1976,13 +1976,61 @@ describe("when a registered user logs on", function() {
 
                 describe("if girls outstanding + desirable + minimum + below minimum > girls total", function() {
                     it("should display error message", function() {
-
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '20',  // perf_learner_girls_minimum
+                                '10'  // perf_learner_girls_below_minimum
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_calc_error',
+                                reply: [
+                                    "You've entered results for 55 girls (10+15+20+10), but " +
+                                    "you initially indicated 49 girls participants. Please try again.",
+                                    "1. Continue"
+                                ].join('\n')
+                            })
+                            .run();
                     });
                 });
 
                 describe("if girls outstanding + desirable + minimum + below minimum < girls total", function() {
                     it("should display error message", function() {
-
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '2',  // initial_state_head_teacher
+                            '52', // perf_learner_boys_total
+                            '10',  // perf_learner_boys_outstanding
+                            '15',  // perf_learner_boys_desirable
+                            '20',  // perf_learner_boys_minimum
+                            '7',  // perf_learner_boys_below_minimum
+                            '49',  // perf_learner_girls_total
+                            '10',  // perf_learner_girls_outstanding
+                            '15',  // perf_learner_girls_desirable
+                            '20',  // perf_learner_girls_minimum
+                            '1'  // perf_learner_girls_below_minimum
+                        )
+                        .check.interaction({
+                            state: 'perf_learner_girls_calc_error',
+                            reply: [
+                                "You've entered results for 46 girls (10+15+20+1), but " +
+                                "you initially indicated 49 girls participants. Please try again.",
+                                "1. Continue"
+                            ].join('\n')
+                        })
+                        .run();
                     });
                 });
             });
