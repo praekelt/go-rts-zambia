@@ -179,6 +179,38 @@ go.utils = {
         };
 
         return school_data;
+    },
+
+    performance_data_learner_collect: function(emis, im){
+        var data_boys = {
+            "gender": "boys",
+            "total_number_pupils": im.user.answers.perf_learner_boys_total,
+            "phonetic_awareness": im.user.answers.perf_learner_boys_phonics,
+            "vocabulary": im.user.answers.perf_learner_boys_vocab,
+            "reading_comprehension": im.user.answers.perf_learner_boys_comprehension,
+            "writing_diction": im.user.answers.perf_learner_boys_writing,
+            "outstanding_results": im.user.answers.perf_learner_boys_outstanding,
+            "desirable_results": im.user.answers.perf_learner_boys_desirable,
+            "minimum_results": im.user.answers.perf_learner_boys_minimum,
+            "below_minimum_results": im.user.answers.perf_learner_boys_below_minimum,
+            "emis": "/api/v1/school/emis/" + emis + "/"
+        };
+
+        var data_girls = {
+            "gender": "girls",
+            "total_number_pupils": im.user.answers.perf_learner_girls_total,
+            "phonetic_awareness": im.user.answers.perf_learner_girls_phonics,
+            "vocabulary": im.user.answers.perf_learner_girls_vocab,
+            "reading_comprehension": im.user.answers.perf_learner_girls_comprehension,
+            "writing_diction": im.user.answers.perf_learner_girls_writing,
+            "outstanding_results": im.user.answers.perf_learner_girls_outstanding,
+            "desirable_results": im.user.answers.perf_learner_girls_desirable,
+            "minimum_results": im.user.answers.perf_learner_girls_minimum,
+            "below_minimum_results": im.user.answers.perf_learner_girls_below_minimum,
+            "emis": "/api/v1/school/emis/" + emis + "/"
+        };
+
+        return {boys: data_boys, girls: data_girls};
     }
 
 };
@@ -506,7 +538,8 @@ go.app = function() {
         });
 
         self.states.add('perf_learner_girls_writing', function(name) {
-            return go.lp.perf_learner_girls_writing(name, $, self.im.user.answers.perf_learner_girls_total);
+            return go.lp.perf_learner_girls_writing(name, $, self.im.user.answers.perf_learner_girls_total, 
+                                                    self.contact, self.im);
         });
 
         self.states.add('perf_learner_completed', function(name) {

@@ -522,9 +522,9 @@ go.cm = function() {
 go.lp = function() {
 
     var vumigo = require('vumigo_v02');
+    var _ = require('lodash');
     var FreeText = vumigo.states.FreeText;
     var ChoiceState = vumigo.states.ChoiceState;
-    // var EndState = vumigo.states.EndState;
     var Choice = vumigo.states.Choice;
 
 
@@ -1109,7 +1109,7 @@ go.lp = function() {
             });
         },
 
-        perf_learner_girls_writing: function(name, $, girls_total) {
+        perf_learner_girls_writing: function(name, $, girls_total, contact, im) {
             var error = $("Please provide a valid number value for total girls achieving 2 out" +
                         " of 4 correct answers for Writing.");
 
@@ -1125,8 +1125,30 @@ go.lp = function() {
                     }
                 },
 
-                next: function(content) {
-                    return 'perf_learner_completed';
+                next: function() {
+                    var emis = contact.extra.rts_emis;
+                    var id = contact.extra.rts_id;
+                    var data = go.utils.performance_data_learner_collect(emis, im);
+
+                    if (_.isUndefined(contact.extra.rts_official_district_id)) {
+                        // is head teacher
+                        data.boys.created_by = "/api/v1/data/headteacher/" + id + "/";
+                        data.girls.created_by = "/api/v1/data/headteacher/" + id + "/";
+                    } else {
+                        // is district admin
+                        data.boys.created_by_da = "/api/v1/district_admin/" + id + "/";
+                        data.girls.created_by_da = "/api/v1/district_admin/" + id + "/";
+                    }
+
+                    return go.utils
+                        .cms_post("data/learnerperformance/", data.boys, im)
+                        .then(function() {
+                            return go.utils
+                                .cms_post("data/learnerperformance/", data.girls, im)
+                                .then(function() {
+                                    return 'perf_learner_completed';
+                                });
+                        });
                 }
             });
         },
@@ -1454,6 +1476,38 @@ go.utils = {
         };
 
         return school_data;
+    },
+
+    performance_data_learner_collect: function(emis, im){
+        var data_boys = {
+            "gender": "boys",
+            "total_number_pupils": im.user.answers.perf_learner_boys_total,
+            "phonetic_awareness": im.user.answers.perf_learner_boys_phonics,
+            "vocabulary": im.user.answers.perf_learner_boys_vocab,
+            "reading_comprehension": im.user.answers.perf_learner_boys_comprehension,
+            "writing_diction": im.user.answers.perf_learner_boys_writing,
+            "outstanding_results": im.user.answers.perf_learner_boys_outstanding,
+            "desirable_results": im.user.answers.perf_learner_boys_desirable,
+            "minimum_results": im.user.answers.perf_learner_boys_minimum,
+            "below_minimum_results": im.user.answers.perf_learner_boys_below_minimum,
+            "emis": "/api/v1/school/emis/" + emis + "/"
+        };
+
+        var data_girls = {
+            "gender": "girls",
+            "total_number_pupils": im.user.answers.perf_learner_girls_total,
+            "phonetic_awareness": im.user.answers.perf_learner_girls_phonics,
+            "vocabulary": im.user.answers.perf_learner_girls_vocab,
+            "reading_comprehension": im.user.answers.perf_learner_girls_comprehension,
+            "writing_diction": im.user.answers.perf_learner_girls_writing,
+            "outstanding_results": im.user.answers.perf_learner_girls_outstanding,
+            "desirable_results": im.user.answers.perf_learner_girls_desirable,
+            "minimum_results": im.user.answers.perf_learner_girls_minimum,
+            "below_minimum_results": im.user.answers.perf_learner_girls_below_minimum,
+            "emis": "/api/v1/school/emis/" + emis + "/"
+        };
+
+        return {boys: data_boys, girls: data_girls};
     }
 
 };
@@ -1781,7 +1835,8 @@ go.app = function() {
         });
 
         self.states.add('perf_learner_girls_writing', function(name) {
-            return go.lp.perf_learner_girls_writing(name, $, self.im.user.answers.perf_learner_girls_total);
+            return go.lp.perf_learner_girls_writing(name, $, self.im.user.answers.perf_learner_girls_total, 
+                                                    self.contact, self.im);
         });
 
         self.states.add('perf_learner_completed', function(name) {

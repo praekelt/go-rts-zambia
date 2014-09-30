@@ -1,9 +1,9 @@
 go.lp = function() {
 
     var vumigo = require('vumigo_v02');
+    var _ = require('lodash');
     var FreeText = vumigo.states.FreeText;
     var ChoiceState = vumigo.states.ChoiceState;
-    // var EndState = vumigo.states.EndState;
     var Choice = vumigo.states.Choice;
 
 
@@ -588,7 +588,7 @@ go.lp = function() {
             });
         },
 
-        perf_learner_girls_writing: function(name, $, girls_total) {
+        perf_learner_girls_writing: function(name, $, girls_total, contact, im) {
             var error = $("Please provide a valid number value for total girls achieving 2 out" +
                         " of 4 correct answers for Writing.");
 
@@ -604,8 +604,30 @@ go.lp = function() {
                     }
                 },
 
-                next: function(content) {
-                    return 'perf_learner_completed';
+                next: function() {
+                    var emis = contact.extra.rts_emis;
+                    var id = contact.extra.rts_id;
+                    var data = go.utils.performance_data_learner_collect(emis, im);
+
+                    if (_.isUndefined(contact.extra.rts_official_district_id)) {
+                        // is head teacher
+                        data.boys.created_by = "/api/v1/data/headteacher/" + id + "/";
+                        data.girls.created_by = "/api/v1/data/headteacher/" + id + "/";
+                    } else {
+                        // is district admin
+                        data.boys.created_by_da = "/api/v1/district_admin/" + id + "/";
+                        data.girls.created_by_da = "/api/v1/district_admin/" + id + "/";
+                    }
+
+                    return go.utils
+                        .cms_post("data/learnerperformance/", data.boys, im)
+                        .then(function() {
+                            return go.utils
+                                .cms_post("data/learnerperformance/", data.girls, im)
+                                .then(function() {
+                                    return 'perf_learner_completed';
+                                });
+                        });
                 }
             });
         },
