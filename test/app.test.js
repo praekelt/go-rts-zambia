@@ -1299,7 +1299,7 @@ describe("when a registered user logs on", function() {
                             .inputs(
                                 'start',
                                 '2',  // initial_state_district_official
-                                '5555555'
+                                '5555555'  // add_emis_perf_learner_boys_total
                             )
                             .check.interaction({
                                 state: 'add_emis_perf_learner_boys_total',
@@ -1318,7 +1318,7 @@ describe("when a registered user logs on", function() {
                             .inputs(
                                 'start',
                                 '2',  // initial_state_district_official
-                                '0001'
+                                '0001'  // add_emis_perf_learner_boys_total
                             )
                             .check.interaction({
                                 state: 'perf_learner_boys_total',
@@ -1334,7 +1334,7 @@ describe("when a registered user logs on", function() {
                             .inputs(
                                 'start',
                                 '2',  // initial_state_district_official
-                                '0001'
+                                '0001'  // add_emis_perf_learner_boys_total
                             )
                             .check(function(api) {
                                 var contact = api.contacts.store[0];
@@ -1349,11 +1349,40 @@ describe("when a registered user logs on", function() {
             // test one full registration as a district official to check data saving
             describe("when the district official user completes a successful report", function() {
                 it("should ask if they want to return to main menu or exit", function() {
-
-                });
-                
-                it("should save all the data", function() {
-
+                    return tester
+                        .setup.user.addr('097444')
+                        .inputs(
+                            'start',
+                            '2',  // initial_state_district_official
+                            '0001',  // add_emis_perf_learner_boys_total
+                            '52', // perf_learner_boys_total
+                            '10',  // perf_learner_boys_outstanding
+                            '15',  // perf_learner_boys_desirable
+                            '20',  // perf_learner_boys_minimum
+                            '7',  // perf_learner_boys_below_minimum
+                            '49',  // perf_learner_girls_total
+                            '10',  // perf_learner_girls_outstanding
+                            '15',  // perf_learner_girls_desirable
+                            '20',  // perf_learner_girls_minimum
+                            '4',  // perf_learner_girls_below_minimum
+                            '31',  // perf_learner_boys_phonics
+                            '32',  // perf_learner_girls_phonics
+                            '33',  // perf_learner_boys_vocab
+                            '34',  // perf_learner_girls_vocab
+                            '35',  // perf_learner_boys_comprehension
+                            '36',  // perf_learner_girls_comprehension
+                            '37',  // perf_learner_boys_writing
+                            '38'  // perf_learner_girls_writing
+                        )
+                        .check.interaction({
+                            state: 'perf_learner_completed',
+                            reply: [
+                                "Congratulations. You have finished reporting on the learner assessment.",
+                                "1. Go back to the main menu.",
+                                "2. Exit."
+                            ].join('\n')
+                        })
+                        .run();
                 });
             });
 
@@ -2447,10 +2476,6 @@ describe("when a registered user logs on", function() {
                                 ].join('\n')
                             })
                             .run();
-                    });
-
-                    it.skip("should save learner performance data", function() {
-
                     });
                 });
 
