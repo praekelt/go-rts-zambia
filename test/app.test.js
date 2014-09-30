@@ -1361,7 +1361,18 @@ describe("when a registered user logs on", function() {
 
         describe("if the user is a head teacher", function() {
             it("should ask for boys total", function() {
-
+                return tester
+                    .setup.user.addr('097555')
+                    .inputs(
+                        'start',
+                        '2'  // initial_state_head_teacher
+                    )
+                    .check.interaction({
+                        state: 'perf_learner_boys_total',
+                        reply:
+                            "How many boys took part in the learner assessment?"
+                    })
+                    .run();
             });
 
             // test step by step flow as a head teacher
@@ -1371,14 +1382,38 @@ describe("when a registered user logs on", function() {
                 
                 describe("if the number validates", function() {
                     it("should ask for boys outstanding results", function() {
-
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52'  // perf_learner_boys_total
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_outstanding',
+                                reply:
+                                    "In total, how many boys achieved 16 out of 20 or more?"
+                            })
+                            .run();
                     });
                 });
 
                 // test for numeric value
                 describe("if the number does not validate", function() {
                     it("should ask for boys total again", function() {
-
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                'fifty-two'  // perf_learner_boys_total
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_total',
+                                reply:
+                                    "Please provide a number value for total boys assessed."
+                            })
+                            .run();
                     });
                 });
             });
@@ -1389,17 +1424,61 @@ describe("when a registered user logs on", function() {
                 
                 describe("if the number validates", function() {
                     it("should ask for boys desirable results", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10'  // perf_learner_boys_outstanding
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_desirable',
+                                reply:
+                                    "In total, how many boys achieved between 12 and 15 out of 20?"
+                            })
+                            .run();
 
                     });
                 });
 
                 describe("if boys outstanding results > boys total", function() {
                     it("should display error message", function() {
-
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '60'  // perf_learner_boys_outstanding
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_calc_error',
+                                reply: [
+                                    "You've entered results for 60 boys (60), but " +
+                                    "you initially indicated 52 boys participants. Please try again.",
+                                    "1. Continue"
+                                ].join('\n')
+                            })
+                            .run();
                     });
 
-                    it("should go back to boys total", function() {
-
+                    it("should go back to boys total upon choosing to continue", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '60',  // perf_learner_boys_outstanding
+                                '1'  // perf_learner_boys_calc_error
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_total',
+                                reply:
+                                    "How many boys took part in the learner assessment?"
+                            })
+                            .run();
                     });
                 });
             });

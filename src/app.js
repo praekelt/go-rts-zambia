@@ -190,6 +190,7 @@ go.app = function() {
 
     var GoApp = App.extend(function(self) {
         App.call(self, 'initial_state');
+        var $ = self.$;
 
         self.init = function() {
             self.env = self.im.config.env;
@@ -413,14 +414,24 @@ go.app = function() {
         // --------------------------
 
         self.states.add('add_emis_perf_learner_boys_total', function(name) {
-            return go.lp.add_emis_perf_learner_boys_total(name, self.array_emis, self.contact, self.im);
+            return go.lp.add_emis_perf_learner_boys_total(name, $, self.array_emis, self.contact, self.im);
         });
 
         self.states.add('perf_learner_boys_total', function(name) {
-            return go.lp.perf_learner_boys_total(name);
+            return go.lp.perf_learner_boys_total(name, $);
         });
 
+        self.states.add('perf_learner_boys_calc_error', function(name, opts) {
+            return go.lp.perf_learner_boys_calc_error(name, $, opts);
+        });
 
+        self.states.add('perf_learner_boys_outstanding', function(name, opts) {
+            return go.lp.perf_learner_boys_outstanding(name, $, opts);
+        });
+
+        self.states.add('perf_learner_boys_desirable', function(name, opts) {
+            return go.lp.perf_learner_boys_desirable(name, $, opts);
+        });
 
 
 
