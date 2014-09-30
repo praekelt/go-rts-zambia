@@ -476,7 +476,129 @@ module.exports = function() {
                 "girls": 51
             }
         }
-    }
+    },
+
+
+
+    // cms_learner_performance
+    // -----------------------
+
+        // head teacher boys
+    {
+        "request": {
+            "method": "POST",
+            "headers": {
+                'Content-Type': ['application/json']
+            },
+            "url": "http://qa/api/v1/data/learnerperformance/",
+            "data": {
+                "below_minimum_results": "7",
+                "created_by": "/api/v1/data/headteacher/555/",
+                "desirable_results": "15",
+                "emis": "/api/v1/school/emis/45/",
+                "gender": "boys",
+                "minimum_results": "20",
+                "outstanding_results": "10",
+                "phonetic_awareness": "31",
+                "reading_comprehension": "35",
+                "total_number_pupils": "52",
+                "vocabulary": "33",
+                "writing_diction": "37"
+            }
+        },
+        "response": {
+            "code": 201,
+            "data": {}
+        }
+    },
+
+        // head teacher girls
+    {
+        "request": {
+            "method": "POST",
+            "headers": {
+                'Content-Type': ['application/json']
+            },
+            "url": "http://qa/api/v1/data/learnerperformance/",
+            "data": {
+                "below_minimum_results": "4",
+                "created_by": "/api/v1/data/headteacher/555/",
+                "desirable_results": "15",
+                "emis": "/api/v1/school/emis/45/",
+                "gender": "girls",
+                "minimum_results": "20",
+                "outstanding_results": "10",
+                "phonetic_awareness": "32",
+                "reading_comprehension": "36",
+                "total_number_pupils": "49",
+                "vocabulary": "34",
+                "writing_diction": "38"
+            }
+        },
+        "response": {
+            "code": 201,
+            "data": {}
+        }
+    },
+
+
+        // district admin boys
+    {
+        "request": {
+            "method": "POST",
+            "headers": {
+                'Content-Type': ['application/json']
+            },
+            "url": "http://qa/api/v1/data/learnerperformance/",
+            "data": {
+                "below_minimum_results": "7",
+                "created_by_da": "/api/v1/district_admin/444/",
+                "desirable_results": "15",
+                "emis": "/api/v1/school/emis/0001/",
+                "gender": "boys",
+                "minimum_results": "20",
+                "outstanding_results": "10",
+                "phonetic_awareness": "31",
+                "reading_comprehension": "35",
+                "total_number_pupils": "52",
+                "vocabulary": "33",
+                "writing_diction": "37"
+            }
+        },
+        "response": {
+            "code": 201,
+            "data": {}
+        }
+    },
+
+        // district admin girls
+    {
+        "request": {
+            "method": "POST",
+            "headers": {
+                'Content-Type': ['application/json']
+            },
+            "url": "http://qa/api/v1/data/learnerperformance/",
+            "data": {
+                "below_minimum_results": "4",
+                "created_by_da": "/api/v1/district_admin/444/",
+                "desirable_results": "15",
+                "emis": "/api/v1/school/emis/0001/",
+                "gender": "girls",
+                "minimum_results": "20",
+                "outstanding_results": "10",
+                "phonetic_awareness": "32",
+                "reading_comprehension": "36",
+                "total_number_pupils": "49",
+                "vocabulary": "34",
+                "writing_diction": "38"
+            }
+        },
+        "response": {
+            "code": 201,
+            "data": {}
+        }
+    },
 
     ];
 };
