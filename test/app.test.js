@@ -69,7 +69,7 @@ describe("app", function() {
 
 // uu = unregistered user
 
-describe("when an unregistered user logs on", function() {
+describe.skip("when an unregistered user logs on", function() {
     
     describe("when uu starts a session", function() {
         it("should ask them want they want to do", function() {
@@ -1264,6 +1264,1090 @@ describe("when a registered user logs on", function() {
                     ].join('\n')
                 })
                 .run();
+        });
+    });
+
+
+
+    // TEACHER PERFORMANCE MONITORING
+    // ------------------------------
+
+    describe("when the user chooses to report on teacher performance", function() {
+        describe("if the user is a district official", function() {
+            it("should ask for an emis code", function() {
+                return tester
+                    .setup.user.addr('097444')
+                    .inputs(
+                        'start',
+                        '1'  // initial_state_district_official
+                    )
+                    .check.interaction({
+                        state: 'add_emis_perf_teacher_ts_number',
+                        reply: 
+                            "Please enter the school's EMIS number that you would like " +
+                            "to report on. This should have 4-6 digits e.g 4351."
+                    })
+                    .run();
+            });
+
+            describe("when the district official user enters an emis", function() {
+
+                describe("if the emis does not validate", function() {
+                    it("should ask for the emis again", function() {
+                        return tester
+                            .setup.user.addr('097444')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_district_official
+                                '5555555'  // add_emis_perf_teacher_ts_number
+                            )
+                            .check.interaction({
+                                state: 'add_emis_perf_teacher_ts_number',
+                                reply:
+                                    "The emis does not exist, please try again. This " +
+                                    "should have 4-6 digits e.g 4351."
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if the emis validates", function() {
+                    it("should ask for the teacher's TS number", function() {
+                        return tester
+                            .setup.user.addr('097444')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_district_official
+                                '0001'  // add_emis_perf_teacher_ts_number
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_ts_number',
+                                reply:
+                                    "Please enter the teacher's TS number."
+                            })
+                            .run();
+                    });
+
+                    it("should save the emis to the district official user's contact", function() {
+                        return tester
+                            .setup.user.addr('097444')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_district_official
+                                '0001'  // add_emis_perf_teacher_ts_number
+                            )
+                            .check(function(api) {
+                                var contact = api.contacts.store[0];
+                                assert.equal(contact.extra.rts_emis, '0001');
+                            })
+                            .run();
+                    });
+                });
+
+            });
+
+            // test one full registration as a district official
+            describe("when the district official user completes a successful report", function() {
+                it("should ask what they want to do", function() {
+                    return tester
+                        .setup.user.addr('097444')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state_district_official
+                            '0001',  // add_emis_perf_teacher_ts_number
+                            '106',  // perf_teacher_ts_number
+                            '2',  // perf_teacher_gender
+                            '30',  // perf_teacher_age
+                            '3',  // perf_teacher_academic_level
+                            '1',  // perf_teacher_years_experience
+                            '40',  // perf_teacher_g2_pupils_present
+                            '50',  // perf_teacher_g2_pupils_registered
+                            '8',  // perf_teacher_classroom_environment_score
+                            '7',  // perf_teacher_t_l_materials
+                            '90',  // perf_teacher_pupils_books_number
+                            '6',  // perf_teacher_pupils_materials_score
+                            '14',  // perf_teacher_reading_lesson
+                            '17',  // perf_teacher_pupil_engagement_score
+                            '16',  // perf_teacher_attitudes_and_beliefs
+                            '3',  // perf_teacher_training_subtotal
+                            '10',  // perf_teacher_reading_assessment
+                            '9'  // perf_teacher_reading_total
+                        )
+                        .check.interaction({
+                            state: 'perf_teacher_completed',
+                            reply: [
+                                "Congratulations, you have finished reporting on this teacher.",
+                                "1. Add another teacher.",
+                                "2. Go back to the main menu.",
+                                "3. Exit"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+        });
+
+        describe("if the user is a head teacher", function() {
+            it("should ask for teacher TS number", function() {
+                return tester
+                    .setup.user.addr('097555')
+                    .inputs(
+                        'start',
+                        '1'  // initial_state_head_teacher
+                    )
+                    .check.interaction({
+                        state: 'perf_teacher_ts_number',
+                        reply:
+                            "Please enter the teacher's TS number."
+                    })
+                    .run();
+            });
+
+            // test step by step flow as a head teacher
+
+            // ts number
+            describe("when the user enters TS number", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for teacher gender", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106'  // perf_teacher_ts_number
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_gender',
+                                reply: [
+                                    "What is the gender of the teacher?",
+                                    "1. Male",
+                                    "2. Female"
+                                ].join('\n')
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if the number does not validate", function() {
+                    it("should ask for TS number again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                'hundreed'  // perf_teacher_ts_number
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_ts_number',
+                                reply:
+                                    "Please provide a valid number value for the teacher's " +
+                                    "TS number."
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // gender
+            describe("when the user enters gender", function() {
+                it("should ask for the teacher's age", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state_head_teacher
+                            '106',  // perf_teacher_ts_number
+                            '2'  // perf_teacher_gender
+                        )
+                        .check.interaction({
+                            state: 'perf_teacher_age',
+                            reply: 
+                                "Please enter the teacher's age in years e.g. 26."
+                        })
+                        .run();
+                });
+            });
+
+            // age
+            describe("when the user enters teacher age", function() {
+
+                describe("if the age validates", function() {
+                    it("should ask for teacher academic level", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30'  // perf_teacher_age
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_academic_level',
+                                reply: [
+                                    "What is the teacher's highest education level?",
+                                    "1. Gr 7",
+                                    "2. Gr 9",
+                                    "3. Gr 12",
+                                    "4. PTC",
+                                    "5. PTD",
+                                    "6. Dip Ed",
+                                    "7. Other diploma",
+                                    "8. BA Degree",
+                                    "9. MA Degree",
+                                    "10. Other"
+                                ].join('\n')
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if the age is too low", function() {
+                    it("should ask for age again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '19'  // perf_teacher_age
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_age',
+                                reply:
+                                    "Please provide a valid number value for the teacher's age."
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if the age is too high", function() {
+                    it("should ask for age again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '76'  // perf_teacher_age
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_age',
+                                reply:
+                                    "Please provide a valid number value for the teacher's age."
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // academic level
+            describe("when the user enters academic level", function() {
+                it("should ask for teacher's years experience", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state_head_teacher
+                            '106',  // perf_teacher_ts_number
+                            '2',  // perf_teacher_gender
+                            '30',  // perf_teacher_age
+                            '3'  // perf_teacher_academic_level
+                        )
+                        .check.interaction({
+                            state: 'perf_teacher_years_experience',
+                            reply: [
+                                "How many years of teaching experience does this teacher have?",
+                                "1. 0 - 3 years",
+                                "2. 4 - 8 years",
+                                "3. 9  - 12 years",
+                                "4. 13 years or more"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            // years experience
+            describe("when the user enters years of experience", function() {
+                it("should ask for number of children present", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state_head_teacher
+                            '106',  // perf_teacher_ts_number
+                            '2',  // perf_teacher_gender
+                            '30',  // perf_teacher_age
+                            '3',  // perf_teacher_academic_level
+                            '1'  // perf_teacher_years_experience
+                        )
+                        .check.interaction({
+                            state: 'perf_teacher_g2_pupils_present',
+                            reply: 
+                                "How many children were PRESENT during the observed lesson?"
+                        })
+                        .run();
+                });
+            });
+
+            // children present
+            describe("when the user enters number of children present", function() {
+                it("should ask for number of children enrolled", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state_head_teacher
+                            '106',  // perf_teacher_ts_number
+                            '2',  // perf_teacher_gender
+                            '30',  // perf_teacher_age
+                            '3',  // perf_teacher_academic_level
+                            '1',  // perf_teacher_years_experience
+                            '40'  // perf_teacher_g2_pupils_present
+                        )
+                        .check.interaction({
+                            state: 'perf_teacher_g2_pupils_registered',
+                            reply: 
+                                "How many children are ENROLLED in the Grade 2 class that " +
+                                "was observed?"
+                        })
+                        .run();
+                });
+            });
+
+            // children enrolled
+            describe("when the user enters number of children enrolled", function() {
+                it("should ask for number of children enrolled", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state_head_teacher
+                            '106',  // perf_teacher_ts_number
+                            '2',  // perf_teacher_gender
+                            '30',  // perf_teacher_age
+                            '3',  // perf_teacher_academic_level
+                            '1',  // perf_teacher_years_experience
+                            '40',  // perf_teacher_g2_pupils_present
+                            '50'  // perf_teacher_g2_pupils_registered
+                        )
+                        .check.interaction({
+                            state: 'perf_teacher_classroom_environment_score',
+                            reply: 
+                                "Enter the subtotal that the teacher achieved during the " +
+                                "classroom observation for Section 2 (Classroom Environment)."
+                        })
+                        .run();
+                });
+            });
+
+            // environment score
+            describe("when the user enters environment score", function() {
+
+                describe("if the environment score validates", function() {
+                    it("should ask for T&L Materials score", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '8'  // perf_teacher_classroom_environment_score
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_t_l_materials',
+                                reply: 
+                                    "Enter the subtotal that the teacher achieved during the classroom " +
+                                    "observation for Section 3 (Teaching and Learning Materials).",
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if the environment score is too high", function() {
+                    it("should ask for environment score again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '9'  // perf_teacher_classroom_environment_score
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_classroom_environment_score',
+                                reply:
+                                    "Please provide a valid number value for the Classroom " +
+                                    "Environment subtotal."
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // tl materials score
+            describe("when the user enters tl materials score", function() {
+
+                describe("if the tl materials score validates", function() {
+                    it("should ask for number of text books", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '8',  // perf_teacher_classroom_environment_score
+                                '7'  // perf_teacher_t_l_materials
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_pupils_books_number',
+                                reply: 
+                                    "Enter the number of learners' books (text books) for " +
+                                    "literacy that were available in the classroom during the " +
+                                    "lesson observation.",
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if the tl materials score is too high", function() {
+                    it("should ask for tl materials score again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '9',  // perf_teacher_classroom_environment_score
+                                '8'  // perf_teacher_t_l_materials
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_t_l_materials',
+                                reply:
+                                    "Please provide a valid number value for the Teaching and " +
+                                    "Learning Materials subtotal."
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // number of books
+            describe("when the user enters number of books", function() {
+                it("should ask for pupils materials score", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state_head_teacher
+                            '106',  // perf_teacher_ts_number
+                            '2',  // perf_teacher_gender
+                            '30',  // perf_teacher_age
+                            '3',  // perf_teacher_academic_level
+                            '1',  // perf_teacher_years_experience
+                            '40',  // perf_teacher_g2_pupils_present
+                            '50',  // perf_teacher_g2_pupils_registered
+                            '8',  // perf_teacher_classroom_environment_score
+                            '7',  // perf_teacher_t_l_materials
+                            '90'  // perf_teacher_pupils_books_number
+                        )
+                        .check.interaction({
+                            state: 'perf_teacher_pupils_materials_score',
+                            reply: 
+                                "Enter the subtotal that the teacher achieved during the " +
+                                "classroom observation for Section 4 (Learner Materials)."
+                        })
+                        .run();
+                });
+            });
+
+            // pupils materials score
+            describe("when the user enters pupils materials score", function() {
+
+                describe("if the pupils materials score validates", function() {
+                    it("should ask for pupil reading score", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '8',  // perf_teacher_classroom_environment_score
+                                '7',  // perf_teacher_t_l_materials
+                                '90',  // perf_teacher_pupils_books_number
+                                '6'  // perf_teacher_pupils_materials_score
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_reading_lesson',
+                                reply: 
+                                    "Enter the subtotal that the teacher achieved during the " +
+                                    "classroom observation for Section 5 (Time on Task and " +
+                                    "Reading Practice)"
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if the pupils materials score is too high", function() {
+                    it("should ask for pupils materials score again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '9',  // perf_teacher_classroom_environment_score
+                                '8',  // perf_teacher_t_l_materials
+                                '90',  // perf_teacher_pupils_books_number
+                                '7'  // perf_teacher_pupils_materials_score
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_pupils_materials_score',
+                                reply:
+                                    "Please provide a valid number value for the Learner " +
+                                    "Materials subtotal."
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // pupils reading score
+            describe("when the user enters pupils reading score", function() {
+
+                describe("if the pupils reading score validates", function() {
+                    it("should ask for pupil engagement score", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '8',  // perf_teacher_classroom_environment_score
+                                '7',  // perf_teacher_t_l_materials
+                                '90',  // perf_teacher_pupils_books_number
+                                '6',  // perf_teacher_pupils_materials_score
+                                '14'  // perf_teacher_reading_lesson
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_pupil_engagement_score',
+                                reply: 
+                                    "Enter the subtotal that the teacher achieved during the " +
+                                    "classroom observation for Section 6 (Learner Engagement)",
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if the pupils reading score is too high", function() {
+                    it("should ask for pupils reading score again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '9',  // perf_teacher_classroom_environment_score
+                                '8',  // perf_teacher_t_l_materials
+                                '90',  // perf_teacher_pupils_books_number
+                                '6',  // perf_teacher_pupils_materials_score
+                                '15'  // perf_teacher_reading_lesson
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_reading_lesson',
+                                reply:
+                                    "Please provide a valid number value for the Time on Task " +
+                                    "and Reading Practice subtotal."
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // pupils engagement score
+            describe("when the user enters pupils engagement score", function() {
+
+                describe("if the pupils engagement score validates", function() {
+                    it("should ask for attitudes & beliefs score", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '8',  // perf_teacher_classroom_environment_score
+                                '7',  // perf_teacher_t_l_materials
+                                '90',  // perf_teacher_pupils_books_number
+                                '6',  // perf_teacher_pupils_materials_score
+                                '14',  // perf_teacher_reading_lesson
+                                '17'  // perf_teacher_pupil_engagement_score
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_attitudes_and_beliefs',
+                                reply: 
+                                    "Enter the subtotal that the teacher achieved during the " +
+                                    "interview on Section 7.1. (Teacher Attitudes and Beliefs)",
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if the pupils engagement score is too high", function() {
+                    it("should ask for pupils engagement score again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '9',  // perf_teacher_classroom_environment_score
+                                '8',  // perf_teacher_t_l_materials
+                                '90',  // perf_teacher_pupils_books_number
+                                '6',  // perf_teacher_pupils_materials_score
+                                '14',  // perf_teacher_reading_lesson
+                                '18'  // perf_teacher_pupil_engagement_score
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_pupil_engagement_score',
+                                reply:
+                                    "Please provide a valid number value for the Learner " +
+                                    "Engagement subtotal."
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // teacher attitudes and beliefs
+            describe("when the user enters teacher attitudes and beliefs score", function() {
+
+                describe("if the attitudes and beliefs score validates", function() {
+                    it("should ask for teacher training score", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '8',  // perf_teacher_classroom_environment_score
+                                '7',  // perf_teacher_t_l_materials
+                                '90',  // perf_teacher_pupils_books_number
+                                '6',  // perf_teacher_pupils_materials_score
+                                '14',  // perf_teacher_reading_lesson
+                                '17',  // perf_teacher_pupil_engagement_score
+                                '16'  // perf_teacher_attitudes_and_beliefs
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_training_subtotal',
+                                reply: 
+                                    "Enter the subtotal that the teacher achieved during the " +
+                                    "interview on Section 7.2. (Teacher Training)",
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if the teacher attitudes and beliefs score is too high", function() {
+                    it("should ask for teacher attitudes and beliefs score again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '9',  // perf_teacher_classroom_environment_score
+                                '8',  // perf_teacher_t_l_materials
+                                '90',  // perf_teacher_pupils_books_number
+                                '6',  // perf_teacher_pupils_materials_score
+                                '14',  // perf_teacher_reading_lesson
+                                '17',  // perf_teacher_pupil_engagement_score
+                                '17'  // perf_teacher_attitudes_and_beliefs
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_attitudes_and_beliefs',
+                                reply:
+                                    "Please provide a valid number value for the Teacher " +
+                                    "Attitudes and Beliefs subtotal."
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // teacher training score
+            describe("when the user enters teacher training score", function() {
+
+                describe("if the teacher training score validates", function() {
+                    it("should ask for teacher reading assessment score", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '8',  // perf_teacher_classroom_environment_score
+                                '7',  // perf_teacher_t_l_materials
+                                '90',  // perf_teacher_pupils_books_number
+                                '6',  // perf_teacher_pupils_materials_score
+                                '14',  // perf_teacher_reading_lesson
+                                '17',  // perf_teacher_pupil_engagement_score
+                                '16',  // perf_teacher_attitudes_and_beliefs
+                                '3'  // perf_teacher_training_subtotal
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_reading_assessment',
+                                reply: 
+                                    "Enter the subtotal that the teacher achieved during the " +
+                                    "interview on Section 7.3. (Reading Assessment).",
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if the teacher training score is too high", function() {
+                    it("should ask for teacher training score again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '9',  // perf_teacher_classroom_environment_score
+                                '8',  // perf_teacher_t_l_materials
+                                '90',  // perf_teacher_pupils_books_number
+                                '6',  // perf_teacher_pupils_materials_score
+                                '14',  // perf_teacher_reading_lesson
+                                '17',  // perf_teacher_pupil_engagement_score
+                                '16',  // perf_teacher_attitudes_and_beliefs
+                                '4'  // perf_teacher_training_subtotal
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_training_subtotal',
+                                reply:
+                                    "Please provide a valid number value for the Teacher " +
+                                    "Training interview subtotal."
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // teacher reading assessment
+            describe("when the user enters teacher reading assessment score", function() {
+
+                describe("if the teacher reading assessment score validates", function() {
+                    it("should ask for number of reading pupils", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '8',  // perf_teacher_classroom_environment_score
+                                '7',  // perf_teacher_t_l_materials
+                                '90',  // perf_teacher_pupils_books_number
+                                '6',  // perf_teacher_pupils_materials_score
+                                '14',  // perf_teacher_reading_lesson
+                                '17',  // perf_teacher_pupil_engagement_score
+                                '16',  // perf_teacher_attitudes_and_beliefs
+                                '3',  // perf_teacher_training_subtotal
+                                '10'  // perf_teacher_reading_assessment
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_reading_total',
+                                reply: 
+                                    "According to your assessment records, how many of the " +
+                                    "pupils in the class that was observed have broken " +
+                                    "through/can read?",
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if the teacher reading assessment score is too high", function() {
+                    it("should ask for teacher reading assessment score again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '9',  // perf_teacher_classroom_environment_score
+                                '8',  // perf_teacher_t_l_materials
+                                '90',  // perf_teacher_pupils_books_number
+                                '6',  // perf_teacher_pupils_materials_score
+                                '14',  // perf_teacher_reading_lesson
+                                '17',  // perf_teacher_pupil_engagement_score
+                                '16',  // perf_teacher_attitudes_and_beliefs
+                                '3',  // perf_teacher_training_subtotal
+                                '11'  // perf_teacher_reading_assessment
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_reading_assessment',
+                                reply:
+                                    "Please provide a valid number value for the Reading " +
+                                    "Assessment subtotal."
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // teacher reading assessment
+            describe("when the user enters number of reading pupils", function() {
+                it("should congratulate them and ask them what they want to do", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state_head_teacher
+                            '106',  // perf_teacher_ts_number
+                            '2',  // perf_teacher_gender
+                            '30',  // perf_teacher_age
+                            '3',  // perf_teacher_academic_level
+                            '1',  // perf_teacher_years_experience
+                            '40',  // perf_teacher_g2_pupils_present
+                            '50',  // perf_teacher_g2_pupils_registered
+                            '8',  // perf_teacher_classroom_environment_score
+                            '7',  // perf_teacher_t_l_materials
+                            '90',  // perf_teacher_pupils_books_number
+                            '6',  // perf_teacher_pupils_materials_score
+                            '14',  // perf_teacher_reading_lesson
+                            '17',  // perf_teacher_pupil_engagement_score
+                            '16',  // perf_teacher_attitudes_and_beliefs
+                            '3',  // perf_teacher_training_subtotal
+                            '10',  // perf_teacher_reading_assessment
+                            '9'  // perf_teacher_reading_total
+                        )
+                        .check.interaction({
+                            state: 'perf_teacher_completed',
+                            reply: [
+                                "Congratulations, you have finished reporting on this teacher.",
+                                "1. Add another teacher.",
+                                "2. Go back to the main menu.",
+                                "3. Exit"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            // after completion
+            describe("when the user has completed the report", function() {
+                
+                describe("if they choose to report on another teacher", function() {
+                    it("should ask for the teacher TS number", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '8',  // perf_teacher_classroom_environment_score
+                                '7',  // perf_teacher_t_l_materials
+                                '90',  // perf_teacher_pupils_books_number
+                                '6',  // perf_teacher_pupils_materials_score
+                                '14',  // perf_teacher_reading_lesson
+                                '17',  // perf_teacher_pupil_engagement_score
+                                '16',  // perf_teacher_attitudes_and_beliefs
+                                '3',  // perf_teacher_training_subtotal
+                                '10',  // perf_teacher_reading_assessment
+                                '9',  // perf_teacher_reading_total
+                                '1'  // perf_teacher_completed
+                            )
+                            .check.interaction({
+                                state: 'perf_teacher_ts_number',
+                                reply: 
+                                    "Please enter the teacher's TS number."
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if they choose to go to the main menu", function() {
+                    it("should ask what the want to do", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '8',  // perf_teacher_classroom_environment_score
+                                '7',  // perf_teacher_t_l_materials
+                                '90',  // perf_teacher_pupils_books_number
+                                '6',  // perf_teacher_pupils_materials_score
+                                '14',  // perf_teacher_reading_lesson
+                                '17',  // perf_teacher_pupil_engagement_score
+                                '16',  // perf_teacher_attitudes_and_beliefs
+                                '3',  // perf_teacher_training_subtotal
+                                '10',  // perf_teacher_reading_assessment
+                                '9',  // perf_teacher_reading_total
+                                '2'  // perf_teacher_completed
+                            )
+                            .check.interaction({
+                                state: 'initial_state_head_teacher',
+                                reply: [
+                                    'What would you like to do?',
+                                    '1. Report on teacher performance.',
+                                    '2. Report on learner performance.',
+                                    '3. Change my school.',
+                                    "4. Update my school's registration data."
+                                ].join('\n')
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if they choose to exit", function() {
+                    it("should thank them and exit", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '1',  // initial_state_head_teacher
+                                '106',  // perf_teacher_ts_number
+                                '2',  // perf_teacher_gender
+                                '30',  // perf_teacher_age
+                                '3',  // perf_teacher_academic_level
+                                '1',  // perf_teacher_years_experience
+                                '40',  // perf_teacher_g2_pupils_present
+                                '50',  // perf_teacher_g2_pupils_registered
+                                '8',  // perf_teacher_classroom_environment_score
+                                '7',  // perf_teacher_t_l_materials
+                                '90',  // perf_teacher_pupils_books_number
+                                '6',  // perf_teacher_pupils_materials_score
+                                '14',  // perf_teacher_reading_lesson
+                                '17',  // perf_teacher_pupil_engagement_score
+                                '16',  // perf_teacher_attitudes_and_beliefs
+                                '3',  // perf_teacher_training_subtotal
+                                '10',  // perf_teacher_reading_assessment
+                                '9',  // perf_teacher_reading_total
+                                '3'  // perf_teacher_completed
+                            )
+                            .check.interaction({
+                                state: 'end_state',
+                                reply:
+                                    "Goodbye! Thank you for using the Gateway."
+                            })
+                            .check.reply.ends_session()
+                            .run();
+                    });
+                });
+                    
+            });
         });
     });
 
