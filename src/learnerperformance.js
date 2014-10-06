@@ -408,7 +408,7 @@ go.lp = function() {
 
                 check: function(content) {
                     if ((go.utils.check_valid_number(content) === false) || 
-                            (Number(boys_total) < Number(content))) {
+                            (parseInt(boys_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
                 },
@@ -429,7 +429,7 @@ go.lp = function() {
 
                 check: function(content) {
                     if ((go.utils.check_valid_number(content) === false) || 
-                            (Number(girls_total) < Number(content))) {
+                            (parseInt(girls_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
                 },
@@ -450,7 +450,7 @@ go.lp = function() {
 
                 check: function(content) {
                     if ((go.utils.check_valid_number(content) === false) || 
-                            (Number(boys_total) < Number(content))) {
+                            (parseInt(boys_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
                 },
@@ -471,7 +471,7 @@ go.lp = function() {
 
                 check: function(content) {
                     if ((go.utils.check_valid_number(content) === false) || 
-                            (Number(girls_total) < Number(content))) {
+                            (parseInt(girls_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
                 },
@@ -492,7 +492,7 @@ go.lp = function() {
 
                 check: function(content) {
                     if ((go.utils.check_valid_number(content) === false) || 
-                            (Number(boys_total) < Number(content))) {
+                            (parseInt(boys_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
                 },
@@ -513,7 +513,7 @@ go.lp = function() {
 
                 check: function(content) {
                     if ((go.utils.check_valid_number(content) === false) || 
-                            (Number(girls_total) < Number(content))) {
+                            (parseInt(girls_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
                 },
@@ -534,7 +534,7 @@ go.lp = function() {
 
                 check: function(content) {
                     if ((go.utils.check_valid_number(content) === false) || 
-                            (Number(boys_total) < Number(content))) {
+                            (parseInt(boys_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
                 },
@@ -555,7 +555,7 @@ go.lp = function() {
 
                 check: function(content) {
                     if ((go.utils.check_valid_number(content) === false) || 
-                            (Number(girls_total) < Number(content))) {
+                            (parseInt(girls_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
                 },
