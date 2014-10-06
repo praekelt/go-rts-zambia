@@ -294,13 +294,13 @@ go.app = function() {
 
         self.states.add('initial_state_unregistered', function(name) {
             return new ChoiceState(name, {
-                question: 'Welcome to the Zambia School Gateway! Options:',
+                question: $('Welcome to the Zambia School Gateway! Options:'),
 
                 choices: [
-                    new Choice("reg_emis", "Register as Head Teacher"),
-                    new Choice("reg_district_official", "Register as District Official"),
-                    new Choice("manage_change_emis_error", "Change my school"),
-                    new Choice("manage_change_msisdn_emis", "Change my primary cell number")
+                    new Choice("reg_emis", $("Register as Head Teacher")),
+                    new Choice("reg_district_official", $("Register as District Official")),
+                    new Choice("manage_change_emis_error", $("Change my school")),
+                    new Choice("manage_change_msisdn_emis", $("Change my primary cell number"))
                 ],
 
                 next: function(choice) {
@@ -320,11 +320,11 @@ go.app = function() {
 
         self.states.add('initial_state_district_official', function(name) {
             return new ChoiceState(name, {
-                question: 'What would you like to do?',
+                question: $('What would you like to do?'),
 
                 choices: [
-                    new Choice("add_emis_perf_teacher_ts_number", "Report on teacher performance."),
-                    new Choice("add_emis_perf_learner_boys_total", "Report on learner performance."),
+                    new Choice("add_emis_perf_teacher_ts_number", $("Report on teacher performance.")),
+                    new Choice("add_emis_perf_learner_boys_total", $("Report on learner performance.")),
                 ],
 
                 next: function(choice) {
@@ -335,13 +335,13 @@ go.app = function() {
 
         self.states.add('initial_state_head_teacher', function(name) {
             return new ChoiceState(name, {
-                question: 'What would you like to do?',
+                question: $('What would you like to do?'),
 
                 choices: [
-                    new Choice("perf_teacher_ts_number", "Report on teacher performance."),
-                    new Choice("perf_learner_boys_total", "Report on learner performance."),
-                    new Choice("manage_change_emis", "Change my school."),
-                    new Choice("manage_update_school_data", "Update my school's registration data.")
+                    new Choice("perf_teacher_ts_number", $("Report on teacher performance.")),
+                    new Choice("perf_learner_boys_total", $("Report on learner performance.")),
+                    new Choice("manage_change_emis", $("Change my school.")),
+                    new Choice("manage_update_school_data", $("Update my school's registration data."))
                 ],
 
                 next: function(choice) {
@@ -352,7 +352,7 @@ go.app = function() {
 
         self.states.add('end_state', function(name) {
             return new EndState(name, {
-                text: "Goodbye! Thank you for using the Gateway.",
+                text: $("Goodbye! Thank you for using the Gateway."),
 
                 next: "initial_state"
             });
@@ -364,87 +364,87 @@ go.app = function() {
         // ----------------------------
 
         self.states.add('reg_emis', function(name, opts) {
-            return go.rht.reg_emis(name, self.array_emis, opts);
+            return go.rht.reg_emis(name, $, self.array_emis, opts);
         });
 
         self.states.add('reg_emis_validates', function(name) {
-            return go.rht.reg_emis_validates(name);
+            return go.rht.reg_emis_validates(name, $);
         });
 
         self.states.add('reg_emis_retry_exit', function(name) {
-            return go.rht.reg_emis_retry_exit(name);
+            return go.rht.reg_emis_retry_exit(name, $);
         });
 
         self.states.add('reg_exit_emis', function(name) {
-            return go.rht.reg_exit_emis(name);
+            return go.rht.reg_exit_emis(name, $);
         });
 
         self.states.add('reg_school_name', function(name) {
-            return go.rht.reg_school_name(name);
+            return go.rht.reg_school_name(name, $);
         });
 
         self.states.add('reg_first_name', function(name) {
-            return go.rht.reg_first_name(name);
+            return go.rht.reg_first_name(name, $);
         });
 
         self.states.add('reg_surname', function(name) {
-            return go.rht.reg_surname(name);
+            return go.rht.reg_surname(name, $);
         });
 
         self.states.add('reg_date_of_birth', function(name) {
-            return go.rht.reg_date_of_birth(name);
+            return go.rht.reg_date_of_birth(name, $);
         });
 
         self.states.add('reg_gender', function(name) {
-            return go.rht.reg_gender(name);
+            return go.rht.reg_gender(name, $);
         });
 
         self.states.add('reg_school_boys', function(name) {
-            return go.rht.reg_school_boys(name);
+            return go.rht.reg_school_boys(name, $);
         });
 
         self.states.add('reg_school_girls', function(name) {
-            return go.rht.reg_school_girls(name);
+            return go.rht.reg_school_girls(name, $);
         });
 
         self.states.add('reg_school_classrooms', function(name) {
-            return go.rht.reg_school_classrooms(name);
+            return go.rht.reg_school_classrooms(name, $);
         });
 
         self.states.add('reg_school_teachers', function(name) {
-            return go.rht.reg_school_teachers(name);
+            return go.rht.reg_school_teachers(name, $);
         });
 
         self.states.add('reg_school_teachers_g1', function(name) {
-            return go.rht.reg_school_teachers_g1(name);
+            return go.rht.reg_school_teachers_g1(name, $);
         });
 
         self.states.add('reg_school_teachers_g2', function(name) {
-            return go.rht.reg_school_teachers_g2(name);
+            return go.rht.reg_school_teachers_g2(name, $);
         });
 
         self.states.add('reg_school_students_g2_boys', function(name) {
-            return go.rht.reg_school_students_g2_boys(name);
+            return go.rht.reg_school_students_g2_boys(name, $);
         });
 
         self.states.add('reg_school_students_g2_girls', function(name) {
-            return go.rht.reg_school_students_g2_girls(name);
+            return go.rht.reg_school_students_g2_girls(name, $);
         });
 
         self.states.add('reg_zonal_head', function(name) {
-            return go.rht.reg_zonal_head(name, self.im, self.contact);
+            return go.rht.reg_zonal_head(name, $, self.im, self.contact);
         });
 
         self.states.add('reg_thanks_zonal_head', function(name) {
-            return go.rht.reg_thanks_zonal_head(name);
+            return go.rht.reg_thanks_zonal_head(name, $);
         });
 
         self.states.add('reg_zonal_head_name', function(name) {
-            return go.rht.reg_zonal_head_name(name, self.im, self.contact);
+            return go.rht.reg_zonal_head_name(name, $, self.im, self.contact);
         });
 
         self.states.add('reg_thanks_head_teacher', function(name) {
-            return go.rht.reg_thanks_head_teacher(name);
+            return go.rht.reg_thanks_head_teacher(name, $);
         });        
 
 
@@ -453,38 +453,38 @@ go.app = function() {
         // ---------------------------------
 
         self.states.add('reg_district_official', function(name) {
-            return go.rdo.reg_district_official(name, self.districts);
+            return go.rdo.reg_district_official(name, $, self.districts);
         });
 
         self.states.add('reg_district_official_first_name', function(name) {
-            return go.rdo.reg_district_official_first_name(name);
+            return go.rdo.reg_district_official_first_name(name, $);
         });
 
         self.states.add('reg_district_official_surname', function(name) {
-            return go.rdo.reg_district_official_surname(name);
+            return go.rdo.reg_district_official_surname(name, $);
         });
 
         self.states.add('reg_district_official_id_number', function(name) {
-            return go.rdo.reg_district_official_id_number(name);
+            return go.rdo.reg_district_official_id_number(name, $);
         });
 
         self.states.add('reg_district_official_dob', function(name) {
-            return go.rdo.reg_district_official_dob(name, self.im, self.contact);
+            return go.rdo.reg_district_official_dob(name, $, self.im, self.contact);
         });
 
         self.states.add('reg_district_official_thanks', function(name) {
-            return go.rdo.reg_district_official_thanks(name);
+            return go.rdo.reg_district_official_thanks(name, $);
         });
 
 
         // CHANGE MANAGEMENT STATES
         // ------------------------
 
-        self.states.add('state_cm_start', function(name) {
+        self.states.add('state_cm_start', function(name, $) {
             return go.cm.state_cm_start(name);
         });
 
-        self.states.add('state_cm_exit', function(name) {
+        self.states.add('state_cm_exit', function(name, $) {
             return go.cm.state_cm_exit(name);
         });
 

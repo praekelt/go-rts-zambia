@@ -78,7 +78,7 @@ go.lp = function() {
                     }),
 
                 choices: [
-                    new Choice('continue', 'Continue')
+                    new Choice('continue', $('Continue'))
                 ],
 
                 next: 'perf_learner_boys_total'
@@ -257,7 +257,7 @@ go.lp = function() {
                     }),
 
                 choices: [
-                    new Choice('continue', 'Continue')
+                    new Choice('continue', $('Continue'))
                 ],
 
                 next: 'perf_learner_girls_total'
@@ -590,11 +590,11 @@ go.lp = function() {
 
         perf_learner_completed: function(name, $) {
             return new ChoiceState(name, {
-                question: "Congratulations. You have finished reporting on the learner assessment.",
+                question: $("Congratulations. You have finished reporting on the learner assessment."),
 
                 choices: [
-                    new Choice('initial_state', 'Go back to the main menu.'),
-                    new Choice('end_state', 'Exit.')
+                    new Choice('initial_state', $('Go back to the main menu.')),
+                    new Choice('end_state', $('Exit.'))
                 ],
 
                 next: function(choice) {

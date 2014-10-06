@@ -16,11 +16,11 @@ go.rht = function() {
     var rht = {
         // Registration of Head Teacher States
 
-        reg_emis: function(name, array_emis, opts) {
+        reg_emis: function(name, $, array_emis, opts) {
             return new FreeText(name, {
                 question: 
-                    "Please enter your school's EMIS number. " +
-                    "This should have 4-6 digits e.g. 4351.",
+                    $("Please enter your school's EMIS number. " +
+                    "This should have 4-6 digits e.g. 4351."),
 
                 next: function(content) {
                     if (go.utils.check_valid_emis(content, array_emis)) {
@@ -34,28 +34,28 @@ go.rht = function() {
             });
         },
 
-        reg_emis_validates: function(name) {
+        reg_emis_validates: function(name, $) {
             return new ChoiceState(name, {
                 question: 
-                    "Thanks for claiming this EMIS. Redial this number if you ever " +
+                    $("Thanks for claiming this EMIS. Redial this number if you ever " +
                     "change cellphone number to reclaim the EMIS and continue to receive " +
-                    "SMS updates.",
+                    "SMS updates."),
 
                 choices: [
-                    new Choice('continue', "Continue")
+                    new Choice('continue', $("Continue"))
                 ],
 
                 next: "reg_school_name"
             });
         },
 
-        reg_emis_retry_exit: function(name) {
+        reg_emis_retry_exit: function(name, $) {
             return new ChoiceState(name, {
-                question: "There is a problem with the EMIS number you have entered.",
+                question: $("There is a problem with the EMIS number you have entered."),
 
                 choices: [
-                    new Choice('retry', "Try again"),
-                    new Choice('exit', "Exit")
+                    new Choice('retry', $("Try again")),
+                    new Choice('exit', $("Exit"))
                 ],
 
                 next: function(content) {
@@ -73,45 +73,45 @@ go.rht = function() {
             });
         },
 
-        reg_exit_emis: function(name) {
+        reg_exit_emis: function(name, $) {
             return new EndState(name, {
-                text: "We don't recognise your EMIS number. Please send a SMS with" +
+                text: $("We don't recognise your EMIS number. Please send a SMS with" +
                         " the words EMIS ERROR to 739 and your DEST will contact you" +
-                        " to resolve the problem.",
+                        " to resolve the problem."),
 
                 next: "initial_state"
             });
         },
 
-        reg_school_name: function(name) {
+        reg_school_name: function(name, $) {
             return new FreeText(name, {
-                question: "Please enter the name of your school, e.g. Kapililonga",
+                question: $("Please enter the name of your school, e.g. Kapililonga"),
 
                 next: "reg_first_name"
             });
         },
 
-        reg_first_name: function(name) {
+        reg_first_name: function(name, $) {
             return new FreeText(name, {
-                question: "Please enter your FIRST name.",
+                question: $("Please enter your FIRST name."),
 
                 next: "reg_surname"
             });
         },
 
-        reg_surname: function(name) {
+        reg_surname: function(name, $) {
             return new FreeText(name, {
-                question: "Please enter your SURNAME.",
+                question: $("Please enter your SURNAME."),
 
                 next: "reg_date_of_birth"
             });
         },
 
-        reg_date_of_birth: function(name) {
-            var error = "Please enter your date of birth formatted DDMMYYYY";
+        reg_date_of_birth: function(name, $) {
+            var error = $("Please enter your date of birth formatted DDMMYYYY");
 
-            var question = "Please enter your date of birth. Start with the day, followed by " +
-                            "the month and year, e.g. 27111980";
+            var question = $("Please enter your date of birth. Start with the day, followed by " +
+                            "the month and year, e.g. 27111980");
 
             return new FreeText(name, {
                 question: question,
@@ -126,23 +126,23 @@ go.rht = function() {
             });
         },
 
-        reg_gender: function(name) {
+        reg_gender: function(name, $) {
             return new ChoiceState(name, {
-                question: "What is your gender?",
+                question: $("What is your gender?"),
 
                 choices: [
-                    new Choice('female', 'Female'),
-                    new Choice('male', 'Male')
+                    new Choice('female', $('Female')),
+                    new Choice('male', $('Male'))
                 ],
 
                 next: "reg_school_boys"
             });
         },
 
-        reg_school_boys: function(name) {
-            var question = "How many boys do you have in your school?";
+        reg_school_boys: function(name, $) {
+            var question = $("How many boys do you have in your school?");
 
-            var error = "Please provide a number value for how many boys you have in your school.";
+            var error = $("Please provide a number value for how many boys you have in your school.");
 
             return new FreeText(name, {
                 question: question,
@@ -157,10 +157,10 @@ go.rht = function() {
             });
         },
 
-        reg_school_girls: function(name) {
-            var question = "How many girls do you have in your school?";
+        reg_school_girls: function(name, $) {
+            var question = $("How many girls do you have in your school?");
 
-            var error = "Please provide a number value for how many girls you have in your school.";
+            var error = $("Please provide a number value for how many girls you have in your school.");
 
             return new FreeText(name, {
                 question: question,
@@ -175,10 +175,10 @@ go.rht = function() {
             });
         },
 
-        reg_school_classrooms: function(name) {
-            var question = "How many classrooms do you have in your school?";
+        reg_school_classrooms: function(name, $) {
+            var question = $("How many classrooms do you have in your school?");
 
-            var error = "Please provide a number value for how many classrooms you have in your school";
+            var error = $("Please provide a number value for how many classrooms you have in your school");
 
             return new FreeText(name, {
                 question: question,
@@ -193,12 +193,12 @@ go.rht = function() {
             });
         },
 
-        reg_school_teachers: function(name) {
-            var question = "How many teachers are presently working in your school, " +
-                            "including the head teacher?";
+        reg_school_teachers: function(name, $) {
+            var question = $("How many teachers are presently working in your school, " +
+                            "including the head teacher?");
 
-            var error = "Please provide a number value for how many teachers in total you have " +
-                        "in your school.";
+            var error = $("Please provide a number value for how many teachers in total you have " +
+                        "in your school.");
 
             return new FreeText(name, {
                 question: question,
@@ -213,11 +213,11 @@ go.rht = function() {
             });
         },
 
-        reg_school_teachers_g1: function(name) {
-            var question = "How many teachers teach Grade 1 local language?";
+        reg_school_teachers_g1: function(name, $) {
+            var question = $("How many teachers teach Grade 1 local language?");
 
-            var error = "Please provide a number value for how many teachers teach G1 local " +
-                        "language literacy.";
+            var error = $("Please provide a number value for how many teachers teach G1 local " +
+                        "language literacy.");
 
             return new FreeText(name, {
                 question: question,
@@ -232,11 +232,11 @@ go.rht = function() {
             });
         },
 
-        reg_school_teachers_g2: function(name) {
-            var question = "How many teachers teach Grade 2 local language?";
+        reg_school_teachers_g2: function(name, $) {
+            var question = $("How many teachers teach Grade 2 local language?");
 
-            var error = "Please provide a number value for how many teachers teach G2 local" +
-                        " language literacy.";
+            var error = $("Please provide a number value for how many teachers teach G2 local" +
+                        " language literacy.");
 
             return new FreeText(name, {
                 question: question,
@@ -251,10 +251,10 @@ go.rht = function() {
             });
         },
 
-        reg_school_students_g2_boys: function(name) {
-            var question = "How many boys are ENROLLED in Grade 2 at your school?";
+        reg_school_students_g2_boys: function(name, $) {
+            var question = $("How many boys are ENROLLED in Grade 2 at your school?");
 
-            var error = "Please provide a number value for the total number of G2 boys enrolled.";
+            var error = $("Please provide a number value for the total number of G2 boys enrolled.");
 
             return new FreeText(name, {
                 question: question,
@@ -269,10 +269,10 @@ go.rht = function() {
             });
         },
 
-        reg_school_students_g2_girls: function(name) {
-            var question = "How many girls are ENROLLED in Grade 2 at your school?";
+        reg_school_students_g2_girls: function(name, $) {
+            var question = $("How many girls are ENROLLED in Grade 2 at your school?");
 
-            var error = "Please provide a number value for the total number of G2 girls enrolled.";
+            var error = $("Please provide a number value for the total number of G2 girls enrolled.");
 
             return new FreeText(name, {
                 question: question,
@@ -287,13 +287,13 @@ go.rht = function() {
             });
         },
 
-        reg_zonal_head: function(name, im, contact) {
+        reg_zonal_head: function(name, $, im, contact) {
             return new ChoiceState(name, {
-                question: "Are you a Zonal Head Teacher?",
+                question: $("Are you a Zonal Head Teacher?"),
 
                 choices: [
-                    new Choice('reg_thanks_zonal_head', 'Yes'),
-                    new Choice('reg_zonal_head_name', 'No')
+                    new Choice('reg_thanks_zonal_head', $('Yes')),
+                    new Choice('reg_zonal_head_name', $('No'))
                 ],
 
                 next: function(choice) {
@@ -316,21 +316,21 @@ go.rht = function() {
             });
         },
 
-        reg_thanks_zonal_head: function(name) {
+        reg_thanks_zonal_head: function(name, $) {
             return new EndState(name, {
                 text:
-                    "Well done! You are now registered as a Zonal Head " +
+                    $("Well done! You are now registered as a Zonal Head " +
                     "Teacher. When you are ready, dial in to start " +
                     "reporting. You will also receive monthly SMS's from " +
-                    "your zone.",
+                    "your zone."),
 
                 next: "initial_state"
             });
         },
 
-        reg_zonal_head_name: function(name, im, contact) {
+        reg_zonal_head_name: function(name, $, im, contact) {
             return new FreeText(name, {
-                question: "Please enter the name and surname of your ZONAL HEAD TEACHER.",
+                question: $("Please enter the name and surname of your ZONAL HEAD TEACHER."),
 
                 next: function() {
                     var headteacher_data = go.utils.registration_data_headteacher_collect(im);
@@ -347,12 +347,12 @@ go.rht = function() {
             });
         },
 
-        reg_thanks_head_teacher: function(name) {
+        reg_thanks_head_teacher: function(name, $) {
             return new EndState(name, {
                 text:
-                    "Congratulations! You are now registered as a user of " +
+                    $("Congratulations! You are now registered as a user of " +
                     "the Gateway! Please dial in again when you are ready to " +
-                    "start reporting on teacher and learner performance.",
+                    "start reporting on teacher and learner performance."),
 
                 next: "initial_state"
             });
@@ -377,7 +377,7 @@ go.rdo = function() {
     var rdo = {
         // Registration of District Official States
 
-        reg_district_official: function(name, districts) {
+        reg_district_official: function(name, $, districts) {
             var choices = [];
 
             for (var i=0; i<districts.inspect().value.length; i++) {
@@ -386,7 +386,7 @@ go.rdo = function() {
             }
 
             return new PaginatedChoiceState(name, {
-                question: "Please enter your district name.",
+                question: $("Please enter your district name."),
 
                 choices: choices,
 
@@ -397,36 +397,36 @@ go.rdo = function() {
             
         },
 
-        reg_district_official_first_name: function(name) {
+        reg_district_official_first_name: function(name, $) {
             return new FreeText(name, {
-                question: "Please enter your FIRST name.",
+                question: $("Please enter your FIRST name."),
 
                 next: "reg_district_official_surname"
             });
         },
 
-        reg_district_official_surname: function(name) {
+        reg_district_official_surname: function(name, $) {
             return new FreeText(name, {
-                question: "Please enter your SURNAME.",
+                question: $("Please enter your SURNAME."),
 
                 next: "reg_district_official_id_number"
             });
         },
 
-        reg_district_official_id_number: function(name) {
+        reg_district_official_id_number: function(name, $) {
             return new FreeText(name, {
-                question: "Please enter your ID number.",
+                question: $("Please enter your ID number."),
 
                 next: "reg_district_official_dob"
             });
         },
 
-        reg_district_official_dob: function(name, im, contact) {
-            var error = "Please enter your date of birth formatted DDMMYYYY";
+        reg_district_official_dob: function(name, $, im, contact) {
+            var error = $("Please enter your date of birth formatted DDMMYYYY");
 
             var question = 
-                    "Please enter your date of birth. Start with the day," +
-                    " followed by the month and year, e.g. 27111980.";
+                    $("Please enter your date of birth. Start with the day," +
+                    " followed by the month and year, e.g. 27111980.");
 
             return new FreeText(name, {
                 question: question,
@@ -458,12 +458,12 @@ go.rdo = function() {
             });
         },
 
-        reg_district_official_thanks: function(name) {
+        reg_district_official_thanks: function(name, $) {
             return new EndState(name, {
                 text:
-                    "Congratulations! You are now registered as a user of the" +
+                    $("Congratulations! You are now registered as a user of the" +
                     " Gateway! Please dial in again when you are ready to start" +
-                    " reporting on teacher and learner performance.",
+                    " reporting on teacher and learner performance."),
 
                 next:
                     "initial_state"
@@ -599,7 +599,7 @@ go.lp = function() {
                     }),
 
                 choices: [
-                    new Choice('continue', 'Continue')
+                    new Choice('continue', $('Continue'))
                 ],
 
                 next: 'perf_learner_boys_total'
@@ -778,7 +778,7 @@ go.lp = function() {
                     }),
 
                 choices: [
-                    new Choice('continue', 'Continue')
+                    new Choice('continue', $('Continue'))
                 ],
 
                 next: 'perf_learner_girls_total'
@@ -1111,11 +1111,11 @@ go.lp = function() {
 
         perf_learner_completed: function(name, $) {
             return new ChoiceState(name, {
-                question: "Congratulations. You have finished reporting on the learner assessment.",
+                question: $("Congratulations. You have finished reporting on the learner assessment."),
 
                 choices: [
-                    new Choice('initial_state', 'Go back to the main menu.'),
-                    new Choice('end_state', 'Exit.')
+                    new Choice('initial_state', $('Go back to the main menu.')),
+                    new Choice('end_state', $('Exit.'))
                 ],
 
                 next: function(choice) {
@@ -1195,8 +1195,8 @@ go.tp = function() {
                 question: $("What is the gender of the teacher?"),
 
                 choices: [
-                    new Choice('male', 'Male'),
-                    new Choice('female', 'Female')
+                    new Choice('male', $('Male')),
+                    new Choice('female', $('Female'))
                 ],
 
                 next: 'perf_teacher_age'
@@ -1227,16 +1227,16 @@ go.tp = function() {
                 question: $("What is the teacher's highest education level?"),
 
                 choices: [
-                    new Choice("1", "Gr 7"),
-                    new Choice("2", "Gr 9"),
-                    new Choice("3", "Gr 12"),
-                    new Choice("4", "PTC"),
-                    new Choice("5", "PTD"),
-                    new Choice("6", "Dip Ed"),
-                    new Choice("7", "Other diploma"),
-                    new Choice("8", "BA Degree"),
-                    new Choice("9", "MA Degree"),
-                    new Choice("10", "Other")
+                    new Choice("1", $("Gr 7")),
+                    new Choice("2", $("Gr 9")),
+                    new Choice("3", $("Gr 12")),
+                    new Choice("4", $("PTC")),
+                    new Choice("5", $("PTD")),
+                    new Choice("6", $("Dip Ed")),
+                    new Choice("7", $("Other diploma")),
+                    new Choice("8", $("BA Degree")),
+                    new Choice("9", $("MA Degree")),
+                    new Choice("10", $("Other"))
                 ],
 
                 next: 'perf_teacher_years_experience'
@@ -1248,10 +1248,10 @@ go.tp = function() {
                 question: $("How many years of teaching experience does this teacher have?"),
 
                 choices: [
-                    new Choice("0-3", "0 - 3 years"),
-                    new Choice("4-8", "4 - 8 years"),
-                    new Choice("9-12", "9 - 12 years"),
-                    new Choice("13+", "13 years or more")
+                    new Choice("0-3", $("0 - 3 years")),
+                    new Choice("4-8", $("4 - 8 years")),
+                    new Choice("9-12", $("9 - 12 years")),
+                    new Choice("13+", $("13 years or more"))
                 ],
 
                 next: 'perf_teacher_g2_pupils_present'
@@ -1523,9 +1523,9 @@ go.tp = function() {
                 question: $("Congratulations, you have finished reporting on this teacher."),
 
                 choices: [
-                    new Choice("perf_teacher_ts_number", "Add another teacher."),
-                    new Choice("initial_state", "Go back to the main menu."),
-                    new Choice("end_state", "Exit.")
+                    new Choice("perf_teacher_ts_number", $("Add another teacher.")),
+                    new Choice("initial_state", $("Go back to the main menu.")),
+                    new Choice("end_state", $("Exit."))
                 ],
 
                 next: function(choice) {
@@ -1897,13 +1897,13 @@ go.app = function() {
 
         self.states.add('initial_state_unregistered', function(name) {
             return new ChoiceState(name, {
-                question: 'Welcome to the Zambia School Gateway! Options:',
+                question: $('Welcome to the Zambia School Gateway! Options:'),
 
                 choices: [
-                    new Choice("reg_emis", "Register as Head Teacher"),
-                    new Choice("reg_district_official", "Register as District Official"),
-                    new Choice("manage_change_emis_error", "Change my school"),
-                    new Choice("manage_change_msisdn_emis", "Change my primary cell number")
+                    new Choice("reg_emis", $("Register as Head Teacher")),
+                    new Choice("reg_district_official", $("Register as District Official")),
+                    new Choice("manage_change_emis_error", $("Change my school")),
+                    new Choice("manage_change_msisdn_emis", $("Change my primary cell number"))
                 ],
 
                 next: function(choice) {
@@ -1923,11 +1923,11 @@ go.app = function() {
 
         self.states.add('initial_state_district_official', function(name) {
             return new ChoiceState(name, {
-                question: 'What would you like to do?',
+                question: $('What would you like to do?'),
 
                 choices: [
-                    new Choice("add_emis_perf_teacher_ts_number", "Report on teacher performance."),
-                    new Choice("add_emis_perf_learner_boys_total", "Report on learner performance."),
+                    new Choice("add_emis_perf_teacher_ts_number", $("Report on teacher performance.")),
+                    new Choice("add_emis_perf_learner_boys_total", $("Report on learner performance.")),
                 ],
 
                 next: function(choice) {
@@ -1938,13 +1938,13 @@ go.app = function() {
 
         self.states.add('initial_state_head_teacher', function(name) {
             return new ChoiceState(name, {
-                question: 'What would you like to do?',
+                question: $('What would you like to do?'),
 
                 choices: [
-                    new Choice("perf_teacher_ts_number", "Report on teacher performance."),
-                    new Choice("perf_learner_boys_total", "Report on learner performance."),
-                    new Choice("manage_change_emis", "Change my school."),
-                    new Choice("manage_update_school_data", "Update my school's registration data.")
+                    new Choice("perf_teacher_ts_number", $("Report on teacher performance.")),
+                    new Choice("perf_learner_boys_total", $("Report on learner performance.")),
+                    new Choice("manage_change_emis", $("Change my school.")),
+                    new Choice("manage_update_school_data", $("Update my school's registration data."))
                 ],
 
                 next: function(choice) {
@@ -1955,7 +1955,7 @@ go.app = function() {
 
         self.states.add('end_state', function(name) {
             return new EndState(name, {
-                text: "Goodbye! Thank you for using the Gateway.",
+                text: $("Goodbye! Thank you for using the Gateway."),
 
                 next: "initial_state"
             });
@@ -1967,87 +1967,87 @@ go.app = function() {
         // ----------------------------
 
         self.states.add('reg_emis', function(name, opts) {
-            return go.rht.reg_emis(name, self.array_emis, opts);
+            return go.rht.reg_emis(name, $, self.array_emis, opts);
         });
 
         self.states.add('reg_emis_validates', function(name) {
-            return go.rht.reg_emis_validates(name);
+            return go.rht.reg_emis_validates(name, $);
         });
 
         self.states.add('reg_emis_retry_exit', function(name) {
-            return go.rht.reg_emis_retry_exit(name);
+            return go.rht.reg_emis_retry_exit(name, $);
         });
 
         self.states.add('reg_exit_emis', function(name) {
-            return go.rht.reg_exit_emis(name);
+            return go.rht.reg_exit_emis(name, $);
         });
 
         self.states.add('reg_school_name', function(name) {
-            return go.rht.reg_school_name(name);
+            return go.rht.reg_school_name(name, $);
         });
 
         self.states.add('reg_first_name', function(name) {
-            return go.rht.reg_first_name(name);
+            return go.rht.reg_first_name(name, $);
         });
 
         self.states.add('reg_surname', function(name) {
-            return go.rht.reg_surname(name);
+            return go.rht.reg_surname(name, $);
         });
 
         self.states.add('reg_date_of_birth', function(name) {
-            return go.rht.reg_date_of_birth(name);
+            return go.rht.reg_date_of_birth(name, $);
         });
 
         self.states.add('reg_gender', function(name) {
-            return go.rht.reg_gender(name);
+            return go.rht.reg_gender(name, $);
         });
 
         self.states.add('reg_school_boys', function(name) {
-            return go.rht.reg_school_boys(name);
+            return go.rht.reg_school_boys(name, $);
         });
 
         self.states.add('reg_school_girls', function(name) {
-            return go.rht.reg_school_girls(name);
+            return go.rht.reg_school_girls(name, $);
         });
 
         self.states.add('reg_school_classrooms', function(name) {
-            return go.rht.reg_school_classrooms(name);
+            return go.rht.reg_school_classrooms(name, $);
         });
 
         self.states.add('reg_school_teachers', function(name) {
-            return go.rht.reg_school_teachers(name);
+            return go.rht.reg_school_teachers(name, $);
         });
 
         self.states.add('reg_school_teachers_g1', function(name) {
-            return go.rht.reg_school_teachers_g1(name);
+            return go.rht.reg_school_teachers_g1(name, $);
         });
 
         self.states.add('reg_school_teachers_g2', function(name) {
-            return go.rht.reg_school_teachers_g2(name);
+            return go.rht.reg_school_teachers_g2(name, $);
         });
 
         self.states.add('reg_school_students_g2_boys', function(name) {
-            return go.rht.reg_school_students_g2_boys(name);
+            return go.rht.reg_school_students_g2_boys(name, $);
         });
 
         self.states.add('reg_school_students_g2_girls', function(name) {
-            return go.rht.reg_school_students_g2_girls(name);
+            return go.rht.reg_school_students_g2_girls(name, $);
         });
 
         self.states.add('reg_zonal_head', function(name) {
-            return go.rht.reg_zonal_head(name, self.im, self.contact);
+            return go.rht.reg_zonal_head(name, $, self.im, self.contact);
         });
 
         self.states.add('reg_thanks_zonal_head', function(name) {
-            return go.rht.reg_thanks_zonal_head(name);
+            return go.rht.reg_thanks_zonal_head(name, $);
         });
 
         self.states.add('reg_zonal_head_name', function(name) {
-            return go.rht.reg_zonal_head_name(name, self.im, self.contact);
+            return go.rht.reg_zonal_head_name(name, $, self.im, self.contact);
         });
 
         self.states.add('reg_thanks_head_teacher', function(name) {
-            return go.rht.reg_thanks_head_teacher(name);
+            return go.rht.reg_thanks_head_teacher(name, $);
         });        
 
 
@@ -2056,38 +2056,38 @@ go.app = function() {
         // ---------------------------------
 
         self.states.add('reg_district_official', function(name) {
-            return go.rdo.reg_district_official(name, self.districts);
+            return go.rdo.reg_district_official(name, $, self.districts);
         });
 
         self.states.add('reg_district_official_first_name', function(name) {
-            return go.rdo.reg_district_official_first_name(name);
+            return go.rdo.reg_district_official_first_name(name, $);
         });
 
         self.states.add('reg_district_official_surname', function(name) {
-            return go.rdo.reg_district_official_surname(name);
+            return go.rdo.reg_district_official_surname(name, $);
         });
 
         self.states.add('reg_district_official_id_number', function(name) {
-            return go.rdo.reg_district_official_id_number(name);
+            return go.rdo.reg_district_official_id_number(name, $);
         });
 
         self.states.add('reg_district_official_dob', function(name) {
-            return go.rdo.reg_district_official_dob(name, self.im, self.contact);
+            return go.rdo.reg_district_official_dob(name, $, self.im, self.contact);
         });
 
         self.states.add('reg_district_official_thanks', function(name) {
-            return go.rdo.reg_district_official_thanks(name);
+            return go.rdo.reg_district_official_thanks(name, $);
         });
 
 
         // CHANGE MANAGEMENT STATES
         // ------------------------
 
-        self.states.add('state_cm_start', function(name) {
+        self.states.add('state_cm_start', function(name, $) {
             return go.cm.state_cm_start(name);
         });
 
-        self.states.add('state_cm_exit', function(name) {
+        self.states.add('state_cm_exit', function(name, $) {
             return go.cm.state_cm_exit(name);
         });
 

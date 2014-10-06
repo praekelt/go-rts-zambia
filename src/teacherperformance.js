@@ -60,8 +60,8 @@ go.tp = function() {
                 question: $("What is the gender of the teacher?"),
 
                 choices: [
-                    new Choice('male', 'Male'),
-                    new Choice('female', 'Female')
+                    new Choice('male', $('Male')),
+                    new Choice('female', $('Female'))
                 ],
 
                 next: 'perf_teacher_age'
@@ -92,16 +92,16 @@ go.tp = function() {
                 question: $("What is the teacher's highest education level?"),
 
                 choices: [
-                    new Choice("1", "Gr 7"),
-                    new Choice("2", "Gr 9"),
-                    new Choice("3", "Gr 12"),
-                    new Choice("4", "PTC"),
-                    new Choice("5", "PTD"),
-                    new Choice("6", "Dip Ed"),
-                    new Choice("7", "Other diploma"),
-                    new Choice("8", "BA Degree"),
-                    new Choice("9", "MA Degree"),
-                    new Choice("10", "Other")
+                    new Choice("1", $("Gr 7")),
+                    new Choice("2", $("Gr 9")),
+                    new Choice("3", $("Gr 12")),
+                    new Choice("4", $("PTC")),
+                    new Choice("5", $("PTD")),
+                    new Choice("6", $("Dip Ed")),
+                    new Choice("7", $("Other diploma")),
+                    new Choice("8", $("BA Degree")),
+                    new Choice("9", $("MA Degree")),
+                    new Choice("10", $("Other"))
                 ],
 
                 next: 'perf_teacher_years_experience'
@@ -113,10 +113,10 @@ go.tp = function() {
                 question: $("How many years of teaching experience does this teacher have?"),
 
                 choices: [
-                    new Choice("0-3", "0 - 3 years"),
-                    new Choice("4-8", "4 - 8 years"),
-                    new Choice("9-12", "9 - 12 years"),
-                    new Choice("13+", "13 years or more")
+                    new Choice("0-3", $("0 - 3 years")),
+                    new Choice("4-8", $("4 - 8 years")),
+                    new Choice("9-12", $("9 - 12 years")),
+                    new Choice("13+", $("13 years or more"))
                 ],
 
                 next: 'perf_teacher_g2_pupils_present'
@@ -388,9 +388,9 @@ go.tp = function() {
                 question: $("Congratulations, you have finished reporting on this teacher."),
 
                 choices: [
-                    new Choice("perf_teacher_ts_number", "Add another teacher."),
-                    new Choice("initial_state", "Go back to the main menu."),
-                    new Choice("end_state", "Exit.")
+                    new Choice("perf_teacher_ts_number", $("Add another teacher.")),
+                    new Choice("initial_state", $("Go back to the main menu.")),
+                    new Choice("end_state", $("Exit."))
                 ],
 
                 next: function(choice) {

@@ -11,7 +11,7 @@ go.rdo = function() {
     var rdo = {
         // Registration of District Official States
 
-        reg_district_official: function(name, districts) {
+        reg_district_official: function(name, $, districts) {
             var choices = [];
 
             for (var i=0; i<districts.inspect().value.length; i++) {
@@ -20,7 +20,7 @@ go.rdo = function() {
             }
 
             return new PaginatedChoiceState(name, {
-                question: "Please enter your district name.",
+                question: $("Please enter your district name."),
 
                 choices: choices,
 
@@ -31,36 +31,36 @@ go.rdo = function() {
             
         },
 
-        reg_district_official_first_name: function(name) {
+        reg_district_official_first_name: function(name, $) {
             return new FreeText(name, {
-                question: "Please enter your FIRST name.",
+                question: $("Please enter your FIRST name."),
 
                 next: "reg_district_official_surname"
             });
         },
 
-        reg_district_official_surname: function(name) {
+        reg_district_official_surname: function(name, $) {
             return new FreeText(name, {
-                question: "Please enter your SURNAME.",
+                question: $("Please enter your SURNAME."),
 
                 next: "reg_district_official_id_number"
             });
         },
 
-        reg_district_official_id_number: function(name) {
+        reg_district_official_id_number: function(name, $) {
             return new FreeText(name, {
-                question: "Please enter your ID number.",
+                question: $("Please enter your ID number."),
 
                 next: "reg_district_official_dob"
             });
         },
 
-        reg_district_official_dob: function(name, im, contact) {
-            var error = "Please enter your date of birth formatted DDMMYYYY";
+        reg_district_official_dob: function(name, $, im, contact) {
+            var error = $("Please enter your date of birth formatted DDMMYYYY");
 
             var question = 
-                    "Please enter your date of birth. Start with the day," +
-                    " followed by the month and year, e.g. 27111980.";
+                    $("Please enter your date of birth. Start with the day," +
+                    " followed by the month and year, e.g. 27111980.");
 
             return new FreeText(name, {
                 question: question,
@@ -92,12 +92,12 @@ go.rdo = function() {
             });
         },
 
-        reg_district_official_thanks: function(name) {
+        reg_district_official_thanks: function(name, $) {
             return new EndState(name, {
                 text:
-                    "Congratulations! You are now registered as a user of the" +
+                    $("Congratulations! You are now registered as a user of the" +
                     " Gateway! Please dial in again when you are ready to start" +
-                    " reporting on teacher and learner performance.",
+                    " reporting on teacher and learner performance."),
 
                 next:
                     "initial_state"
