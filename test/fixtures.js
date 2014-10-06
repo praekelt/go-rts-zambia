@@ -619,7 +619,7 @@ module.exports = function() {
                 "attitudes_and_beliefs": "16",
                 "classroom_environment_score": "8",
                 "created_by": "/api/v1/data/headteacher/555/",
-                "emis": "/api/v1/school/emis/0001/",
+                "emis": "/api/v1/school/emis/45/",
                 "g2_pupils_present": "40",
                 "g2_pupils_registered": "50",
                 "gender": "female",
