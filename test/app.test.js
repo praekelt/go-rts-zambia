@@ -69,7 +69,7 @@ describe("app", function() {
 
 // uu = unregistered user
 
-describe.skip("when an unregistered user logs on", function() {
+describe("when an unregistered user logs on", function() {
     
     describe("when uu starts a session", function() {
         it("should ask them want they want to do", function() {
@@ -1317,7 +1317,7 @@ describe("when a registered user logs on", function() {
                             .setup.user.addr('097444')
                             .inputs(
                                 'start',
-                                '2',  // initial_state_district_official
+                                '1',  // initial_state_district_official
                                 '0001'  // add_emis_perf_teacher_ts_number
                             )
                             .check.interaction({
@@ -1379,7 +1379,7 @@ describe("when a registered user logs on", function() {
                                 "Congratulations, you have finished reporting on this teacher.",
                                 "1. Add another teacher.",
                                 "2. Go back to the main menu.",
-                                "3. Exit"
+                                "3. Exit."
                             ].join('\n')
                         })
                         .run();
@@ -1436,7 +1436,7 @@ describe("when a registered user logs on", function() {
                             .setup.user.addr('097555')
                             .inputs(
                                 'start',
-                                '2',  // initial_state_head_teacher
+                                '1',  // initial_state_head_teacher
                                 'hundreed'  // perf_teacher_ts_number
                             )
                             .check.interaction({
@@ -1564,7 +1564,7 @@ describe("when a registered user logs on", function() {
                                 "How many years of teaching experience does this teacher have?",
                                 "1. 0 - 3 years",
                                 "2. 4 - 8 years",
-                                "3. 9  - 12 years",
+                                "3. 9 - 12 years",
                                 "4. 13 years or more"
                             ].join('\n')
                         })
@@ -1747,7 +1747,7 @@ describe("when a registered user logs on", function() {
                                 '1',  // perf_teacher_years_experience
                                 '40',  // perf_teacher_g2_pupils_present
                                 '50',  // perf_teacher_g2_pupils_registered
-                                '9',  // perf_teacher_classroom_environment_score
+                                '8',  // perf_teacher_classroom_environment_score
                                 '8'  // perf_teacher_t_l_materials
                             )
                             .check.interaction({
@@ -1837,8 +1837,8 @@ describe("when a registered user logs on", function() {
                                 '1',  // perf_teacher_years_experience
                                 '40',  // perf_teacher_g2_pupils_present
                                 '50',  // perf_teacher_g2_pupils_registered
-                                '9',  // perf_teacher_classroom_environment_score
-                                '8',  // perf_teacher_t_l_materials
+                                '8',  // perf_teacher_classroom_environment_score
+                                '7',  // perf_teacher_t_l_materials
                                 '90',  // perf_teacher_pupils_books_number
                                 '7'  // perf_teacher_pupils_materials_score
                             )
@@ -1900,8 +1900,8 @@ describe("when a registered user logs on", function() {
                                 '1',  // perf_teacher_years_experience
                                 '40',  // perf_teacher_g2_pupils_present
                                 '50',  // perf_teacher_g2_pupils_registered
-                                '9',  // perf_teacher_classroom_environment_score
-                                '8',  // perf_teacher_t_l_materials
+                                '8',  // perf_teacher_classroom_environment_score
+                                '7',  // perf_teacher_t_l_materials
                                 '90',  // perf_teacher_pupils_books_number
                                 '6',  // perf_teacher_pupils_materials_score
                                 '15'  // perf_teacher_reading_lesson
@@ -1965,8 +1965,8 @@ describe("when a registered user logs on", function() {
                                 '1',  // perf_teacher_years_experience
                                 '40',  // perf_teacher_g2_pupils_present
                                 '50',  // perf_teacher_g2_pupils_registered
-                                '9',  // perf_teacher_classroom_environment_score
-                                '8',  // perf_teacher_t_l_materials
+                                '8',  // perf_teacher_classroom_environment_score
+                                '7',  // perf_teacher_t_l_materials
                                 '90',  // perf_teacher_pupils_books_number
                                 '6',  // perf_teacher_pupils_materials_score
                                 '14',  // perf_teacher_reading_lesson
@@ -2032,8 +2032,8 @@ describe("when a registered user logs on", function() {
                                 '1',  // perf_teacher_years_experience
                                 '40',  // perf_teacher_g2_pupils_present
                                 '50',  // perf_teacher_g2_pupils_registered
-                                '9',  // perf_teacher_classroom_environment_score
-                                '8',  // perf_teacher_t_l_materials
+                                '8',  // perf_teacher_classroom_environment_score
+                                '7',  // perf_teacher_t_l_materials
                                 '90',  // perf_teacher_pupils_books_number
                                 '6',  // perf_teacher_pupils_materials_score
                                 '14',  // perf_teacher_reading_lesson
@@ -2101,8 +2101,8 @@ describe("when a registered user logs on", function() {
                                 '1',  // perf_teacher_years_experience
                                 '40',  // perf_teacher_g2_pupils_present
                                 '50',  // perf_teacher_g2_pupils_registered
-                                '9',  // perf_teacher_classroom_environment_score
-                                '8',  // perf_teacher_t_l_materials
+                                '8',  // perf_teacher_classroom_environment_score
+                                '7',  // perf_teacher_t_l_materials
                                 '90',  // perf_teacher_pupils_books_number
                                 '6',  // perf_teacher_pupils_materials_score
                                 '14',  // perf_teacher_reading_lesson
@@ -2173,8 +2173,8 @@ describe("when a registered user logs on", function() {
                                 '1',  // perf_teacher_years_experience
                                 '40',  // perf_teacher_g2_pupils_present
                                 '50',  // perf_teacher_g2_pupils_registered
-                                '9',  // perf_teacher_classroom_environment_score
-                                '8',  // perf_teacher_t_l_materials
+                                '8',  // perf_teacher_classroom_environment_score
+                                '7',  // perf_teacher_t_l_materials
                                 '90',  // perf_teacher_pupils_books_number
                                 '6',  // perf_teacher_pupils_materials_score
                                 '14',  // perf_teacher_reading_lesson
@@ -2226,7 +2226,7 @@ describe("when a registered user logs on", function() {
                                 "Congratulations, you have finished reporting on this teacher.",
                                 "1. Add another teacher.",
                                 "2. Go back to the main menu.",
-                                "3. Exit"
+                                "3. Exit."
                             ].join('\n')
                         })
                         .run();
