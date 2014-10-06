@@ -242,8 +242,8 @@ go.app = function() {
         // --------------------------
 
         self.states.add('initial_state', function(name) {
-            if (self.contact.name === null) {
-                // user is unregistered if doesn't have a contact.name
+            if (_.isUndefined(self.contact.extra.rts_id)) {
+                // user is unregistered if doesn't have rts_id
                 return self.states.create('initial_state_unregistered');
             } else if (_.isUndefined(self.contact.extra.rts_official_district_id)) {
                 // registered user is head teacher if doesn't have district_id
