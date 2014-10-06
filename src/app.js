@@ -181,7 +181,7 @@ go.utils = {
         return school_data;
     },
 
-    performance_data_learner_collect: function(emis, im){
+    performance_data_learner_collect: function(emis, im) {
         var data_boys = {
             "gender": "boys",
             "total_number_pupils": im.user.answers.perf_learner_boys_total,
@@ -211,6 +211,32 @@ go.utils = {
         };
 
         return {boys: data_boys, girls: data_girls};
+    },
+
+    performance_data_teacher_collect: function(emis, im) {
+        var data = {
+            "ts_number": im.user.answers.perf_teacher_ts_number,
+            "gender": im.user.answers.perf_teacher_gender,
+            "age": im.user.answers.perf_teacher_age,
+            "years_experience": im.user.answers.perf_teacher_years_experience,
+            "g2_pupils_present": im.user.answers.perf_teacher_g2_pupils_present,
+            "g2_pupils_registered": im.user.answers.perf_teacher_g2_pupils_registered,
+            "classroom_environment_score": im.user.answers.perf_teacher_classroom_environment_score,
+            "t_l_materials": im.user.answers.perf_teacher_t_l_materials,
+            "pupils_materials_score": im.user.answers.perf_teacher_pupils_materials_score,
+            "pupils_books_number": im.user.answers.perf_teacher_pupils_books_number,
+            "reading_lesson": im.user.answers.perf_teacher_reading_lesson,
+            "pupil_engagement_score": im.user.answers.perf_teacher_pupil_engagement_score,
+            "attitudes_and_beliefs": im.user.answers.perf_teacher_attitudes_and_beliefs,
+            "training_subtotal": im.user.answers.perf_teacher_training_subtotal,
+            "academic_level": "/api/v1/data/achievement/" +
+                                im.user.answers.perf_teacher_academic_level + "/",
+            "reading_assessment": im.user.answers.perf_teacher_reading_assessment,
+            "reading_total": im.user.answers.perf_teacher_reading_total,
+            "emis": "/api/v1/school/emis/" + emis + "/"
+        };
+
+        return data;
     }
 
 };
@@ -561,16 +587,81 @@ go.app = function() {
         // TEACHER PERFORMANCE STATES
         // --------------------------
 
-        self.states.add('state_tp_start', function(name) {
-            return go.tp.state_tp_start(name);
+        self.states.add('add_emis_perf_teacher_ts_number', function(name) {
+            return go.tp.add_emis_perf_teacher_ts_number(name, $, self.array_emis, self.contact,
+                                                        self.im);
         });
 
-        self.states.add('state_tp_next', function(name) {
-            return go.tp.state_tp_next(name);
+        self.states.add('perf_teacher_ts_number', function(name) {
+            return go.tp.perf_teacher_ts_number(name, $);
         });
 
-        self.states.add('state_tp_exit', function(name) {
-            return go.tp.state_tp_exit(name);
+        self.states.add('perf_teacher_gender', function(name) {
+            return go.tp.perf_teacher_gender(name, $);
+        });
+
+        self.states.add('perf_teacher_age', function(name) {
+            return go.tp.perf_teacher_age(name, $);
+        });
+
+        self.states.add('perf_teacher_academic_level', function(name) {
+            return go.tp.perf_teacher_academic_level(name, $);
+        });
+
+        self.states.add('perf_teacher_years_experience', function(name) {
+            return go.tp.perf_teacher_years_experience(name, $);
+        });
+
+        self.states.add('perf_teacher_g2_pupils_present', function(name) {
+            return go.tp.perf_teacher_g2_pupils_present(name, $);
+        });
+
+        self.states.add('perf_teacher_g2_pupils_registered', function(name) {
+            return go.tp.perf_teacher_g2_pupils_registered(name, $);
+        });
+
+        self.states.add('perf_teacher_classroom_environment_score', function(name) {
+            return go.tp.perf_teacher_classroom_environment_score(name, $);
+        });
+
+        self.states.add('perf_teacher_t_l_materials', function(name) {
+            return go.tp.perf_teacher_t_l_materials(name, $);
+        });
+
+        self.states.add('perf_teacher_pupils_books_number', function(name) {
+            return go.tp.perf_teacher_pupils_books_number(name, $);
+        });
+
+        self.states.add('perf_teacher_pupils_materials_score', function(name) {
+            return go.tp.perf_teacher_pupils_materials_score(name, $);
+        });
+
+        self.states.add('perf_teacher_reading_lesson', function(name) {
+            return go.tp.perf_teacher_reading_lesson(name, $);
+        });
+
+        self.states.add('perf_teacher_pupil_engagement_score', function(name) {
+            return go.tp.perf_teacher_pupil_engagement_score(name, $);
+        });
+
+        self.states.add('perf_teacher_attitudes_and_beliefs', function(name) {
+            return go.tp.perf_teacher_attitudes_and_beliefs(name, $);
+        });
+
+        self.states.add('perf_teacher_training_subtotal', function(name) {
+            return go.tp.perf_teacher_training_subtotal(name, $);
+        });
+
+        self.states.add('perf_teacher_reading_assessment', function(name) {
+            return go.tp.perf_teacher_reading_assessment(name, $);
+        });
+
+        self.states.add('perf_teacher_reading_total', function(name) {
+            return go.tp.perf_teacher_reading_total(name, $, self.contact, self.im);
+        });
+
+        self.states.add('perf_teacher_completed', function(name) {
+            return go.tp.perf_teacher_completed(name, $);
         });
 
 
@@ -589,6 +680,7 @@ go.app = function() {
         self.states.add('state_sp_exit', function(name) {
             return go.sp.state_sp_exit(name);
         });
+
 
     });
 
