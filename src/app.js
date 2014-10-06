@@ -334,6 +334,15 @@ go.app = function() {
 
 
 
+        // CHANGE MANAGEMENT STATES
+        // ------------------------
+
+        self.states.add('manage_change_emis_error', function(name) {
+            return go.cm.manage_change_emis_error(name, $);
+        });
+
+
+
         // REGISTER HEAD TEACHER STATES
         // ----------------------------
 
@@ -448,18 +457,6 @@ go.app = function() {
 
         self.states.add('reg_district_official_thanks', function(name) {
             return go.rdo.reg_district_official_thanks(name);
-        });
-
-
-        // CHANGE MANAGEMENT STATES
-        // ------------------------
-
-        self.states.add('state_cm_start', function(name) {
-            return go.cm.state_cm_start(name);
-        });
-
-        self.states.add('state_cm_exit', function(name) {
-            return go.cm.state_cm_exit(name);
         });
 
 

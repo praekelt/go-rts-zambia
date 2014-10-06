@@ -2,38 +2,28 @@ go.cm = function() {
 
     var vumigo = require('vumigo_v02');
     var ChoiceState = vumigo.states.ChoiceState;
-    var EndState = vumigo.states.EndState;
     var Choice = vumigo.states.Choice;
 
 
     var cm = {
         // Registration of Change Management States
 
-        state_cm_start: function(name) {
+        manage_change_emis_error: function(name, $) {
             return new ChoiceState(name, {
-                question: 'Hi there! What do you want to do?',
+                question: "Your cell phone number is unrecognised. Please associate your new " +
+                        "number with your old EMIS first before requesting to change school.",
 
                 choices: [
-                    new Choice('next', 'Go to next state'),
-                    new Choice('exit', 'Exit')],
+                    new Choice('initial_state', $("Main menu.")),
+                    new Choice('end_state', $("Exit."))],
 
                 next: function(choice) {
-                    if(choice.value === 'next') {
-                        return 'state_cm_exit';
-                    } else {
-                        return 'state_cm_exit';
-                    }
+                    return choice.value;
                 }
             });
         },
 
-        state_cm_exit: function(name) {
-            return new EndState(name, {
-                text: 'Thanks, cheers!',
-                next: 'state_cm_start'
-            });
-        }
-
+        "commas": "commas"
     };
 
     return cm;
