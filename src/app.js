@@ -129,6 +129,19 @@ go.utils = {
         }
     },
 
+    update_calculated_totals: function(opts, content) {
+        // calculate new totals to be passed through to next state as creator_opts
+        opts.current_sum = opts.current_sum + parseInt(content, 10);
+        
+        if (opts.sum_as_string === "") {
+            opts.sum_as_string = content;
+        } else {
+            opts.sum_as_string = opts.sum_as_string + "+" + content;    
+        }
+        
+        return opts;
+    },
+
     registration_official_admin_collect: function(im) {
         var dob = go.utils.check_and_parse_date(im.user.answers.reg_district_official_dob);
 

@@ -577,7 +577,9 @@ go.lp = function() {
                     return {
                         name: 'perf_learner_boys_outstanding',
                         creator_opts: {
-                            total: Number(content)
+                            target_sum: parseInt(content, 10),
+                            sum_as_string: "",
+                            current_sum: 0
                         }
                     };
                 }
@@ -587,12 +589,13 @@ go.lp = function() {
         perf_learner_boys_calc_error: function(name, $, opts) {
             return new ChoiceState(name, {
                 question: 
-                    $("You've entered results for {{ calc_total }} boys ({{ calculation }}), but " +
-                        "you initially indicated {{ total }} boys participants. Please try again.")
+                    $("You've entered results for {{ current_sum }} boys ({{ sum_as_string }}), " +
+                        "but you initially indicated {{ target_sum }} boys participants. Please " +
+                        "try again.")
                     .context({
-                        calc_total: opts.calc_total,
-                        calculation: opts.calculation,
-                        total: opts.total
+                        current_sum: opts.current_sum,
+                        sum_as_string: opts.sum_as_string,
+                        target_sum: opts.target_sum
                     }),
 
                 choices: [
@@ -619,26 +622,17 @@ go.lp = function() {
                 },
 
                 next: function(content) {
-                    var calc_total = Number(content);
-                    var calculation = content;
+                    opts = go.utils.update_calculated_totals(opts, content);
 
-                    if (calc_total > opts.total) {
+                    if (opts.current_sum > opts.target_sum) {
                         return {
                             name: 'perf_learner_boys_calc_error',
-                            creator_opts: {
-                                calculation: calculation,
-                                total: opts.total,
-                                calc_total: calc_total
-                            }
+                            creator_opts: opts
                         };
                     } else {
                         return {
                             name: 'perf_learner_boys_desirable',
-                            creator_opts: {
-                                total: opts.total,
-                                calc_total: calc_total,
-                                calculation: calculation
-                            }
+                            creator_opts: opts
                         };
                     }
                 }
@@ -661,26 +655,17 @@ go.lp = function() {
                 },
 
                 next: function(content) {
-                    var calc_total = opts.calc_total + Number(content);
-                    var calculation = opts.calculation + '+' + content;
+                    opts = go.utils.update_calculated_totals(opts, content);
 
-                    if (calc_total > opts.total) {
+                    if (opts.current_sum > opts.target_sum) {
                         return {
                             name: 'perf_learner_boys_calc_error',
-                            creator_opts: {
-                                calculation: calculation,
-                                total: opts.total,
-                                calc_total: calc_total
-                            }
+                            creator_opts: opts
                         };
                     } else {
                         return {
                             name: 'perf_learner_boys_minimum',
-                            creator_opts: {
-                                total: opts.total,
-                                calc_total: calc_total,
-                                calculation: calculation
-                            }
+                            creator_opts: opts
                         };
                     }
                 }
@@ -703,26 +688,17 @@ go.lp = function() {
                 },
 
                 next: function(content) {
-                    var calc_total = opts.calc_total + Number(content);
-                    var calculation = opts.calculation + '+' + content;
+                    opts = go.utils.update_calculated_totals(opts, content);
 
-                    if (calc_total > opts.total) {
+                    if (opts.current_sum > opts.target_sum) {
                         return {
                             name: 'perf_learner_boys_calc_error',
-                            creator_opts: {
-                                calculation: calculation,
-                                total: opts.total,
-                                calc_total: calc_total
-                            }
+                            creator_opts: opts
                         };
                     } else {
                         return {
                             name: 'perf_learner_boys_below_minimum',
-                            creator_opts: {
-                                total: opts.total,
-                                calc_total: calc_total,
-                                calculation: calculation
-                            }
+                            creator_opts: opts
                         };
                     }
                 }
@@ -745,20 +721,18 @@ go.lp = function() {
                 },
 
                 next: function(content) {
-                    var calc_total = opts.calc_total + Number(content);
-                    var calculation = opts.calculation + '+' + content;
+                    opts = go.utils.update_calculated_totals(opts, content);
 
-                    if (calc_total !== opts.total) {
+                    if (opts.current_sum !== opts.target_sum) {
                         return {
                             name: 'perf_learner_boys_calc_error',
-                            creator_opts: {
-                                calculation: calculation,
-                                total: opts.total,
-                                calc_total: calc_total
-                            }
+                            creator_opts: opts
                         };
                     } else {
-                        return 'perf_learner_girls_total';
+                        return {
+                            name: 'perf_learner_girls_total',
+                            creator_opts: opts
+                        };
                     }
                 }
             });
@@ -782,7 +756,9 @@ go.lp = function() {
                     return {
                         name: 'perf_learner_girls_outstanding',
                         creator_opts: {
-                            total: Number(content)
+                            target_sum: parseInt(content, 10),
+                            sum_as_string: "",
+                            current_sum: 0
                         }
                     };
                 }
@@ -792,12 +768,13 @@ go.lp = function() {
         perf_learner_girls_calc_error: function(name, $, opts) {
             return new ChoiceState(name, {
                 question: 
-                    $("You've entered results for {{ calc_total }} girls ({{ calculation }}), " +
-                    "but you initially indicated {{ total }} girls participants. Please try again.")
+                    $("You've entered results for {{ current_sum }} girls ({{ sum_as_string }}), " +
+                        "but you initially indicated {{ target_sum }} girls participants. Please " +
+                        "try again.")
                     .context({
-                        calc_total: opts.calc_total,
-                        calculation: opts.calculation,
-                        total: opts.total
+                        current_sum: opts.current_sum,
+                        sum_as_string: opts.sum_as_string,
+                        target_sum: opts.target_sum
                     }),
 
                 choices: [
@@ -824,26 +801,17 @@ go.lp = function() {
                 },
 
                 next: function(content) {
-                    var calc_total = Number(content);
-                    var calculation = content;
+                    opts = go.utils.update_calculated_totals(opts, content);
 
-                    if (calc_total > opts.total) {
+                    if (opts.current_sum > opts.target_sum) {
                         return {
                             name: 'perf_learner_girls_calc_error',
-                            creator_opts: {
-                                calculation: calculation,
-                                total: opts.total,
-                                calc_total: calc_total
-                            }
+                            creator_opts: opts
                         };
                     } else {
                         return {
                             name: 'perf_learner_girls_desirable',
-                            creator_opts: {
-                                total: opts.total,
-                                calc_total: calc_total,
-                                calculation: calculation
-                            }
+                            creator_opts: opts
                         };
                     }
                 }
@@ -866,26 +834,17 @@ go.lp = function() {
                 },
 
                 next: function(content) {
-                    var calc_total = opts.calc_total + Number(content);
-                    var calculation = opts.calculation + '+' + content;
+                    opts = go.utils.update_calculated_totals(opts, content);
 
-                    if (calc_total > opts.total) {
+                    if (opts.current_sum > opts.target_sum) {
                         return {
                             name: 'perf_learner_girls_calc_error',
-                            creator_opts: {
-                                calculation: calculation,
-                                total: opts.total,
-                                calc_total: calc_total
-                            }
+                            creator_opts: opts
                         };
                     } else {
                         return {
                             name: 'perf_learner_girls_minimum',
-                            creator_opts: {
-                                total: opts.total,
-                                calc_total: calc_total,
-                                calculation: calculation
-                            }
+                            creator_opts: opts
                         };
                     }
                 }
@@ -908,26 +867,17 @@ go.lp = function() {
                 },
 
                 next: function(content) {
-                    var calc_total = opts.calc_total + Number(content);
-                    var calculation = opts.calculation + '+' + content;
+                    opts = go.utils.update_calculated_totals(opts, content);
 
-                    if (calc_total > opts.total) {
+                    if (opts.current_sum > opts.target_sum) {
                         return {
                             name: 'perf_learner_girls_calc_error',
-                            creator_opts: {
-                                calculation: calculation,
-                                total: opts.total,
-                                calc_total: calc_total
-                            }
+                            creator_opts: opts
                         };
                     } else {
                         return {
                             name: 'perf_learner_girls_below_minimum',
-                            creator_opts: {
-                                total: opts.total,
-                                calc_total: calc_total,
-                                calculation: calculation
-                            }
+                            creator_opts: opts
                         };
                     }
                 }
@@ -950,20 +900,18 @@ go.lp = function() {
                 },
 
                 next: function(content) {
-                    var calc_total = opts.calc_total + Number(content);
-                    var calculation = opts.calculation + '+' + content;
+                    opts = go.utils.update_calculated_totals(opts, content);
 
-                    if (calc_total !== opts.total) {
+                    if (opts.current_sum !== opts.target_sum) {
                         return {
                             name: 'perf_learner_girls_calc_error',
-                            creator_opts: {
-                                calculation: calculation,
-                                total: opts.total,
-                                calc_total: calc_total
-                            }
+                            creator_opts: opts
                         };
                     } else {
-                        return 'perf_learner_boys_phonics';
+                        return {
+                            name: 'perf_learner_boys_phonics',
+                            creator_opts: opts
+                        };
                     }
                 }
             });
@@ -1432,6 +1380,19 @@ go.utils = {
         } else {
             return false;
         }
+    },
+
+    update_calculated_totals: function(opts, content) {
+        // calculate new totals to be passed through to next state as creator_opts
+        opts.current_sum = opts.current_sum + parseInt(content, 10);
+        
+        if (opts.sum_as_string === "") {
+            opts.sum_as_string = content;
+        } else {
+            opts.sum_as_string = opts.sum_as_string + "+" + content;    
+        }
+        
+        return opts;
     },
 
     registration_official_admin_collect: function(im) {
