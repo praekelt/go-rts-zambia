@@ -1014,7 +1014,6 @@ describe("when an unregistered user logs on", function() {
     });
 
 
-
     // DISTRICT OFFICIAL REGISTRATION
     // ------------------------------
 
@@ -1223,6 +1222,81 @@ describe("when an unregistered user logs on", function() {
         });
 
     });
+
+
+    // CHANGE SCHOOL
+    // -------------
+
+    describe("when uu chooses to change their school", function() {
+        it("should tell them to associate their number with EMIS first", function() {
+            return tester
+                .setup.user.addr('097123')
+                .inputs(
+                    'start',
+                    '3'  // initial_state
+                )
+                .check.interaction({
+                    state: 'manage_change_emis_error',
+                    reply: [
+                        "Your cell phone number is unrecognised. Please associate your new " +
+                        "number with your old EMIS first before requesting to change school.",
+                        "1. Main menu.",
+                        "2. Exit."
+                    ].join("\n")
+                })
+                .run();
+        });
+
+        describe("after seeing the associate EMIS message", function() {
+
+            describe("if they choose main menu", function() {
+                it("should go back to initial state", function() {
+                    return tester
+                    .setup.user.addr('097123')
+                    .inputs(
+                        'start',
+                        '3',  // initial_state
+                        '1'  // manage_change_emis_error
+                    )
+                    .check.interaction({
+                        state: 'initial_state_unregistered',
+                        reply: [
+                            'Welcome to the Zambia School Gateway! Options:',
+                            '1. Register as Head Teacher',
+                            '2. Register as District Official',
+                            '3. Change my school',
+                            '4. Change my primary cell number'
+                        ].join('\n')
+                    })
+                    .run();
+                });
+            });
+
+            describe("if they choose to exit", function() {
+                it("should thank them and exit", function() {
+                    return tester
+                    .setup.user.addr('097123')
+                    .inputs(
+                        'start',
+                        '3',  // initial_state
+                        '2'  // manage_change_emis_error
+                    )
+                    .check.interaction({
+                        state: 'end_state',
+                        reply: "Goodbye! Thank you for using the Gateway.",
+                    })
+                    .check.reply.ends_session()
+                    .run();
+                });
+            });
+
+        });
+
+    
+
+
+    });
+
 });
 
 
