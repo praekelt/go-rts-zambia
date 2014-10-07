@@ -324,6 +324,16 @@ go.app = function() {
             });
         });
 
+        self.states.add('reg_exit_emis', function(name) {
+            return new EndState(name, {
+                text: $("We don't recognise your EMIS number. Please send a SMS with" +
+                        " the words EMIS ERROR to 739 and your DEST will contact you" +
+                        " to resolve the problem."),
+
+                next: "initial_state"
+            });
+        });
+
         self.states.add('end_state', function(name) {
             return new EndState(name, {
                 text: "Goodbye! Thank you for using the Gateway.",
@@ -360,10 +370,6 @@ go.app = function() {
 
         self.states.add('reg_emis_retry_exit', function(name) {
             return go.rht.reg_emis_retry_exit(name);
-        });
-
-        self.states.add('reg_exit_emis', function(name) {
-            return go.rht.reg_exit_emis(name);
         });
 
         self.states.add('reg_school_name', function(name) {

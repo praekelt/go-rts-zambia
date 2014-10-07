@@ -11,7 +11,7 @@ go.rht = function() {
 
         reg_emis: function(name, array_emis, opts) {
             return new FreeText(name, {
-                question: 
+                question:
                     "Please enter your school's EMIS number. " +
                     "This should have 4-6 digits e.g. 4351.",
 
@@ -29,7 +29,7 @@ go.rht = function() {
 
         reg_emis_validates: function(name) {
             return new ChoiceState(name, {
-                question: 
+                question:
                     "Thanks for claiming this EMIS. Redial this number if you ever " +
                     "change cellphone number to reclaim the EMIS and continue to receive " +
                     "SMS updates.",
@@ -63,16 +63,6 @@ go.rht = function() {
                         return "reg_exit_emis";
                     }
                 }
-            });
-        },
-
-        reg_exit_emis: function(name) {
-            return new EndState(name, {
-                text: "We don't recognise your EMIS number. Please send a SMS with" +
-                        " the words EMIS ERROR to 739 and your DEST will contact you" +
-                        " to resolve the problem.",
-
-                next: "initial_state"
             });
         },
 
