@@ -74,9 +74,9 @@ go.utils = {
         var json_api = new JsonApi(im);
         var url = im.config.cms_api_root + path;
         return json_api.post(
-            url, 
+            url,
             {
-                data: data, 
+                data: data,
                 headers:{
                     'Content-Type': ['application/json']
                 }
@@ -132,13 +132,13 @@ go.utils = {
     update_calculated_totals: function(opts, content) {
         // calculate new totals to be passed through to next state as creator_opts
         opts.current_sum = opts.current_sum + parseInt(content, 10);
-        
+
         if (opts.sum_as_string === "") {
             opts.sum_as_string = content;
         } else {
-            opts.sum_as_string = opts.sum_as_string + "+" + content;    
+            opts.sum_as_string = opts.sum_as_string + "+" + content;
         }
-        
+
         return opts;
     },
 
@@ -242,7 +242,7 @@ go.app = function() {
             self.env = self.im.config.env;
             self.districts = go.utils.cms_district_load(self.im);
             self.array_emis = go.utils.cms_emis_load(self.im);
-            
+
             return self.im.contacts
                 .for_user()
                 .then(function(user_contact) {
@@ -278,15 +278,15 @@ go.app = function() {
                 ],
 
                 next: function(choice) {
-                    if (choice.value != 'reg_emis') {
-                        return choice.value;
-                    } else {
+                    if (choice.value === 'reg_emis' || choice.value === 'manage_change_msisdn_emis') {
                         return {
-                            name: 'reg_emis',
+                            name: choice.value,
                             creator_opts: {
                                 retry: false
                             }
                         };
+                    } else {
+                        return choice.value;
                     }
                 }
             });
@@ -339,6 +339,10 @@ go.app = function() {
 
         self.states.add('manage_change_emis_error', function(name) {
             return go.cm.manage_change_emis_error(name, $);
+        });
+
+        self.states.add('manage_change_msisdn_emis', function(name) {
+            return go.cm.manage_change_msisdn_emis(name, $);
         });
 
 
@@ -428,7 +432,7 @@ go.app = function() {
 
         self.states.add('reg_thanks_head_teacher', function(name) {
             return go.rht.reg_thanks_head_teacher(name);
-        });        
+        });
 
 
 
@@ -557,7 +561,7 @@ go.app = function() {
 
         self.states.add('perf_learner_girls_writing', function(name) {
             return go.lp.perf_learner_girls_writing(name, $,
-                                                    self.im.user.answers.perf_learner_girls_total, 
+                                                    self.im.user.answers.perf_learner_girls_total,
                                                     self.contact, self.im);
         });
 
