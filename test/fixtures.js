@@ -1,10 +1,10 @@
 module.exports = function() {
     return [
-    
+
 
     // cms_district_load
     // -----------------
-    
+
     {
         "request": {
             "url": "http://qa/api/v1/district/",
@@ -209,7 +209,7 @@ module.exports = function() {
 
     // cms_emis_load
     // -------------
-    
+
     {
         "request": {
             "url": "http://qa/api/v1/hierarchy/",
@@ -478,6 +478,107 @@ module.exports = function() {
         }
     },
 
+
+    // cms_change_management
+    // ---------------------
+
+        // manage_change_msisdn_emis GET
+    {
+        "request": {
+            "method": "GET",
+            "headers": {
+                'Content-Type': ['application/json']
+            },
+            "url": "http://qa/api/v1/data/headteacher/?emis__emis=1"
+        },
+        "response": {
+            "code": 200,
+            "data": {
+                "created_at": "2013-08-14T19:57:50.232678",
+                "date_of_birth": "1980-09-11T00:00:00",
+                "emis": {
+                    "emis": 1,
+                    "id": 1,
+                    "name": "School One",
+                    "resource_uri": "/api/v1/school/1/",
+                    "zone": {
+                        "district": {
+                            "id": 1,
+                            "name": "District One",
+                            "province": {
+                                "id": 1,
+                                "name": "Province One",
+                                "resource_uri": "/api/v1/province/1/"
+                            },
+                            "resource_uri": "/api/v1/district/1/"
+                        },
+                        "id": 1,
+                        "name": "Zone One",
+                        "resource_uri": "/api/v1/zone/1/"
+                    }
+                },
+                "first_name": "Jack",
+                "gender": "male",
+                "id": 2,
+                "is_zonal_head": false,
+                "last_name": "Black",
+                "msisdn": "097123",
+                "resource_uri": "/api/data/headteacher/2/",
+                "zonal_head_name": "Jim Carey"
+            }
+        }
+    },
+
+
+        // manage_change_msisdn_emis PUT
+    {
+        "request": {
+            "method": "PUT",
+            "headers": {
+                'Content-Type': ['application/json']
+            },
+            "url": "http://qa/api/v1/data/headteacher/2/",
+            "data": {
+                "msisdn": "097666",
+            },
+        },
+        "response": {
+            "code": 201,
+            "data": {
+                "created_at": "2013-08-14T19:57:50.232678",
+                "date_of_birth": "1980-09-11T00:00:00",
+                "emis": {
+                    "emis": 1,
+                    "id": 1,
+                    "name": "School One",
+                    "resource_uri": "/api/v1/school/1/",
+                    "zone": {
+                        "district": {
+                            "id": 1,
+                            "name": "District One",
+                            "province": {
+                                "id": 1,
+                                "name": "Province One",
+                                "resource_uri": "/api/v1/province/1/"
+                            },
+                            "resource_uri": "/api/v1/district/1/"
+                        },
+                        "id": 1,
+                        "name": "Zone One",
+                        "resource_uri": "/api/v1/zone/1/"
+                    }
+                },
+                "first_name": "Jack",
+                "gender": "male",
+                "id": 2,
+                "is_zonal_head": false,
+                "last_name": "Black",
+                "msisdn": "097666",
+                "resource_uri": "/api/data/headteacher/2/",
+                "zonal_head_name": "Jim Carey"
+            }
+        }
+    },
 
 
     // cms_learner_performance
