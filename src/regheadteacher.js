@@ -291,16 +291,10 @@ go.rht = function() {
 
                 next: function(choice) {
                     if (choice.value === 'reg_thanks_zonal_head') {
-                        var headteacher_data = go.utils.registration_data_headteacher_collect(im);
-
                         return go.utils
-                            .cms_post("data/headteacher/", headteacher_data, im)
-                            .then(function(result) {
-                                return go.utils
-                                    .cms_update_school_and_contact(result, im, contact)
-                                    .then(function() {
-                                        return choice.value;
-                                    });
+                            .cms_registration(im, contact)
+                            .then(function() {
+                                return choice.value;
                             });
                     } else {
                         return choice.value;
@@ -326,16 +320,11 @@ go.rht = function() {
                 question: $("Please enter the name and surname of your ZONAL HEAD TEACHER."),
 
                 next: function() {
-                    var headteacher_data = go.utils.registration_data_headteacher_collect(im);
                     return go.utils
-                        .cms_post("data/headteacher/", headteacher_data, im)
-                            .then(function(result) {
-                                return go.utils
-                                    .cms_update_school_and_contact(result, im, contact)
-                                    .then(function() {
-                                        return "reg_thanks_head_teacher";
-                                    });
-                            });
+                        .cms_registration(im, contact)
+                        .then(function() {
+                            return "reg_thanks_head_teacher";
+                        });
                 }
             });
         },
