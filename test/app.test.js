@@ -3040,6 +3040,49 @@ describe("when a registered user logs on", function() {
 
     });
 
+
+    // UPDATE SCHOOL DATA
+    // ------------------
+
+    describe("when user chooses to update their school data", function() {
+        it("should give instruction, ask to continue", function() {
+            return tester
+                .setup.user.addr('097555')
+                .inputs(
+                    'start',
+                    '4'  // initial_state_head_teacher
+                )
+                .check.interaction({
+                    state: 'manage_update_school_data',
+                    reply: [
+                        "You'll now be asked to re-enter key school details to ensure the " +
+                        "records are accurate. Enter 1 to continue.",
+                        "1. Continue"
+                    ].join("\n")
+                })
+                .run();
+        });
+
+        describe("if they choose to continue after reading message", function() {
+            it("should ask them for number of boys at the school", function() {
+                return tester
+                    .setup.user.addr('097555')
+                    .inputs(
+                        'start',
+                        '4',  // initial_state_head_teacher
+                        '1'  // manage_update_school_data
+                    )
+                    .check.interaction({
+                        state: 'reg_school_boys',
+                        reply: "How many boys do you have in your school?"
+                    })
+                    .run();
+            });
+        });
+
+    });
+
+
 });
 
 
