@@ -2869,7 +2869,7 @@ describe("when a registered user logs on", function() {
     // CHANGE SCHOOL
     // -------------
 
-    describe("when user chooses to change their school", function() {
+    describe.only("when user chooses to change their school", function() {
         it("should ask them for their school's EMIS number", function() {
             return tester
                 .setup.user.addr('097555')
@@ -2895,7 +2895,7 @@ describe("when a registered user logs on", function() {
                         .inputs(
                             'start',
                             '3',  // initial_state_head_teacher
-                            '1'  // manage_change_emis
+                            '2334'  // manage_change_emis
                         )
                         .check.interaction({
                             state: 'manage_change_emis_validates',
@@ -2916,7 +2916,7 @@ describe("when a registered user logs on", function() {
                             .inputs(
                                 'start',
                                 '3',  // initial_state_head_teacher
-                                '1',  // manage_change_emis
+                                '2334',  // manage_change_emis
                                 '1'  // manage_change_emis_validates
                             )
                             .check.interaction({
@@ -2999,7 +2999,7 @@ describe("when a registered user logs on", function() {
                             '3',  // initial_state_head_teacher
                             '000A',  // manage_change_emis
                             '1',  // manage_change_emis_retry_exit
-                            '0001'  // manage_change_emis
+                            '2334'  // manage_change_emis
                         )
                         .check.interaction({
                             state: 'manage_change_emis_validates',
