@@ -1547,7 +1547,7 @@ describe("when a registered user logs on", function() {
                     )
                     .check.interaction({
                         state: 'add_emis_perf_teacher_ts_number',
-                        reply: 
+                        reply:
                             "Please enter the school's EMIS number that you would like " +
                             "to report on. This should have 4-6 digits e.g 4351."
                     })
@@ -1672,7 +1672,7 @@ describe("when a registered user logs on", function() {
 
             // ts number
             describe("when the user enters TS number", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for teacher gender", function() {
                         return tester
@@ -1727,7 +1727,7 @@ describe("when a registered user logs on", function() {
                         )
                         .check.interaction({
                             state: 'perf_teacher_age',
-                            reply: 
+                            reply:
                                 "Please enter the teacher's age in years e.g. 26."
                         })
                         .run();
@@ -1852,7 +1852,7 @@ describe("when a registered user logs on", function() {
                         )
                         .check.interaction({
                             state: 'perf_teacher_g2_pupils_present',
-                            reply: 
+                            reply:
                                 "How many children were PRESENT during the observed lesson?"
                         })
                         .run();
@@ -1876,7 +1876,7 @@ describe("when a registered user logs on", function() {
                         )
                         .check.interaction({
                             state: 'perf_teacher_g2_pupils_registered',
-                            reply: 
+                            reply:
                                 "How many children are ENROLLED in the Grade 2 class that " +
                                 "was observed?"
                         })
@@ -1902,7 +1902,7 @@ describe("when a registered user logs on", function() {
                         )
                         .check.interaction({
                             state: 'perf_teacher_classroom_environment_score',
-                            reply: 
+                            reply:
                                 "Enter the subtotal that the teacher achieved during the " +
                                 "classroom observation for Section 2 (Classroom Environment)."
                         })
@@ -1931,7 +1931,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_t_l_materials',
-                                reply: 
+                                reply:
                                     "Enter the subtotal that the teacher achieved during the classroom " +
                                     "observation for Section 3 (Teaching and Learning Materials).",
                             })
@@ -1988,7 +1988,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_pupils_books_number',
-                                reply: 
+                                reply:
                                     "Enter the number of learners' books (text books) for " +
                                     "literacy that were available in the classroom during the " +
                                     "lesson observation.",
@@ -2046,7 +2046,7 @@ describe("when a registered user logs on", function() {
                         )
                         .check.interaction({
                             state: 'perf_teacher_pupils_materials_score',
-                            reply: 
+                            reply:
                                 "Enter the subtotal that the teacher achieved during the " +
                                 "classroom observation for Section 4 (Learner Materials)."
                         })
@@ -2078,7 +2078,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_reading_lesson',
-                                reply: 
+                                reply:
                                     "Enter the subtotal that the teacher achieved during the " +
                                     "classroom observation for Section 5 (Time on Task and " +
                                     "Reading Practice)"
@@ -2142,7 +2142,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_pupil_engagement_score',
-                                reply: 
+                                reply:
                                     "Enter the subtotal that the teacher achieved during the " +
                                     "classroom observation for Section 6 (Learner Engagement)",
                             })
@@ -2207,7 +2207,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_attitudes_and_beliefs',
-                                reply: 
+                                reply:
                                     "Enter the subtotal that the teacher achieved during the " +
                                     "interview on Section 7.1. (Teacher Attitudes and Beliefs)",
                             })
@@ -2274,7 +2274,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_training_subtotal',
-                                reply: 
+                                reply:
                                     "Enter the subtotal that the teacher achieved during the " +
                                     "interview on Section 7.2. (Teacher Training)",
                             })
@@ -2343,7 +2343,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_reading_assessment',
-                                reply: 
+                                reply:
                                     "Enter the subtotal that the teacher achieved during the " +
                                     "interview on Section 7.3. (Reading Assessment).",
                             })
@@ -2414,7 +2414,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_reading_total',
-                                reply: 
+                                reply:
                                     "According to your assessment records, how many of the " +
                                     "pupils in the class that was observed have broken " +
                                     "through/can read?",
@@ -2499,7 +2499,7 @@ describe("when a registered user logs on", function() {
 
             // after completion
             describe("when the user has completed the report", function() {
-                
+
                 describe("if they choose to report on another teacher", function() {
                     it("should ask for the teacher TS number", function() {
                         return tester
@@ -2528,7 +2528,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_ts_number',
-                                reply: 
+                                reply:
                                     "Please enter the teacher's TS number."
                             })
                             .run();
@@ -2610,7 +2610,7 @@ describe("when a registered user logs on", function() {
                             .run();
                     });
                 });
-                    
+
             });
         });
     });
@@ -4011,7 +4011,7 @@ describe("when a registered user logs on", function() {
                     });
                 });
 
-                describe.skip("if the user completes school change process", function() {
+                describe("if the user completes school change process", function() {
                     it("should save data", function() {
                         return tester
                             .setup.user.addr('097555')
@@ -4177,6 +4177,53 @@ describe("when a registered user logs on", function() {
                 })
                 .run();
         });
+
+        describe("if they choose to continue after reading message", function() {
+            it("should ask them for number of boys at the school", function() {
+                return tester
+                    .setup.user.addr('097555')
+                    .inputs(
+                        'start',
+                        '4',  // initial_state_head_teacher
+                        '1'  // manage_update_school_data
+                    )
+                    .check.interaction({
+                        state: 'reg_school_boys',
+                        reply: "How many boys do you have in your school?"
+                    })
+                    .run();
+            });
+        });
+
+        describe("if the user completes school update process", function() {
+            it("should save data", function() {
+                return tester
+                    .setup.user.addr('097555')
+                    .inputs(
+                        'start',
+                        '4',  // initial_state_head_teacher
+                        '1',  // manage_update_school_data
+                        '33',  // reg_school_boys
+                        '51',  // reg_school_girls
+                        '5',  // reg_school_classrooms
+                        '5',  // reg_school_teachers
+                        '2',  // reg_school_teachers_g1
+                        '2',  // reg_school_teachers_g2
+                        '10',  // reg_school_students_g2_boys
+                        '11',  // reg_school_students_g2_girls
+                        '1'  // reg_zonal_head
+                    )
+                    .check(function(api) {
+                        var contact = api.contacts.store[1];
+                        assert.equal(contact.extra.rts_id, '555');
+                        assert.equal(contact.extra.rts_emis, '45');
+                        assert.equal(contact.name, 'Regina');
+                        assert.equal(contact.surname, 'Spektor');
+                    })
+                    .run();
+            });
+        });
+
 
         describe("if they choose to continue after reading message", function() {
             it("should ask them for number of boys at the school", function() {
