@@ -600,5 +600,85 @@ module.exports = function() {
         }
     },
 
+
+
+    // cms_teacher_performance
+    // -----------------------
+
+        // head teacher
+    {
+        "request": {
+            "method": "POST",
+            "headers": {
+                'Content-Type': ['application/json']
+            },
+            "url": "http://qa/api/v1/data/teacherperformance/",
+            "data": {
+                "academic_level": "/api/v1/data/achievement/3/",
+                "age": "30",
+                "attitudes_and_beliefs": "16",
+                "classroom_environment_score": "8",
+                "created_by": "/api/v1/data/headteacher/555/",
+                "emis": "/api/v1/school/emis/45/",
+                "g2_pupils_present": "40",
+                "g2_pupils_registered": "50",
+                "gender": "female",
+                "pupil_engagement_score": "17",
+                "pupils_books_number": "90",
+                "pupils_materials_score": "6",
+                "reading_lesson": "14",
+                "reading_assessment": "10",
+                "reading_total": "9",
+                "t_l_materials": "7",
+                "training_subtotal": "3",
+                "ts_number": "106",
+                "years_experience": "0-3"
+            }
+        },
+        "response": {
+            "code": 201,
+            "data": {}
+        }
+    },
+
+        // district official
+    {
+        "request": {
+            "method": "POST",
+            "headers": {
+                'Content-Type': ['application/json']
+            },
+            "url": "http://qa/api/v1/data/teacherperformance/",
+            "data": {
+                "academic_level": "/api/v1/data/achievement/3/",
+                "age": "30",
+                "attitudes_and_beliefs": "16",
+                "classroom_environment_score": "8",
+                "created_by_da": "/api/v1/district_admin/444/",
+                "emis": "/api/v1/school/emis/0001/",
+                "g2_pupils_present": "40",
+                "g2_pupils_registered": "50",
+                "gender": "female",
+                "pupil_engagement_score": "17",
+                "pupils_books_number": "90",
+                "pupils_materials_score": "6",
+                "reading_lesson": "14",
+                "reading_assessment": "10",
+                "reading_total": "9",
+                "t_l_materials": "7",
+                "training_subtotal": "3",
+                "ts_number": "106",
+                "years_experience": "0-3"
+            }
+        },
+        "response": {
+            "code": 201,
+            "data": {}
+        }
+    },
+
+
+
+
     ];
 };

@@ -16,11 +16,11 @@ go.rht = function() {
     var rht = {
         // Registration of Head Teacher States
 
-        reg_emis: function(name, array_emis, opts) {
+        reg_emis: function(name, $, array_emis, opts) {
             return new FreeText(name, {
                 question: 
-                    "Please enter your school's EMIS number. " +
-                    "This should have 4-6 digits e.g. 4351.",
+                    $("Please enter your school's EMIS number. " +
+                    "This should have 4-6 digits e.g. 4351."),
 
                 next: function(content) {
                     if (go.utils.check_valid_emis(content, array_emis)) {
@@ -34,28 +34,28 @@ go.rht = function() {
             });
         },
 
-        reg_emis_validates: function(name) {
+        reg_emis_validates: function(name, $) {
             return new ChoiceState(name, {
                 question: 
-                    "Thanks for claiming this EMIS. Redial this number if you ever " +
+                    $("Thanks for claiming this EMIS. Redial this number if you ever " +
                     "change cellphone number to reclaim the EMIS and continue to receive " +
-                    "SMS updates.",
+                    "SMS updates."),
 
                 choices: [
-                    new Choice('continue', "Continue")
+                    new Choice('continue', $("Continue"))
                 ],
 
                 next: "reg_school_name"
             });
         },
 
-        reg_emis_retry_exit: function(name) {
+        reg_emis_retry_exit: function(name, $) {
             return new ChoiceState(name, {
-                question: "There is a problem with the EMIS number you have entered.",
+                question: $("There is a problem with the EMIS number you have entered."),
 
                 choices: [
-                    new Choice('retry', "Try again"),
-                    new Choice('exit', "Exit")
+                    new Choice('retry', $("Try again")),
+                    new Choice('exit', $("Exit"))
                 ],
 
                 next: function(content) {
@@ -73,45 +73,45 @@ go.rht = function() {
             });
         },
 
-        reg_exit_emis: function(name) {
+        reg_exit_emis: function(name, $) {
             return new EndState(name, {
-                text: "We don't recognise your EMIS number. Please send a SMS with" +
+                text: $("We don't recognise your EMIS number. Please send a SMS with" +
                         " the words EMIS ERROR to 739 and your DEST will contact you" +
-                        " to resolve the problem.",
+                        " to resolve the problem."),
 
                 next: "initial_state"
             });
         },
 
-        reg_school_name: function(name) {
+        reg_school_name: function(name, $) {
             return new FreeText(name, {
-                question: "Please enter the name of your school, e.g. Kapililonga",
+                question: $("Please enter the name of your school, e.g. Kapililonga"),
 
                 next: "reg_first_name"
             });
         },
 
-        reg_first_name: function(name) {
+        reg_first_name: function(name, $) {
             return new FreeText(name, {
-                question: "Please enter your FIRST name.",
+                question: $("Please enter your FIRST name."),
 
                 next: "reg_surname"
             });
         },
 
-        reg_surname: function(name) {
+        reg_surname: function(name, $) {
             return new FreeText(name, {
-                question: "Please enter your SURNAME.",
+                question: $("Please enter your SURNAME."),
 
                 next: "reg_date_of_birth"
             });
         },
 
-        reg_date_of_birth: function(name) {
-            var error = "Please enter your date of birth formatted DDMMYYYY";
+        reg_date_of_birth: function(name, $) {
+            var error = $("Please enter your date of birth formatted DDMMYYYY");
 
-            var question = "Please enter your date of birth. Start with the day, followed by " +
-                            "the month and year, e.g. 27111980";
+            var question = $("Please enter your date of birth. Start with the day, followed by " +
+                            "the month and year, e.g. 27111980");
 
             return new FreeText(name, {
                 question: question,
@@ -126,23 +126,23 @@ go.rht = function() {
             });
         },
 
-        reg_gender: function(name) {
+        reg_gender: function(name, $) {
             return new ChoiceState(name, {
-                question: "What is your gender?",
+                question: $("What is your gender?"),
 
                 choices: [
-                    new Choice('female', 'Female'),
-                    new Choice('male', 'Male')
+                    new Choice('female', $('Female')),
+                    new Choice('male', $('Male'))
                 ],
 
                 next: "reg_school_boys"
             });
         },
 
-        reg_school_boys: function(name) {
-            var question = "How many boys do you have in your school?";
+        reg_school_boys: function(name, $) {
+            var question = $("How many boys do you have in your school?");
 
-            var error = "Please provide a number value for how many boys you have in your school.";
+            var error = $("Please provide a number value for how many boys you have in your school.");
 
             return new FreeText(name, {
                 question: question,
@@ -157,10 +157,10 @@ go.rht = function() {
             });
         },
 
-        reg_school_girls: function(name) {
-            var question = "How many girls do you have in your school?";
+        reg_school_girls: function(name, $) {
+            var question = $("How many girls do you have in your school?");
 
-            var error = "Please provide a number value for how many girls you have in your school.";
+            var error = $("Please provide a number value for how many girls you have in your school.");
 
             return new FreeText(name, {
                 question: question,
@@ -175,10 +175,10 @@ go.rht = function() {
             });
         },
 
-        reg_school_classrooms: function(name) {
-            var question = "How many classrooms do you have in your school?";
+        reg_school_classrooms: function(name, $) {
+            var question = $("How many classrooms do you have in your school?");
 
-            var error = "Please provide a number value for how many classrooms you have in your school";
+            var error = $("Please provide a number value for how many classrooms you have in your school");
 
             return new FreeText(name, {
                 question: question,
@@ -193,12 +193,12 @@ go.rht = function() {
             });
         },
 
-        reg_school_teachers: function(name) {
-            var question = "How many teachers are presently working in your school, " +
-                            "including the head teacher?";
+        reg_school_teachers: function(name, $) {
+            var question = $("How many teachers are presently working in your school, " +
+                            "including the head teacher?");
 
-            var error = "Please provide a number value for how many teachers in total you have " +
-                        "in your school.";
+            var error = $("Please provide a number value for how many teachers in total you have " +
+                        "in your school.");
 
             return new FreeText(name, {
                 question: question,
@@ -213,11 +213,11 @@ go.rht = function() {
             });
         },
 
-        reg_school_teachers_g1: function(name) {
-            var question = "How many teachers teach Grade 1 local language?";
+        reg_school_teachers_g1: function(name, $) {
+            var question = $("How many teachers teach Grade 1 local language?");
 
-            var error = "Please provide a number value for how many teachers teach G1 local " +
-                        "language literacy.";
+            var error = $("Please provide a number value for how many teachers teach G1 local " +
+                        "language literacy.");
 
             return new FreeText(name, {
                 question: question,
@@ -232,11 +232,11 @@ go.rht = function() {
             });
         },
 
-        reg_school_teachers_g2: function(name) {
-            var question = "How many teachers teach Grade 2 local language?";
+        reg_school_teachers_g2: function(name, $) {
+            var question = $("How many teachers teach Grade 2 local language?");
 
-            var error = "Please provide a number value for how many teachers teach G2 local" +
-                        " language literacy.";
+            var error = $("Please provide a number value for how many teachers teach G2 local" +
+                        " language literacy.");
 
             return new FreeText(name, {
                 question: question,
@@ -251,10 +251,10 @@ go.rht = function() {
             });
         },
 
-        reg_school_students_g2_boys: function(name) {
-            var question = "How many boys are ENROLLED in Grade 2 at your school?";
+        reg_school_students_g2_boys: function(name, $) {
+            var question = $("How many boys are ENROLLED in Grade 2 at your school?");
 
-            var error = "Please provide a number value for the total number of G2 boys enrolled.";
+            var error = $("Please provide a number value for the total number of G2 boys enrolled.");
 
             return new FreeText(name, {
                 question: question,
@@ -269,10 +269,10 @@ go.rht = function() {
             });
         },
 
-        reg_school_students_g2_girls: function(name) {
-            var question = "How many girls are ENROLLED in Grade 2 at your school?";
+        reg_school_students_g2_girls: function(name, $) {
+            var question = $("How many girls are ENROLLED in Grade 2 at your school?");
 
-            var error = "Please provide a number value for the total number of G2 girls enrolled.";
+            var error = $("Please provide a number value for the total number of G2 girls enrolled.");
 
             return new FreeText(name, {
                 question: question,
@@ -287,13 +287,13 @@ go.rht = function() {
             });
         },
 
-        reg_zonal_head: function(name, im, contact) {
+        reg_zonal_head: function(name, $, im, contact) {
             return new ChoiceState(name, {
-                question: "Are you a Zonal Head Teacher?",
+                question: $("Are you a Zonal Head Teacher?"),
 
                 choices: [
-                    new Choice('reg_thanks_zonal_head', 'Yes'),
-                    new Choice('reg_zonal_head_name', 'No')
+                    new Choice('reg_thanks_zonal_head', $('Yes')),
+                    new Choice('reg_zonal_head_name', $('No'))
                 ],
 
                 next: function(choice) {
@@ -316,21 +316,21 @@ go.rht = function() {
             });
         },
 
-        reg_thanks_zonal_head: function(name) {
+        reg_thanks_zonal_head: function(name, $) {
             return new EndState(name, {
                 text:
-                    "Well done! You are now registered as a Zonal Head " +
+                    $("Well done! You are now registered as a Zonal Head " +
                     "Teacher. When you are ready, dial in to start " +
                     "reporting. You will also receive monthly SMS's from " +
-                    "your zone.",
+                    "your zone."),
 
                 next: "initial_state"
             });
         },
 
-        reg_zonal_head_name: function(name, im, contact) {
+        reg_zonal_head_name: function(name, $, im, contact) {
             return new FreeText(name, {
-                question: "Please enter the name and surname of your ZONAL HEAD TEACHER.",
+                question: $("Please enter the name and surname of your ZONAL HEAD TEACHER."),
 
                 next: function() {
                     var headteacher_data = go.utils.registration_data_headteacher_collect(im);
@@ -347,12 +347,12 @@ go.rht = function() {
             });
         },
 
-        reg_thanks_head_teacher: function(name) {
+        reg_thanks_head_teacher: function(name, $) {
             return new EndState(name, {
                 text:
-                    "Congratulations! You are now registered as a user of " +
+                    $("Congratulations! You are now registered as a user of " +
                     "the Gateway! Please dial in again when you are ready to " +
-                    "start reporting on teacher and learner performance.",
+                    "start reporting on teacher and learner performance."),
 
                 next: "initial_state"
             });
@@ -377,7 +377,7 @@ go.rdo = function() {
     var rdo = {
         // Registration of District Official States
 
-        reg_district_official: function(name, districts) {
+        reg_district_official: function(name, $, districts) {
             var choices = [];
 
             for (var i=0; i<districts.inspect().value.length; i++) {
@@ -386,7 +386,7 @@ go.rdo = function() {
             }
 
             return new PaginatedChoiceState(name, {
-                question: "Please enter your district name.",
+                question: $("Please enter your district name."),
 
                 choices: choices,
 
@@ -397,36 +397,36 @@ go.rdo = function() {
             
         },
 
-        reg_district_official_first_name: function(name) {
+        reg_district_official_first_name: function(name, $) {
             return new FreeText(name, {
-                question: "Please enter your FIRST name.",
+                question: $("Please enter your FIRST name."),
 
                 next: "reg_district_official_surname"
             });
         },
 
-        reg_district_official_surname: function(name) {
+        reg_district_official_surname: function(name, $) {
             return new FreeText(name, {
-                question: "Please enter your SURNAME.",
+                question: $("Please enter your SURNAME."),
 
                 next: "reg_district_official_id_number"
             });
         },
 
-        reg_district_official_id_number: function(name) {
+        reg_district_official_id_number: function(name, $) {
             return new FreeText(name, {
-                question: "Please enter your ID number.",
+                question: $("Please enter your ID number."),
 
                 next: "reg_district_official_dob"
             });
         },
 
-        reg_district_official_dob: function(name, im, contact) {
-            var error = "Please enter your date of birth formatted DDMMYYYY";
+        reg_district_official_dob: function(name, $, im, contact) {
+            var error = $("Please enter your date of birth formatted DDMMYYYY");
 
             var question = 
-                    "Please enter your date of birth. Start with the day," +
-                    " followed by the month and year, e.g. 27111980.";
+                    $("Please enter your date of birth. Start with the day," +
+                    " followed by the month and year, e.g. 27111980.");
 
             return new FreeText(name, {
                 question: question,
@@ -458,12 +458,12 @@ go.rdo = function() {
             });
         },
 
-        reg_district_official_thanks: function(name) {
+        reg_district_official_thanks: function(name, $) {
             return new EndState(name, {
                 text:
-                    "Congratulations! You are now registered as a user of the" +
+                    $("Congratulations! You are now registered as a user of the" +
                     " Gateway! Please dial in again when you are ready to start" +
-                    " reporting on teacher and learner performance.",
+                    " reporting on teacher and learner performance."),
 
                 next:
                     "initial_state"
@@ -599,7 +599,7 @@ go.lp = function() {
                     }),
 
                 choices: [
-                    new Choice('continue', 'Continue')
+                    new Choice('continue', $('Continue'))
                 ],
 
                 next: 'perf_learner_boys_total'
@@ -778,7 +778,7 @@ go.lp = function() {
                     }),
 
                 choices: [
-                    new Choice('continue', 'Continue')
+                    new Choice('continue', $('Continue'))
                 ],
 
                 next: 'perf_learner_girls_total'
@@ -1111,11 +1111,11 @@ go.lp = function() {
 
         perf_learner_completed: function(name, $) {
             return new ChoiceState(name, {
-                question: "Congratulations. You have finished reporting on the learner assessment.",
+                question: $("Congratulations. You have finished reporting on the learner assessment."),
 
                 choices: [
-                    new Choice('initial_state', 'Go back to the main menu.'),
-                    new Choice('end_state', 'Exit.')
+                    new Choice('initial_state', $('Go back to the main menu.')),
+                    new Choice('end_state', $('Exit.'))
                 ],
 
                 next: function(choice) {
@@ -1135,56 +1135,406 @@ go.lp = function() {
 
 go.tp = function() {
     var vumigo = require('vumigo_v02');
+    var _ = require('lodash');
+    var FreeText = vumigo.states.FreeText;
     var ChoiceState = vumigo.states.ChoiceState;
-    var EndState = vumigo.states.EndState;
     var Choice = vumigo.states.Choice;
 
 
     var tp = {
         // TeacherPerformance States
 
-        state_tp_start: function(name) {
+        add_emis_perf_teacher_ts_number: function(name, $, array_emis, contact, im) {
+            var error = $("The emis does not exist, please try again. " +
+                        "This should have 4-6 digits e.g 4351.");
+
+            var question = $("Please enter the school's EMIS number that you would " +
+                            "like to report on. This should have 4-6 digits e.g 4351.");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_emis(content, array_emis) === false) {
+                        return error;
+                    }
+                },
+
+                next: function(content) {
+                    contact.extra.rts_emis = content;
+                    return im.contacts
+                        .save(contact)
+                        .then(function() {
+                            return "perf_teacher_ts_number";
+                        });
+                }
+
+            });
+        },
+
+        perf_teacher_ts_number: function(name, $) {
+            var error = $("Please provide a valid number value for the teacher's TS number.");
+
+            var question = $("Please enter the teacher's TS number.");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_number(content) === false) {
+                        return error;
+                    }
+                },
+
+                next: 'perf_teacher_gender'
+            });
+        },
+
+        perf_teacher_gender: function(name, $) {
             return new ChoiceState(name, {
-                question: 'Hi there! What do you want to do?',
+                question: $("What is the gender of the teacher?"),
 
                 choices: [
-                    new Choice('next', 'Go to next state'),
-                    new Choice('exit', 'Exit')],
+                    new Choice('male', $('Male')),
+                    new Choice('female', $('Female'))
+                ],
 
-                next: function(choice) {
-                    if(choice.value === 'next') {
-                        return 'state_tp_next';
-                    } else {
-                        return 'state_tp_exit';
+                next: 'perf_teacher_age'
+            });
+        },
+
+        perf_teacher_age: function(name, $) {
+            var error = $("Please provide a valid number value for the teacher's age.");
+
+            var question = $("Please enter the teacher's age in years e.g. 26.");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_number(content) === false ||
+                            parseInt(content, 10) >= 76 || parseInt(content, 10) <= 19) {
+                        return error;
                     }
+                },
+
+                next: 'perf_teacher_academic_level'
+            });
+        },
+
+        perf_teacher_academic_level: function(name, $) {
+            return new ChoiceState(name, {
+                question: $("What is the teacher's highest education level?"),
+
+                choices: [
+                    new Choice("1", $("Gr 7")),
+                    new Choice("2", $("Gr 9")),
+                    new Choice("3", $("Gr 12")),
+                    new Choice("4", $("PTC")),
+                    new Choice("5", $("PTD")),
+                    new Choice("6", $("Dip Ed")),
+                    new Choice("7", $("Other diploma")),
+                    new Choice("8", $("BA Degree")),
+                    new Choice("9", $("MA Degree")),
+                    new Choice("10", $("Other"))
+                ],
+
+                next: 'perf_teacher_years_experience'
+            });
+        },
+
+        perf_teacher_years_experience: function(name, $) {
+            return new ChoiceState(name, {
+                question: $("How many years of teaching experience does this teacher have?"),
+
+                choices: [
+                    new Choice("0-3", $("0 - 3 years")),
+                    new Choice("4-8", $("4 - 8 years")),
+                    new Choice("9-12", $("9 - 12 years")),
+                    new Choice("13+", $("13 years or more"))
+                ],
+
+                next: 'perf_teacher_g2_pupils_present'
+            });
+        },
+
+        perf_teacher_g2_pupils_present: function(name, $) {
+            var error = $('Please provide a number value for pupils present.');
+
+            var question = $("How many children were PRESENT during the observed lesson?");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_number(content) === false) {
+                        return error;
+                    }
+                },
+
+                next: 'perf_teacher_g2_pupils_registered'
+            });
+        },
+
+        perf_teacher_g2_pupils_registered: function(name, $) {
+            var error = $('Please provide a number value for pupils enrolled.');
+
+            var question = $("How many children are ENROLLED in the Grade 2 class that was " +
+                            "observed?");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_number(content) === false) {
+                        return error;
+                    }
+                },
+
+                next: 'perf_teacher_classroom_environment_score'
+            });
+        },
+
+        perf_teacher_classroom_environment_score: function(name, $) {
+            var error = $("Please provide a valid number value for the Classroom Environment " +
+                        "subtotal.");
+
+            var question = $("Enter the subtotal that the teacher achieved during the classroom " +
+                            "observation for Section 2 (Classroom Environment).");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_number(content) === false ||
+                            parseInt(content, 10) < 0 || parseInt(content, 10) > 8) {
+                        return error;
+                    }
+                },
+
+                next: 'perf_teacher_t_l_materials'
+            });
+        },
+
+        perf_teacher_t_l_materials: function(name, $) {
+            var error = $("Please provide a valid number value for the Teaching and Learning " +
+                        "Materials subtotal.");
+
+            var question = $("Enter the subtotal that the teacher achieved during the classroom " +
+                            "observation for Section 3 (Teaching and Learning Materials).");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_number(content) === false ||
+                            parseInt(content, 10) < 0 || parseInt(content, 10) > 7) {
+                        return error;
+                    }
+                },
+
+                next: 'perf_teacher_pupils_books_number'
+            });
+        },
+
+        perf_teacher_pupils_books_number: function(name, $) {
+            var error = $("Please provide a number value for number of learners' books.");
+
+            var question = $("Enter the number of learners' books (text books) for literacy that " +
+                            "were available in the classroom during the lesson observation.");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_number(content) === false) {
+                        return error;
+                    }
+                },
+
+                next: 'perf_teacher_pupils_materials_score'
+            });
+        },
+
+        perf_teacher_pupils_materials_score: function(name, $) {
+            var error = $("Please provide a valid number value for the Learner Materials subtotal.");
+
+            var question = $("Enter the subtotal that the teacher achieved during the classroom " +
+                            "observation for Section 4 (Learner Materials).");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_number(content) === false ||
+                            parseInt(content, 10) < 0 || parseInt(content, 10) > 6) {
+                        return error;
+                    }
+                },
+
+                next: 'perf_teacher_reading_lesson'
+            });
+        },
+
+        perf_teacher_reading_lesson: function(name, $) {
+            var error = $("Please provide a valid number value for the Time on Task and Reading " +
+                        "Practice subtotal.");
+
+            var question = $("Enter the subtotal that the teacher achieved during the classroom " +
+                            "observation for Section 5 (Time on Task and Reading Practice)");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_number(content) === false ||
+                            parseInt(content, 10) < 0 || parseInt(content, 10) > 14) {
+                        return error;
+                    }
+                },
+
+                next: 'perf_teacher_pupil_engagement_score'
+            });
+        },
+
+        perf_teacher_pupil_engagement_score: function(name, $) {
+            var error = $("Please provide a valid number value for the Learner Engagement subtotal.");
+
+            var question = $("Enter the subtotal that the teacher achieved during the classroom " +
+                            "observation for Section 6 (Learner Engagement)");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_number(content) === false ||
+                            parseInt(content, 10) < 0 || parseInt(content, 10) > 17) {
+                        return error;
+                    }
+                },
+
+                next: 'perf_teacher_attitudes_and_beliefs'
+            });
+        },
+
+        perf_teacher_attitudes_and_beliefs: function(name, $) {
+            var error = $("Please provide a valid number value for the Teacher Attitudes and " +
+                        "Beliefs subtotal.");
+
+            var question = $("Enter the subtotal that the teacher achieved during the interview " +
+                            "on Section 7.1. (Teacher Attitudes and Beliefs)");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_number(content) === false ||
+                            parseInt(content, 10) < 0 || parseInt(content, 10) > 16) {
+                        return error;
+                    }
+                },
+
+                next: 'perf_teacher_training_subtotal'
+            });
+        },
+
+        perf_teacher_training_subtotal: function(name, $) {
+            var error = $("Please provide a valid number value for the Teacher Training " +
+                        "interview subtotal.");
+
+            var question = $("Enter the subtotal that the teacher achieved during the interview " +
+                            "on Section 7.2. (Teacher Training)");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_number(content) === false ||
+                            parseInt(content, 10) < 0 || parseInt(content, 10) > 3) {
+                        return error;
+                    }
+                },
+
+                next: 'perf_teacher_reading_assessment'
+            });
+        },
+
+        perf_teacher_reading_assessment: function(name, $) {
+            var error = $("Please provide a valid number value for the Reading Assessment " +
+                        "subtotal.");
+
+            var question = $("Enter the subtotal that the teacher achieved during the interview " +
+                            "on Section 7.3. (Reading Assessment).");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_number(content) === false ||
+                            parseInt(content, 10) < 0 || parseInt(content, 10) > 10) {
+                        return error;
+                    }
+                },
+
+                next: 'perf_teacher_reading_total'
+            });
+        },
+
+        perf_teacher_reading_total: function(name, $, contact, im) {
+            var error = $("Please provide a number value for the pupils in the class that have " +
+                        "broken through/can read.");
+
+            var question = $("According to your assessment records, how many of the pupils in " +
+                            "the class that was observed have broken through/can read?");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_number(content) === false) {
+                        return error;
+                    }
+                },
+
+                next: function() {
+                    var emis = contact.extra.rts_emis;
+                    var id = contact.extra.rts_id;
+                    var data = go.utils.performance_data_teacher_collect(emis, im);
+
+                    if (_.isUndefined(contact.extra.rts_official_district_id)) {
+                        // is head teacher
+                        data.created_by = "/api/v1/data/headteacher/" + id + "/";
+                    } else {
+                        // is district admin
+                        data.created_by_da = "/api/v1/district_admin/" + id + "/";
+                    }
+
+                    return go.utils
+                        .cms_post("data/teacherperformance/", data, im)
+                        .then(function() {
+                            return 'perf_teacher_completed';
+                        });
                 }
             });
         },
 
-        state_tp_next: function(name) {
+        perf_teacher_completed: function(name, $) {
             return new ChoiceState(name, {
-                question: 'Hi there! What do you want to do?',
+                question: $("Congratulations, you have finished reporting on this teacher."),
 
                 choices: [
-                    new Choice('again', 'Back to beginning'),
-                    new Choice('exit', 'Exit')],
+                    new Choice("perf_teacher_ts_number", $("Add another teacher.")),
+                    new Choice("initial_state", $("Go back to the main menu.")),
+                    new Choice("end_state", $("Exit."))
+                ],
 
                 next: function(choice) {
-                    if(choice.value === 'again') {
-                        return 'state_tp_start';
-                    } else {
-                        return 'state_tp_exit';
-                    }
+                    return choice.value;
                 }
             });
         },
 
-        state_tp_exit: function(name) {
-            return new EndState(name, {
-                text: 'Thanks, cheers!',
-                next: 'state_tp_start'
-            });
-        }
+        'commas': 'commas'
 
     };
 
@@ -1447,7 +1797,7 @@ go.utils = {
         return school_data;
     },
 
-    performance_data_learner_collect: function(emis, im){
+    performance_data_learner_collect: function(emis, im) {
         var data_boys = {
             "gender": "boys",
             "total_number_pupils": im.user.answers.perf_learner_boys_total,
@@ -1477,6 +1827,32 @@ go.utils = {
         };
 
         return {boys: data_boys, girls: data_girls};
+    },
+
+    performance_data_teacher_collect: function(emis, im) {
+        var data = {
+            "ts_number": im.user.answers.perf_teacher_ts_number,
+            "gender": im.user.answers.perf_teacher_gender,
+            "age": im.user.answers.perf_teacher_age,
+            "years_experience": im.user.answers.perf_teacher_years_experience,
+            "g2_pupils_present": im.user.answers.perf_teacher_g2_pupils_present,
+            "g2_pupils_registered": im.user.answers.perf_teacher_g2_pupils_registered,
+            "classroom_environment_score": im.user.answers.perf_teacher_classroom_environment_score,
+            "t_l_materials": im.user.answers.perf_teacher_t_l_materials,
+            "pupils_materials_score": im.user.answers.perf_teacher_pupils_materials_score,
+            "pupils_books_number": im.user.answers.perf_teacher_pupils_books_number,
+            "reading_lesson": im.user.answers.perf_teacher_reading_lesson,
+            "pupil_engagement_score": im.user.answers.perf_teacher_pupil_engagement_score,
+            "attitudes_and_beliefs": im.user.answers.perf_teacher_attitudes_and_beliefs,
+            "training_subtotal": im.user.answers.perf_teacher_training_subtotal,
+            "academic_level": "/api/v1/data/achievement/" +
+                                im.user.answers.perf_teacher_academic_level + "/",
+            "reading_assessment": im.user.answers.perf_teacher_reading_assessment,
+            "reading_total": im.user.answers.perf_teacher_reading_total,
+            "emis": "/api/v1/school/emis/" + emis + "/"
+        };
+
+        return data;
     }
 
 };
@@ -1521,13 +1897,13 @@ go.app = function() {
 
         self.states.add('initial_state_unregistered', function(name) {
             return new ChoiceState(name, {
-                question: 'Welcome to the Zambia School Gateway! Options:',
+                question: $('Welcome to the Zambia School Gateway! Options:'),
 
                 choices: [
-                    new Choice("reg_emis", "Register as Head Teacher"),
-                    new Choice("reg_district_official", "Register as District Official"),
-                    new Choice("manage_change_emis_error", "Change my school"),
-                    new Choice("manage_change_msisdn_emis", "Change my primary cell number")
+                    new Choice("reg_emis", $("Register as Head Teacher")),
+                    new Choice("reg_district_official", $("Register as District Official")),
+                    new Choice("manage_change_emis_error", $("Change my school")),
+                    new Choice("manage_change_msisdn_emis", $("Change my primary cell number"))
                 ],
 
                 next: function(choice) {
@@ -1547,11 +1923,11 @@ go.app = function() {
 
         self.states.add('initial_state_district_official', function(name) {
             return new ChoiceState(name, {
-                question: 'What would you like to do?',
+                question: $('What would you like to do?'),
 
                 choices: [
-                    new Choice("add_emis_perf_teacher_ts_number", "Report on teacher performance."),
-                    new Choice("add_emis_perf_learner_boys_total", "Report on learner performance."),
+                    new Choice("add_emis_perf_teacher_ts_number", $("Report on teacher performance.")),
+                    new Choice("add_emis_perf_learner_boys_total", $("Report on learner performance.")),
                 ],
 
                 next: function(choice) {
@@ -1562,13 +1938,13 @@ go.app = function() {
 
         self.states.add('initial_state_head_teacher', function(name) {
             return new ChoiceState(name, {
-                question: 'What would you like to do?',
+                question: $('What would you like to do?'),
 
                 choices: [
-                    new Choice("perf_teacher_ts_number", "Report on teacher performance."),
-                    new Choice("perf_learner_boys_total", "Report on learner performance."),
-                    new Choice("manage_change_emis", "Change my school."),
-                    new Choice("manage_update_school_data", "Update my school's registration data.")
+                    new Choice("perf_teacher_ts_number", $("Report on teacher performance.")),
+                    new Choice("perf_learner_boys_total", $("Report on learner performance.")),
+                    new Choice("manage_change_emis", $("Change my school.")),
+                    new Choice("manage_update_school_data", $("Update my school's registration data."))
                 ],
 
                 next: function(choice) {
@@ -1579,7 +1955,7 @@ go.app = function() {
 
         self.states.add('end_state', function(name) {
             return new EndState(name, {
-                text: "Goodbye! Thank you for using the Gateway.",
+                text: $("Goodbye! Thank you for using the Gateway."),
 
                 next: "initial_state"
             });
@@ -1591,87 +1967,87 @@ go.app = function() {
         // ----------------------------
 
         self.states.add('reg_emis', function(name, opts) {
-            return go.rht.reg_emis(name, self.array_emis, opts);
+            return go.rht.reg_emis(name, $, self.array_emis, opts);
         });
 
         self.states.add('reg_emis_validates', function(name) {
-            return go.rht.reg_emis_validates(name);
+            return go.rht.reg_emis_validates(name, $);
         });
 
         self.states.add('reg_emis_retry_exit', function(name) {
-            return go.rht.reg_emis_retry_exit(name);
+            return go.rht.reg_emis_retry_exit(name, $);
         });
 
         self.states.add('reg_exit_emis', function(name) {
-            return go.rht.reg_exit_emis(name);
+            return go.rht.reg_exit_emis(name, $);
         });
 
         self.states.add('reg_school_name', function(name) {
-            return go.rht.reg_school_name(name);
+            return go.rht.reg_school_name(name, $);
         });
 
         self.states.add('reg_first_name', function(name) {
-            return go.rht.reg_first_name(name);
+            return go.rht.reg_first_name(name, $);
         });
 
         self.states.add('reg_surname', function(name) {
-            return go.rht.reg_surname(name);
+            return go.rht.reg_surname(name, $);
         });
 
         self.states.add('reg_date_of_birth', function(name) {
-            return go.rht.reg_date_of_birth(name);
+            return go.rht.reg_date_of_birth(name, $);
         });
 
         self.states.add('reg_gender', function(name) {
-            return go.rht.reg_gender(name);
+            return go.rht.reg_gender(name, $);
         });
 
         self.states.add('reg_school_boys', function(name) {
-            return go.rht.reg_school_boys(name);
+            return go.rht.reg_school_boys(name, $);
         });
 
         self.states.add('reg_school_girls', function(name) {
-            return go.rht.reg_school_girls(name);
+            return go.rht.reg_school_girls(name, $);
         });
 
         self.states.add('reg_school_classrooms', function(name) {
-            return go.rht.reg_school_classrooms(name);
+            return go.rht.reg_school_classrooms(name, $);
         });
 
         self.states.add('reg_school_teachers', function(name) {
-            return go.rht.reg_school_teachers(name);
+            return go.rht.reg_school_teachers(name, $);
         });
 
         self.states.add('reg_school_teachers_g1', function(name) {
-            return go.rht.reg_school_teachers_g1(name);
+            return go.rht.reg_school_teachers_g1(name, $);
         });
 
         self.states.add('reg_school_teachers_g2', function(name) {
-            return go.rht.reg_school_teachers_g2(name);
+            return go.rht.reg_school_teachers_g2(name, $);
         });
 
         self.states.add('reg_school_students_g2_boys', function(name) {
-            return go.rht.reg_school_students_g2_boys(name);
+            return go.rht.reg_school_students_g2_boys(name, $);
         });
 
         self.states.add('reg_school_students_g2_girls', function(name) {
-            return go.rht.reg_school_students_g2_girls(name);
+            return go.rht.reg_school_students_g2_girls(name, $);
         });
 
         self.states.add('reg_zonal_head', function(name) {
-            return go.rht.reg_zonal_head(name, self.im, self.contact);
+            return go.rht.reg_zonal_head(name, $, self.im, self.contact);
         });
 
         self.states.add('reg_thanks_zonal_head', function(name) {
-            return go.rht.reg_thanks_zonal_head(name);
+            return go.rht.reg_thanks_zonal_head(name, $);
         });
 
         self.states.add('reg_zonal_head_name', function(name) {
-            return go.rht.reg_zonal_head_name(name, self.im, self.contact);
+            return go.rht.reg_zonal_head_name(name, $, self.im, self.contact);
         });
 
         self.states.add('reg_thanks_head_teacher', function(name) {
-            return go.rht.reg_thanks_head_teacher(name);
+            return go.rht.reg_thanks_head_teacher(name, $);
         });        
 
 
@@ -1680,38 +2056,38 @@ go.app = function() {
         // ---------------------------------
 
         self.states.add('reg_district_official', function(name) {
-            return go.rdo.reg_district_official(name, self.districts);
+            return go.rdo.reg_district_official(name, $, self.districts);
         });
 
         self.states.add('reg_district_official_first_name', function(name) {
-            return go.rdo.reg_district_official_first_name(name);
+            return go.rdo.reg_district_official_first_name(name, $);
         });
 
         self.states.add('reg_district_official_surname', function(name) {
-            return go.rdo.reg_district_official_surname(name);
+            return go.rdo.reg_district_official_surname(name, $);
         });
 
         self.states.add('reg_district_official_id_number', function(name) {
-            return go.rdo.reg_district_official_id_number(name);
+            return go.rdo.reg_district_official_id_number(name, $);
         });
 
         self.states.add('reg_district_official_dob', function(name) {
-            return go.rdo.reg_district_official_dob(name, self.im, self.contact);
+            return go.rdo.reg_district_official_dob(name, $, self.im, self.contact);
         });
 
         self.states.add('reg_district_official_thanks', function(name) {
-            return go.rdo.reg_district_official_thanks(name);
+            return go.rdo.reg_district_official_thanks(name, $);
         });
 
 
         // CHANGE MANAGEMENT STATES
         // ------------------------
 
-        self.states.add('state_cm_start', function(name) {
+        self.states.add('state_cm_start', function(name, $) {
             return go.cm.state_cm_start(name);
         });
 
-        self.states.add('state_cm_exit', function(name) {
+        self.states.add('state_cm_exit', function(name, $) {
             return go.cm.state_cm_exit(name);
         });
 
@@ -1827,16 +2203,81 @@ go.app = function() {
         // TEACHER PERFORMANCE STATES
         // --------------------------
 
-        self.states.add('state_tp_start', function(name) {
-            return go.tp.state_tp_start(name);
+        self.states.add('add_emis_perf_teacher_ts_number', function(name) {
+            return go.tp.add_emis_perf_teacher_ts_number(name, $, self.array_emis, self.contact,
+                                                        self.im);
         });
 
-        self.states.add('state_tp_next', function(name) {
-            return go.tp.state_tp_next(name);
+        self.states.add('perf_teacher_ts_number', function(name) {
+            return go.tp.perf_teacher_ts_number(name, $);
         });
 
-        self.states.add('state_tp_exit', function(name) {
-            return go.tp.state_tp_exit(name);
+        self.states.add('perf_teacher_gender', function(name) {
+            return go.tp.perf_teacher_gender(name, $);
+        });
+
+        self.states.add('perf_teacher_age', function(name) {
+            return go.tp.perf_teacher_age(name, $);
+        });
+
+        self.states.add('perf_teacher_academic_level', function(name) {
+            return go.tp.perf_teacher_academic_level(name, $);
+        });
+
+        self.states.add('perf_teacher_years_experience', function(name) {
+            return go.tp.perf_teacher_years_experience(name, $);
+        });
+
+        self.states.add('perf_teacher_g2_pupils_present', function(name) {
+            return go.tp.perf_teacher_g2_pupils_present(name, $);
+        });
+
+        self.states.add('perf_teacher_g2_pupils_registered', function(name) {
+            return go.tp.perf_teacher_g2_pupils_registered(name, $);
+        });
+
+        self.states.add('perf_teacher_classroom_environment_score', function(name) {
+            return go.tp.perf_teacher_classroom_environment_score(name, $);
+        });
+
+        self.states.add('perf_teacher_t_l_materials', function(name) {
+            return go.tp.perf_teacher_t_l_materials(name, $);
+        });
+
+        self.states.add('perf_teacher_pupils_books_number', function(name) {
+            return go.tp.perf_teacher_pupils_books_number(name, $);
+        });
+
+        self.states.add('perf_teacher_pupils_materials_score', function(name) {
+            return go.tp.perf_teacher_pupils_materials_score(name, $);
+        });
+
+        self.states.add('perf_teacher_reading_lesson', function(name) {
+            return go.tp.perf_teacher_reading_lesson(name, $);
+        });
+
+        self.states.add('perf_teacher_pupil_engagement_score', function(name) {
+            return go.tp.perf_teacher_pupil_engagement_score(name, $);
+        });
+
+        self.states.add('perf_teacher_attitudes_and_beliefs', function(name) {
+            return go.tp.perf_teacher_attitudes_and_beliefs(name, $);
+        });
+
+        self.states.add('perf_teacher_training_subtotal', function(name) {
+            return go.tp.perf_teacher_training_subtotal(name, $);
+        });
+
+        self.states.add('perf_teacher_reading_assessment', function(name) {
+            return go.tp.perf_teacher_reading_assessment(name, $);
+        });
+
+        self.states.add('perf_teacher_reading_total', function(name) {
+            return go.tp.perf_teacher_reading_total(name, $, self.contact, self.im);
+        });
+
+        self.states.add('perf_teacher_completed', function(name) {
+            return go.tp.perf_teacher_completed(name, $);
         });
 
 
@@ -1855,6 +2296,7 @@ go.app = function() {
         self.states.add('state_sp_exit', function(name) {
             return go.sp.state_sp_exit(name);
         });
+
 
     });
 
