@@ -18,7 +18,7 @@ go.rht = function() {
 
         reg_emis: function(name, array_emis, opts) {
             return new FreeText(name, {
-                question: 
+                question:
                     "Please enter your school's EMIS number. " +
                     "This should have 4-6 digits e.g. 4351.",
 
@@ -36,7 +36,7 @@ go.rht = function() {
 
         reg_emis_validates: function(name) {
             return new ChoiceState(name, {
-                question: 
+                question:
                     "Thanks for claiming this EMIS. Redial this number if you ever " +
                     "change cellphone number to reclaim the EMIS and continue to receive " +
                     "SMS updates.",
@@ -70,16 +70,6 @@ go.rht = function() {
                         return "reg_exit_emis";
                     }
                 }
-            });
-        },
-
-        reg_exit_emis: function(name) {
-            return new EndState(name, {
-                text: "We don't recognise your EMIS number. Please send a SMS with" +
-                        " the words EMIS ERROR to 739 and your DEST will contact you" +
-                        " to resolve the problem.",
-
-                next: "initial_state"
             });
         },
 
@@ -481,6 +471,8 @@ go.cm = function() {
 
     var vumigo = require('vumigo_v02');
     var ChoiceState = vumigo.states.ChoiceState;
+    var FreeText = vumigo.states.FreeText;
+    var EndState = vumigo.states.EndState;
     var Choice = vumigo.states.Choice;
 
 
@@ -489,8 +481,8 @@ go.cm = function() {
 
         manage_change_emis_error: function(name, $) {
             return new ChoiceState(name, {
-                question: "Your cell phone number is unrecognised. Please associate your new " +
-                        "number with your old EMIS first before requesting to change school.",
+                question: $("Your cell phone number is unrecognised. Please associate your new " +
+                            "number with your old EMIS first before requesting to change school."),
 
                 choices: [
                     new Choice('initial_state', $("Main menu.")),
@@ -501,6 +493,77 @@ go.cm = function() {
                 }
             });
         },
+
+
+
+        manage_change_msisdn_emis: function(name, $, array_emis, opts, im) {
+            return new FreeText(name, {
+                question: $("Please enter the school's EMIS number that you are currently " +
+                            "registered with. This should have 4-6 digits e.g 4351."),
+
+                next: function(content) {
+                    if (go.utils.check_valid_emis(content, array_emis)) {
+                        var emis = parseInt(content, 10);
+                        return go.utils
+                            .cms_get("data/headteacher/?emis__emis=" + emis, im)
+                            .then(function(result) {
+                                var parsed_result = JSON.parse(result.body);
+                                var headteacher_id = parsed_result.id;
+                                var data = {
+                                    msisdn: im.user.addr
+                                };
+                                return go.utils
+                                    .cms_put("data/headteacher/" + headteacher_id + "/", data, im)
+                                    .then(function() {
+                                        return 'manage_change_msisdn_emis_validates';
+                                    });
+                            });
+                    } else if (opts.retry === false) {
+                        return "manage_change_msisdn_emis_retry_exit";
+                    } else if (opts.retry === true) {
+                        return "reg_exit_emis";
+                    }
+                }
+            });
+        },
+
+        manage_change_msisdn_emis_validates: function(name, $) {
+            return new EndState(name, {
+                text:
+                    $("Thank you! Your cell phone number is now the official number " +
+                    "that your school will use to communicate with the Gateway."),
+
+                next: "initial_state"
+            });
+        },
+
+        manage_change_msisdn_emis_retry_exit: function(name, $) {
+            return new ChoiceState(name, {
+                question: $("There is a problem with the EMIS number you have entered."),
+
+                choices: [
+                    new Choice('retry', $("Try again")),
+                    new Choice('exit', $("Exit"))
+                ],
+
+                next: function(content) {
+                    if (content.value === 'retry') {
+                        return {
+                            name: "manage_change_msisdn_emis",
+                            creator_opts: {
+                                retry: true
+                            }
+                        };
+                    } else {
+                        return "reg_exit_emis";
+                    }
+                }
+            });
+        },
+
+
+
+
 
         "commas": "commas"
     };
@@ -1317,9 +1380,23 @@ go.utils = {
         var json_api = new JsonApi(im);
         var url = im.config.cms_api_root + path;
         return json_api.post(
-            url, 
+            url,
             {
-                data: data, 
+                data: data,
+                headers:{
+                    'Content-Type': ['application/json']
+                }
+            }
+        );
+    },
+
+    cms_put: function(path, data, im) {
+        var json_api = new JsonApi(im);
+        var url = im.config.cms_api_root + path;
+        return json_api.put(
+            url,
+            {
+                data: data,
                 headers:{
                     'Content-Type': ['application/json']
                 }
@@ -1375,13 +1452,13 @@ go.utils = {
     update_calculated_totals: function(opts, content) {
         // calculate new totals to be passed through to next state as creator_opts
         opts.current_sum = opts.current_sum + parseInt(content, 10);
-        
+
         if (opts.sum_as_string === "") {
             opts.sum_as_string = content;
         } else {
-            opts.sum_as_string = opts.sum_as_string + "+" + content;    
+            opts.sum_as_string = opts.sum_as_string + "+" + content;
         }
-        
+
         return opts;
     },
 
@@ -1485,7 +1562,7 @@ go.app = function() {
             self.env = self.im.config.env;
             self.districts = go.utils.cms_district_load(self.im);
             self.array_emis = go.utils.cms_emis_load(self.im);
-            
+
             return self.im.contacts
                 .for_user()
                 .then(function(user_contact) {
@@ -1521,15 +1598,15 @@ go.app = function() {
                 ],
 
                 next: function(choice) {
-                    if (choice.value != 'reg_emis') {
-                        return choice.value;
-                    } else {
+                    if (choice.value === 'reg_emis' || choice.value === 'manage_change_msisdn_emis') {
                         return {
-                            name: 'reg_emis',
+                            name: choice.value,
                             creator_opts: {
                                 retry: false
                             }
                         };
+                    } else {
+                        return choice.value;
                     }
                 }
             });
@@ -1567,6 +1644,16 @@ go.app = function() {
             });
         });
 
+        self.states.add('reg_exit_emis', function(name) {
+            return new EndState(name, {
+                text: $("We don't recognise your EMIS number. Please send a SMS with" +
+                        " the words EMIS ERROR to 739 and your DEST will contact you" +
+                        " to resolve the problem."),
+
+                next: "initial_state"
+            });
+        });
+
         self.states.add('end_state', function(name) {
             return new EndState(name, {
                 text: "Goodbye! Thank you for using the Gateway.",
@@ -1584,6 +1671,18 @@ go.app = function() {
             return go.cm.manage_change_emis_error(name, $);
         });
 
+        self.states.add('manage_change_msisdn_emis', function(name, opts) {
+            return go.cm.manage_change_msisdn_emis(name, $, self.array_emis, opts, self.im);
+        });
+
+        self.states.add('manage_change_msisdn_emis_validates', function(name) {
+            return go.cm.manage_change_msisdn_emis_validates(name, $);
+        });
+
+        self.states.add('manage_change_msisdn_emis_retry_exit', function(name) {
+            return go.cm.manage_change_msisdn_emis_retry_exit(name, $);
+        });
+
 
 
         // REGISTER HEAD TEACHER STATES
@@ -1599,10 +1698,6 @@ go.app = function() {
 
         self.states.add('reg_emis_retry_exit', function(name) {
             return go.rht.reg_emis_retry_exit(name);
-        });
-
-        self.states.add('reg_exit_emis', function(name) {
-            return go.rht.reg_exit_emis(name);
         });
 
         self.states.add('reg_school_name', function(name) {
@@ -1671,7 +1766,7 @@ go.app = function() {
 
         self.states.add('reg_thanks_head_teacher', function(name) {
             return go.rht.reg_thanks_head_teacher(name);
-        });        
+        });
 
 
 
@@ -1800,7 +1895,7 @@ go.app = function() {
 
         self.states.add('perf_learner_girls_writing', function(name) {
             return go.lp.perf_learner_girls_writing(name, $,
-                                                    self.im.user.answers.perf_learner_girls_total, 
+                                                    self.im.user.answers.perf_learner_girls_total,
                                                     self.contact, self.im);
         });
 
