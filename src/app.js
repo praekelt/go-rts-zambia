@@ -398,6 +398,10 @@ go.app = function() {
             return go.cm.manage_change_emis_retry_exit(name, $);
         });
 
+        self.states.add('manage_update_school_data', function(name) {
+            return go.cm.manage_update_school_data(name, $);
+        });
+
 
 
         // REGISTER HEAD TEACHER STATES
