@@ -4034,6 +4034,7 @@ describe("when a registered user logs on", function() {
                                 var contact = api.contacts.store[1];
                                 assert.equal(contact.extra.rts_id, '555');
                                 assert.equal(contact.extra.rts_emis, '2334');
+                                assert.equal(contact.extra.registration_origin, '');
                                 assert.equal(contact.name, 'Regina');
                                 assert.equal(contact.surname, 'Spektor');
                             })
@@ -4217,6 +4218,7 @@ describe("when a registered user logs on", function() {
                         var contact = api.contacts.store[1];
                         assert.equal(contact.extra.rts_id, '555');
                         assert.equal(contact.extra.rts_emis, '45');
+                        assert.equal(contact.extra.registration_origin, '');
                         assert.equal(contact.name, 'Regina');
                         assert.equal(contact.surname, 'Spektor');
                     })

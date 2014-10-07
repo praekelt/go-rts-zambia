@@ -298,17 +298,24 @@ go.rht = function() {
 
                 next: function(choice) {
                     if (choice.value === 'reg_thanks_zonal_head') {
-                        var headteacher_data = go.utils.registration_data_headteacher_collect(im);
-
                         return go.utils
-                            .cms_post("data/headteacher/", headteacher_data, im)
-                            .then(function(result) {
-                                return go.utils
-                                    .cms_update_school_and_contact(result, im, contact)
-                                    .then(function() {
-                                        return choice.value;
-                                    });
+                            .cms_registration(im, contact)
+                            .then(function() {
+                                return choice.value;
                             });
+
+
+                        // var headteacher_data = go.utils.registration_data_headteacher_collect(im);
+
+                        // return go.utils
+                        //     .cms_post("data/headteacher/", headteacher_data, im)
+                        //     .then(function(result) {
+                        //         return go.utils
+                        //             .cms_update_school_and_contact(result, im, contact)
+                        //             .then(function() {
+                        //                 return choice.value;
+                        //             });
+                        //     });
                     } else {
                         return choice.value;
                     }
@@ -333,16 +340,22 @@ go.rht = function() {
                 question: $("Please enter the name and surname of your ZONAL HEAD TEACHER."),
 
                 next: function() {
-                    var headteacher_data = go.utils.registration_data_headteacher_collect(im);
                     return go.utils
-                        .cms_post("data/headteacher/", headteacher_data, im)
-                            .then(function(result) {
-                                return go.utils
-                                    .cms_update_school_and_contact(result, im, contact)
-                                    .then(function() {
-                                        return "reg_thanks_head_teacher";
-                                    });
-                            });
+                        .cms_registration(im, contact)
+                        .then(function() {
+                            return "reg_thanks_head_teacher";
+                        });
+
+                    // var headteacher_data = go.utils.registration_data_headteacher_collect(im);
+                    // return go.utils
+                    //     .cms_post("data/headteacher/", headteacher_data, im)
+                    //         .then(function(result) {
+                    //             return go.utils
+                    //                 .cms_update_school_and_contact(result, im, contact)
+                    //                 .then(function() {
+                    //                     return "reg_thanks_head_teacher";
+                    //                 });
+                    //         });
                 }
             });
         },
@@ -573,14 +586,19 @@ go.cm = function() {
 
 
 
-        manage_change_emis: function(name, $, array_emis, opts) {
+        manage_change_emis: function(name, $, array_emis, opts, contact, im) {
             return new FreeText(name, {
                 question: $("Please enter your school's EMIS number. This should have 4-6 " +
                             "digits e.g 4351."),
 
                 next: function(content) {
                     if (go.utils.check_valid_emis(content, array_emis)) {
-                        return "manage_change_emis_validates";
+                        contact.extra.registration_origin = name;
+                        return im.contacts
+                            .save(contact)
+                            .then(function() {
+                                return "manage_change_emis_validates";
+                            });
                     } else if (opts.retry === false) {
                         return "manage_change_emis_retry_exit";
                     } else if (opts.retry === true) {
@@ -631,7 +649,7 @@ go.cm = function() {
 
 
 
-        manage_update_school_data: function(name, $) {
+        manage_update_school_data: function(name, $, contact, im) {
             return new ChoiceState(name, {
                 question:
                     $("You'll now be asked to re-enter key school details to ensure the " +
@@ -641,7 +659,14 @@ go.cm = function() {
                     new Choice('continue', $("Continue"))
                 ],
 
-                next: "reg_school_boys"
+                next: function() {
+                    contact.extra.registration_origin = name;
+                    return im.contacts
+                        .save(contact)
+                        .then(function() {
+                            return "reg_school_boys";
+                        });
+                }
             });
         },
 
@@ -1790,10 +1815,48 @@ go.utils = {
             .then(function(result) {
                 contact.extra.rts_id = headteacher_id.toString();
                 contact.extra.rts_emis = emis.toString();
-                contact.name = im.user.answers.reg_first_name;
-                contact.surname = im.user.answers.reg_surname;
+                contact.extra.registration_origin = "";
+                if (contact.name === null) {
+                    // only applicable if name has not been saved before
+                    contact.name = im.user.answers.reg_first_name;
+                    contact.surname = im.user.answers.reg_surname;
+                }
+
                 return im.contacts.save(contact);
             });
+    },
+
+    cms_registration: function(im, contact) {
+        var headteacher_data;
+
+        if (contact.extra.registration_origin === "manage_change_emis") {
+            // Registered head teacher started process with "Change my school"
+            headteacher_data = {
+                emis: "/api/v1/school/emis/" + parseInt(im.user.answers.manage_change_emis, 10) + "/"
+            };
+            return go.utils
+                .cms_put("data/headteacher/" + contact.extra.rts_id + "/", headteacher_data, im)
+                .then(function(result) {
+                    return go.utils.cms_update_school_and_contact(result, im, contact);
+                });
+
+        } else if (contact.extra.registration_origin === "manage_update_school_data") {
+            // Registered head teacher started process with "Update my school's registration data"
+            return go.utils
+                .cms_get("data/headteacher/?emis__emis=" + contact.extra.rts_emis, im)
+                .then(function(result) {
+                    return go.utils.cms_update_school_and_contact(result, im, contact);
+                });
+
+        } else {
+            // Unregistered head teacher registers for the first time
+            headteacher_data = go.utils.registration_data_headteacher_collect(im);
+            return go.utils
+                .cms_post("data/headteacher/", headteacher_data, im)
+                .then(function(result) {
+                    return go.utils.cms_update_school_and_contact(result, im, contact);
+                });
+        }
     },
 
 
@@ -2149,7 +2212,7 @@ go.app = function() {
         });
 
         self.states.add('manage_change_emis', function(name, opts) {
-            return go.cm.manage_change_emis(name, $, self.array_emis, opts);
+            return go.cm.manage_change_emis(name, $, self.array_emis, opts, self.contact, self.im);
         });
 
         self.states.add('manage_change_emis_validates', function(name) {
@@ -2161,7 +2224,7 @@ go.app = function() {
         });
 
         self.states.add('manage_update_school_data', function(name) {
-            return go.cm.manage_update_school_data(name, $);
+            return go.cm.manage_update_school_data(name, $, self.contact, self.im);
         });
 
 
