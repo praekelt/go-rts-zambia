@@ -1,3 +1,5 @@
+// tip: code fold level 3
+
 go.rdo = function() {
     var vumigo = require('vumigo_v02');
     var FreeText = vumigo.states.FreeText;

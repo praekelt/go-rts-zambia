@@ -32,6 +32,31 @@ describe("app", function() {
                         d.repeatable = true;
                         api.http.fixtures.add(d);
                     });
+                })
+                .setup(function(api) {
+                    // registered district official
+                    api.contacts.add({
+                        msisdn: '+097444',
+                        name: 'Pete',
+                        surname: 'Yorn',
+                        extra: {
+                            rts_id: '444',
+                            rts_district_official_id_number: '444111',
+                            rts_official_district_id: '4'
+                        }
+                    });
+                })
+                .setup(function(api) {
+                    // registered head teacher
+                    api.contacts.add({
+                        msisdn: '+097555',
+                        name: 'Regina',
+                        surname: 'Spektor',
+                        extra: {
+                            rts_id: '555',
+                            rts_emis: '45'
+                        }
+                    });
                 });
         });
 
@@ -52,7 +77,7 @@ describe("when an unregistered user logs on", function() {
                 .setup.user.addr('097123')
                 .inputs('start')
                 .check.interaction({
-                    state: 'initial_state',
+                    state: 'initial_state_unregistered',
                     reply: [
                         'Welcome to the Zambia School Gateway! Options:',
                         '1. Register as Head Teacher',
@@ -907,7 +932,7 @@ describe("when an unregistered user logs on", function() {
                         '1'  // reg_zonal_head
                     )
                     .check(function(api) {
-                        var contact = api.contacts.store[0];
+                        var contact = api.contacts.store[2];
                         assert.equal(contact.extra.rts_id, '2');
                         assert.equal(contact.extra.rts_emis, '1');
                         assert.equal(contact.name, 'Jack');
@@ -1099,7 +1124,6 @@ describe("when an unregistered user logs on", function() {
                 });
             });
 
-
         });
 
         describe("when uu enters their first name", function() {
@@ -1172,7 +1196,7 @@ describe("when an unregistered user logs on", function() {
                         })
                         .inputs('start', '2', '9', '2', 'Michael', 'Sherwin', '123454321', '27111980')
                         .check(function(api) {
-                            var contact = api.contacts.store[0];
+                            var contact = api.contacts.store[2];
                             assert.equal(contact.extra.rts_id, '2');
                             assert.equal(contact.extra.rts_district_official_id_number, '123454321');
                             assert.equal(contact.extra.rts_official_district_id, '1');
@@ -1201,6 +1225,1383 @@ describe("when an unregistered user logs on", function() {
     });
 });
 
+
+// MONITORING
+// ----------
+
+describe("when a registered user logs on", function() {
+
+    describe("when the registered user is a district official", function() {
+        it("should ask them what they want to do", function() {
+            return tester
+                .setup.user.addr('097444')
+                .inputs('start')
+                .check.interaction({
+                    state: 'initial_state_district_official',
+                    reply: [
+                        'What would you like to do?',
+                        '1. Report on teacher performance.',
+                        '2. Report on learner performance.',
+                    ].join('\n')
+                })
+                .run();
+        });
+    });
+
+    describe("when the registered user is a head teacher", function() {
+        it("should ask them what they want to do", function() {
+            return tester
+                .setup.user.addr('097555')
+                .inputs('start')
+                .check.interaction({
+                    state: 'initial_state_head_teacher',
+                    reply: [
+                        'What would you like to do?',
+                        '1. Report on teacher performance.',
+                        '2. Report on learner performance.',
+                        '3. Change my school.',
+                        "4. Update my school's registration data."
+                    ].join('\n')
+                })
+                .run();
+        });
+    });
+
+
+    // LEARNER PERFORMANCE MONITORING
+    // ------------------------------
+
+    describe("when the user chooses to report on learner performance", function() {
+
+        describe("if the user is a district official", function() {
+            it("should ask for an emis code", function() {
+                return tester
+                    .setup.user.addr('097444')
+                    .inputs(
+                        'start',
+                        '2'  // initial_state_district_official
+                    )
+                    .check.interaction({
+                        state: 'add_emis_perf_learner_boys_total',
+                        reply: 
+                            "Please enter the school's EMIS number that you would like " +
+                            "to report on. This should have 4-6 digits e.g 4351."
+                    })
+                    .run();
+            });
+
+            describe("when the district official user enters an emis", function() {
+
+                describe("if the emis does not validate", function() {
+                    it("should ask for the emis again", function() {
+                        return tester
+                            .setup.user.addr('097444')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_district_official
+                                '5555555'  // add_emis_perf_learner_boys_total
+                            )
+                            .check.interaction({
+                                state: 'add_emis_perf_learner_boys_total',
+                                reply:
+                                    "The emis does not exist, please try again. This " +
+                                    "should have 4-6 digits e.g 4351."
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if the emis validates", function() {
+                    it("should ask for boys total", function() {
+                        return tester
+                            .setup.user.addr('097444')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_district_official
+                                '0001'  // add_emis_perf_learner_boys_total
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_total',
+                                reply:
+                                    "How many boys took part in the learner assessment?"
+                            })
+                            .run();
+                    });
+
+                    it("should save the emis to the district official user's contact", function() {
+                        return tester
+                            .setup.user.addr('097444')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_district_official
+                                '0001'  // add_emis_perf_learner_boys_total
+                            )
+                            .check(function(api) {
+                                var contact = api.contacts.store[0];
+                                assert.equal(contact.extra.rts_emis, '0001');
+                            })
+                            .run();
+                    });
+                });
+
+            });
+
+            // test one full registration as a district official to check data saving
+            describe("when the district official user completes a successful report", function() {
+                it("should ask if they want to return to main menu or exit", function() {
+                    return tester
+                        .setup.user.addr('097444')
+                        .inputs(
+                            'start',
+                            '2',  // initial_state_district_official
+                            '0001',  // add_emis_perf_learner_boys_total
+                            '52', // perf_learner_boys_total
+                            '10',  // perf_learner_boys_outstanding
+                            '15',  // perf_learner_boys_desirable
+                            '20',  // perf_learner_boys_minimum
+                            '7',  // perf_learner_boys_below_minimum
+                            '49',  // perf_learner_girls_total
+                            '10',  // perf_learner_girls_outstanding
+                            '15',  // perf_learner_girls_desirable
+                            '20',  // perf_learner_girls_minimum
+                            '4',  // perf_learner_girls_below_minimum
+                            '31',  // perf_learner_boys_phonics
+                            '32',  // perf_learner_girls_phonics
+                            '33',  // perf_learner_boys_vocab
+                            '34',  // perf_learner_girls_vocab
+                            '35',  // perf_learner_boys_comprehension
+                            '36',  // perf_learner_girls_comprehension
+                            '37',  // perf_learner_boys_writing
+                            '38'  // perf_learner_girls_writing
+                        )
+                        .check.interaction({
+                            state: 'perf_learner_completed',
+                            reply: [
+                                "Congratulations. You have finished reporting on the learner assessment.",
+                                "1. Go back to the main menu.",
+                                "2. Exit."
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+        });
+
+        describe("if the user is a head teacher", function() {
+            it("should ask for boys total", function() {
+                return tester
+                    .setup.user.addr('097555')
+                    .inputs(
+                        'start',
+                        '2'  // initial_state_head_teacher
+                    )
+                    .check.interaction({
+                        state: 'perf_learner_boys_total',
+                        reply:
+                            "How many boys took part in the learner assessment?"
+                    })
+                    .run();
+            });
+
+            // test step by step flow as a head teacher
+
+            // boys total
+            describe("when the user enters boys total", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for boys outstanding results", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52'  // perf_learner_boys_total
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_outstanding',
+                                reply:
+                                    "In total, how many boys achieved 16 out of 20 or more?"
+                            })
+                            .run();
+                    });
+                });
+
+                // test for numeric value
+                describe("if the number does not validate", function() {
+                    it("should ask for boys total again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                'fifty-two'  // perf_learner_boys_total
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_total',
+                                reply:
+                                    "Please provide a number value for total boys assessed."
+                            })
+                            .run();
+                    });
+                });
+            });
+
+
+            // boys outstanding
+            describe("when the user enters boys outstanding results", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for boys desirable results", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10'  // perf_learner_boys_outstanding
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_desirable',
+                                reply:
+                                    "In total, how many boys achieved between 12 and 15 out of 20?"
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if boys outstanding results > boys total", function() {
+                    it("should display error message", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '60'  // perf_learner_boys_outstanding
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_calc_error',
+                                reply: [
+                                    "You've entered results for 60 boys (60), but " +
+                                    "you initially indicated 52 boys participants. Please try again.",
+                                    "1. Continue"
+                                ].join('\n')
+                            })
+                            .run();
+                    });
+
+                    it("should go back to boys total upon choosing to continue", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '60',  // perf_learner_boys_outstanding
+                                '1'  // perf_learner_boys_calc_error
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_total',
+                                reply:
+                                    "How many boys took part in the learner assessment?"
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // boys desirable
+            describe("when the user enters boys desirable results", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for boys minimum results", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15'  // perf_learner_boys_desirable
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_minimum',
+                                reply:
+                                    "In total, how many boys achieved between 8 and 11 out of 20?"
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if boys outstanding + desirable > boys total", function() {
+                    it("should display error message", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '50'  // perf_learner_boys_desirable
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_calc_error',
+                                reply: [
+                                    "You've entered results for 60 boys (10+50), but " +
+                                    "you initially indicated 52 boys participants. Please try again.",
+                                    "1. Continue"
+                                ].join('\n')
+                            })
+                            .run();
+                    });
+
+                    it("should go back to boys total upon choosing to continue", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '50',  // perf_learner_boys_desirable
+                                '1'  // perf_learner_boys_calc_error
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_total',
+                                reply:
+                                    "How many boys took part in the learner assessment?"
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // boys minimum
+            describe("when the user enters boys minimum results", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for boys below minimum results", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20'  // perf_learner_boys_minimum
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_below_minimum',
+                                reply:
+                                    "In total, how many boys achieved between 0 and 7 out of 20?"
+                            })
+                            .run();
+                    });
+                });
+
+                // test for numeric value
+                describe("if the number does not validate", function() {
+                    it("should ask for boys minimum results again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                'twenty'  // perf_learner_boys_minimum
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_minimum',
+                                reply:
+                                    "Please provide a valid number value for total boys achieving between 8 and 11 " +
+                                    "out of 20."
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if boys outstanding + desirable + minimum > boys total", function() {
+                    it("should display error message", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '35'  // perf_learner_boys_minimum
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_calc_error',
+                                reply: [
+                                    "You've entered results for 60 boys (10+15+35), but " +
+                                    "you initially indicated 52 boys participants. Please try again.",
+                                    "1. Continue"
+                                ].join('\n')
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // boys below minimum
+            describe("when the user enters boys below minimum results", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for girls total", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7'  // perf_learner_boys_below_minimum
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_total',
+                                reply:
+                                    "How many girls took part in the learner assessment?"
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if boys outstanding + desirable + minimum + below minimum > boys total", function() {
+                    it("should display error message", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '10'  // perf_learner_boys_below_minimum
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_calc_error',
+                                reply: [
+                                    "You've entered results for 55 boys (10+15+20+10), but " +
+                                    "you initially indicated 52 boys participants. Please try again.",
+                                    "1. Continue"
+                                ].join('\n')
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if boys outstanding + desirable + minimum + below minimum < boys total", function() {
+                    it("should display error message", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '5'  // perf_learner_boys_below_minimum
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_calc_error',
+                                reply: [
+                                    "You've entered results for 50 boys (10+15+20+5), but " +
+                                    "you initially indicated 52 boys participants. Please try again.",
+                                    "1. Continue"
+                                ].join('\n')
+                            })
+                            .run();
+                    });
+                });
+            });
+
+
+            // girls total
+            describe("when the user enters girls total", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for girls outstanding results", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49'  // perf_learner_girls_total
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_outstanding',
+                                reply:
+                                    "In total, how many girls achieved 16 out of 20 or more?"
+                            })
+                            .run();
+                    });
+                });
+            });
+
+
+            // girls outstanding
+            describe("when the user enters girls outstanding results", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for girls desirable results", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10'  // perf_learner_girls_outstanding
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_desirable',
+                                reply:
+                                    "In total, how many girls achieved between 12 and 15 out of 20?"
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if girls outstanding results > girls total", function() {
+                    it("should display error message", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '60'  // perf_learner_girls_outstanding
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_calc_error',
+                                reply: [
+                                    "You've entered results for 60 girls (60), but " +
+                                    "you initially indicated 49 girls participants. Please try again.",
+                                    "1. Continue"
+                                ].join('\n')
+                            })
+                            .run();
+                    });
+
+                    it("should go back to girls total upon choosing to continue", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '60',  // perf_learner_girls_outstanding
+                                '1'  // perf_learner_girls_calc_error
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_total',
+                                reply:
+                                    "How many girls took part in the learner assessment?"
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // girls desirable
+            describe("when the user enters girls desirable results", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for girls minimum results", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15'  // perf_learner_girls_desirable
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_minimum',
+                                reply:
+                                    "In total, how many girls achieved between 8 and 11 out of 20?"
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if girls outstanding + desirable > girls total", function() {
+                    it("should display error message", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '50'  // perf_learner_girls_desirable
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_calc_error',
+                                reply: [
+                                    "You've entered results for 60 girls (10+50), but " +
+                                    "you initially indicated 49 girls participants. Please try again.",
+                                    "1. Continue"
+                                ].join('\n')
+                            })
+                            .run();
+                    });
+
+                    it("should go back to girls total upon choosing to continue", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '50',  // perf_learner_girls_desirable
+                                '1'  // perf_learner_girls_calc_error
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_total',
+                                reply:
+                                    "How many girls took part in the learner assessment?"
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // girls minimum
+            describe("when the user enters girls minimum results", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for girls below minimum results", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '20'  // perf_learner_girls_minimum
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_below_minimum',
+                                reply:
+                                    "In total, how many girls achieved between 0 and 7 out of 20?"
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if girls outstanding + desirable + minimum > girls total", function() {
+                    it("should display error message", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '35'  // perf_learner_girls_minimum
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_calc_error',
+                                reply: [
+                                    "You've entered results for 60 girls (10+15+35), but " +
+                                    "you initially indicated 49 girls participants. Please try again.",
+                                    "1. Continue"
+                                ].join('\n')
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // girls below minimum
+            describe("when the user enters girls below minimum results", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for boys phonics", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '20',  // perf_learner_girls_minimum
+                                '4'  // perf_learner_girls_below_minimum
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_phonics',
+                                reply:
+                                    "How many boys scored 4 or more correctly out of 6 for Section " +
+                                    "1 (Phonics and Phonemic Awareness)?"
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if girls outstanding + desirable + minimum + below minimum > girls total", function() {
+                    it("should display error message", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '20',  // perf_learner_girls_minimum
+                                '10'  // perf_learner_girls_below_minimum
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_calc_error',
+                                reply: [
+                                    "You've entered results for 55 girls (10+15+20+10), but " +
+                                    "you initially indicated 49 girls participants. Please try again.",
+                                    "1. Continue"
+                                ].join('\n')
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if girls outstanding + desirable + minimum + below minimum < girls total", function() {
+                    it("should display error message", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '2',  // initial_state_head_teacher
+                            '52', // perf_learner_boys_total
+                            '10',  // perf_learner_boys_outstanding
+                            '15',  // perf_learner_boys_desirable
+                            '20',  // perf_learner_boys_minimum
+                            '7',  // perf_learner_boys_below_minimum
+                            '49',  // perf_learner_girls_total
+                            '10',  // perf_learner_girls_outstanding
+                            '15',  // perf_learner_girls_desirable
+                            '20',  // perf_learner_girls_minimum
+                            '1'  // perf_learner_girls_below_minimum
+                        )
+                        .check.interaction({
+                            state: 'perf_learner_girls_calc_error',
+                            reply: [
+                                "You've entered results for 46 girls (10+15+20+1), but " +
+                                "you initially indicated 49 girls participants. Please try again.",
+                                "1. Continue"
+                            ].join('\n')
+                        })
+                        .run();
+                    });
+                });
+            });
+
+
+            // boys phonics
+            describe("when the user enters boys phonics result", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for girls phonics result", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '20',  // perf_learner_girls_minimum
+                                '4',  // perf_learner_girls_below_minimum
+                                '31'  // perf_learner_boys_phonics
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_phonics',
+                                reply:
+                                    "How many girls scored 4 or more correctly out of 6 for Section " +
+                                    "1 (Phonics and Phonemic Awareness)?"
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if the entry is not a number", function() {
+                    it("should ask for boys phonics again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '20',  // perf_learner_girls_minimum
+                                '4',  // perf_learner_girls_below_minimum
+                                'lots'  // perf_learner_boys_phonics
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_phonics',
+                                reply:
+                                    "Please provide a valid number value for total boys scoring 4 or more" +
+                                    " correctly out of 6 for Phonics and Phonemic Awareness."
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if boys phonics result > boys total", function() {
+                    it("should ask for boys phonics again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '20',  // perf_learner_girls_minimum
+                                '4',  // perf_learner_girls_below_minimum
+                                '53'  // perf_learner_boys_phonics
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_phonics',
+                                reply:
+                                    "Please provide a valid number value for total boys scoring 4 or more" +
+                                    " correctly out of 6 for Phonics and Phonemic Awareness."
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // girls phonics
+            describe("when the user enters girls phonics result", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for boys vocab result", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '20',  // perf_learner_girls_minimum
+                                '4',  // perf_learner_girls_below_minimum
+                                '31',  // perf_learner_boys_phonics
+                                '32'  // perf_learner_girls_phonics
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_vocab',
+                                reply:
+                                    "How many boys scored 3 or more correctly out of 6 " +
+                                    "for Section 2 (Vocabulary)?"
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if the entry is not a number", function() {
+                    it("should ask for girls phonics again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '20',  // perf_learner_girls_minimum
+                                '4',  // perf_learner_girls_below_minimum
+                                '31',  // perf_learner_boys_phonics
+                                'many'  // perf_learner_girls_phonics
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_phonics',
+                                reply:
+                                    "Please provide a valid number value for total girls scoring 4 or more" +
+                                    " correctly out of 6 for Phonics and Phonemic Awareness."
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if girls phonics result > girls total", function() {
+                    it("should ask for girls phonics again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '20',  // perf_learner_girls_minimum
+                                '4',  // perf_learner_girls_below_minimum
+                                '31',  // perf_learner_boys_phonics
+                                '50'  // perf_learner_girls_phonics
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_phonics',
+                                reply:
+                                    "Please provide a valid number value for total girls scoring 4 or more" +
+                                    " correctly out of 6 for Phonics and Phonemic Awareness."
+                            })
+                            .run();
+                    });
+                });
+            });
+
+
+            // boys vocab
+            describe("when the user enters boys vocab result", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for girls vocab result", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '20',  // perf_learner_girls_minimum
+                                '4',  // perf_learner_girls_below_minimum
+                                '31',  // perf_learner_boys_phonics
+                                '32',  // perf_learner_girls_phonics
+                                '33'  // perf_learner_boys_vocab
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_vocab',
+                                reply:
+                                    "How many girls scored 3 or more correctly out of 6 " +
+                                    "for Section 2 (Vocabulary)?"
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // girls vocab
+            describe("when the user enters girls vocab result", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for boys comprehension result", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '20',  // perf_learner_girls_minimum
+                                '4',  // perf_learner_girls_below_minimum
+                                '31',  // perf_learner_boys_phonics
+                                '32',  // perf_learner_girls_phonics
+                                '33',  // perf_learner_boys_vocab
+                                '34'  // perf_learner_girls_vocab
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_comprehension',
+                                reply:
+                                    "How many boys scored 2 or more correctly out of 4 " +
+                                    "for Section 3 (Comprehension)?"
+                            })
+                            .run();
+                    });
+                });
+            });
+
+
+            // boys comprehension
+            describe("when the user enters boys comprehension result", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for girls comprehension result", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '20',  // perf_learner_girls_minimum
+                                '4',  // perf_learner_girls_below_minimum
+                                '31',  // perf_learner_boys_phonics
+                                '32',  // perf_learner_girls_phonics
+                                '33',  // perf_learner_boys_vocab
+                                '34',  // perf_learner_girls_vocab
+                                '35'  // perf_learner_boys_comprehension
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_comprehension',
+                                reply:
+                                    "How many girls scored 2 or more correctly out of 4 " +
+                                    "for Section 3 (Comprehension)?"
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // girls comprehension
+            describe("when the user enters girls comprehension result", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for boys writing result", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '20',  // perf_learner_girls_minimum
+                                '4',  // perf_learner_girls_below_minimum
+                                '31',  // perf_learner_boys_phonics
+                                '32',  // perf_learner_girls_phonics
+                                '33',  // perf_learner_boys_vocab
+                                '34',  // perf_learner_girls_vocab
+                                '35',  // perf_learner_boys_comprehension
+                                '36'  // perf_learner_girls_comprehension
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_writing',
+                                reply:
+                                    "How many boys scored 2 or more correctly out of 4 " +
+                                    "for Section 4 (Writing)?"
+                            })
+                            .run();
+                    });
+                });
+            });
+
+
+            // boys writing
+            describe("when the user enters boys writing result", function() {
+                
+                describe("if the number validates", function() {
+                    it("should ask for girls writing result", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '20',  // perf_learner_girls_minimum
+                                '4',  // perf_learner_girls_below_minimum
+                                '31',  // perf_learner_boys_phonics
+                                '32',  // perf_learner_girls_phonics
+                                '33',  // perf_learner_boys_vocab
+                                '34',  // perf_learner_girls_vocab
+                                '35',  // perf_learner_boys_comprehension
+                                '36',  // perf_learner_girls_comprehension
+                                '37'  // perf_learner_boys_writing
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_writing',
+                                reply:
+                                    "How many girls scored 2 or more correctly out of 4 " +
+                                    "for Section 4 (Writing)?"
+                            })
+                            .run();
+                    });
+                });
+            });
+
+            // girls writing
+            describe("when the user enters girls writing result", function() {
+                
+                describe("if the number validates", function() {
+                    it("should show success and options", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '20',  // perf_learner_girls_minimum
+                                '4',  // perf_learner_girls_below_minimum
+                                '31',  // perf_learner_boys_phonics
+                                '32',  // perf_learner_girls_phonics
+                                '33',  // perf_learner_boys_vocab
+                                '34',  // perf_learner_girls_vocab
+                                '35',  // perf_learner_boys_comprehension
+                                '36',  // perf_learner_girls_comprehension
+                                '37',  // perf_learner_boys_writing
+                                '38'  // perf_learner_girls_writing
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_completed',
+                                reply: [
+                                    "Congratulations. You have finished reporting on the learner assessment.",
+                                    "1. Go back to the main menu.",
+                                    "2. Exit."
+                                ].join('\n')
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if girls writing result > girls total", function() {
+                    it("should ask for girls writing again", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '52', // perf_learner_boys_total
+                                '10',  // perf_learner_boys_outstanding
+                                '15',  // perf_learner_boys_desirable
+                                '20',  // perf_learner_boys_minimum
+                                '7',  // perf_learner_boys_below_minimum
+                                '49',  // perf_learner_girls_total
+                                '10',  // perf_learner_girls_outstanding
+                                '15',  // perf_learner_girls_desirable
+                                '20',  // perf_learner_girls_minimum
+                                '4',  // perf_learner_girls_below_minimum
+                                '31',  // perf_learner_boys_phonics
+                                '32',  // perf_learner_girls_phonics
+                                '33',  // perf_learner_boys_vocab
+                                '34',  // perf_learner_girls_vocab
+                                '35',  // perf_learner_boys_comprehension
+                                '36',  // perf_learner_girls_comprehension
+                                '37',  // perf_learner_boys_writing
+                                '75'  // perf_learner_girls_writing
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_girls_writing',
+                                reply: 
+                                    "Please provide a valid number value for total girls achieving 2 out of 4" +
+                                    " correct answers for Writing."
+                            })
+                            .run();
+                    });
+                });
+            });
+
+
+            // completed - main menu
+            describe("after completing report if user selects to go to main menu", function() {
+                it("should go back to main menu", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '2',  // initial_state_head_teacher
+                            '52', // perf_learner_boys_total
+                            '10',  // perf_learner_boys_outstanding
+                            '15',  // perf_learner_boys_desirable
+                            '20',  // perf_learner_boys_minimum
+                            '7',  // perf_learner_boys_below_minimum
+                            '49',  // perf_learner_girls_total
+                            '10',  // perf_learner_girls_outstanding
+                            '15',  // perf_learner_girls_desirable
+                            '20',  // perf_learner_girls_minimum
+                            '4',  // perf_learner_girls_below_minimum
+                            '31',  // perf_learner_boys_phonics
+                            '32',  // perf_learner_girls_phonics
+                            '33',  // perf_learner_boys_vocab
+                            '34',  // perf_learner_girls_vocab
+                            '35',  // perf_learner_boys_comprehension
+                            '36',  // perf_learner_girls_comprehension
+                            '37',  // perf_learner_boys_writing
+                            '38',  // perf_learner_girls_writing
+                            '1'  // perf_learner_completed
+                        )
+                        .check.interaction({
+                            state: 'initial_state_head_teacher',
+                            reply: [
+                                'What would you like to do?',
+                                '1. Report on teacher performance.',
+                                '2. Report on learner performance.',
+                                '3. Change my school.',
+                                "4. Update my school's registration data."
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            // completed - exit
+            describe("after completing report if user selects to exit", function() {
+                it("should thank them and exit", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '2',  // initial_state_head_teacher
+                            '52', // perf_learner_boys_total
+                            '10',  // perf_learner_boys_outstanding
+                            '15',  // perf_learner_boys_desirable
+                            '20',  // perf_learner_boys_minimum
+                            '7',  // perf_learner_boys_below_minimum
+                            '49',  // perf_learner_girls_total
+                            '10',  // perf_learner_girls_outstanding
+                            '15',  // perf_learner_girls_desirable
+                            '20',  // perf_learner_girls_minimum
+                            '4',  // perf_learner_girls_below_minimum
+                            '31',  // perf_learner_boys_phonics
+                            '32',  // perf_learner_girls_phonics
+                            '33',  // perf_learner_boys_vocab
+                            '34',  // perf_learner_girls_vocab
+                            '35',  // perf_learner_boys_comprehension
+                            '36',  // perf_learner_girls_comprehension
+                            '37',  // perf_learner_boys_writing
+                            '38',  // perf_learner_girls_writing
+                            '2'  // perf_learner_completed
+                        )
+                        .check.interaction({
+                            state: 'end_state',
+                            reply: "Goodbye! Thank you for using the Gateway.",
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
+
+        });
+
+    });
+
+});
 
 
 // end broken indentation to save whitespace

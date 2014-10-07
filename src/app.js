@@ -1,10 +1,13 @@
 var vumigo = require('vumigo_v02');
 var moment = require('moment');
-// var _ = require('lodash');
+var _ = require('lodash');
 var ChoiceState = vumigo.states.ChoiceState;
+var EndState = vumigo.states.EndState;
 var Choice = vumigo.states.Choice;
 var JsonApi = vumigo.http.api.JsonApi;
 
+
+// tip: code fold level 2, then unfold var GoApp, then fold level 3
 
 go.utils = {
 
@@ -126,6 +129,19 @@ go.utils = {
         }
     },
 
+    update_calculated_totals: function(opts, content) {
+        // calculate new totals to be passed through to next state as creator_opts
+        opts.current_sum = opts.current_sum + parseInt(content, 10);
+        
+        if (opts.sum_as_string === "") {
+            opts.sum_as_string = content;
+        } else {
+            opts.sum_as_string = opts.sum_as_string + "+" + content;    
+        }
+        
+        return opts;
+    },
+
     registration_official_admin_collect: function(im) {
         var dob = go.utils.check_and_parse_date(im.user.answers.reg_district_official_dob);
 
@@ -176,6 +192,38 @@ go.utils = {
         };
 
         return school_data;
+    },
+
+    performance_data_learner_collect: function(emis, im){
+        var data_boys = {
+            "gender": "boys",
+            "total_number_pupils": im.user.answers.perf_learner_boys_total,
+            "phonetic_awareness": im.user.answers.perf_learner_boys_phonics,
+            "vocabulary": im.user.answers.perf_learner_boys_vocab,
+            "reading_comprehension": im.user.answers.perf_learner_boys_comprehension,
+            "writing_diction": im.user.answers.perf_learner_boys_writing,
+            "outstanding_results": im.user.answers.perf_learner_boys_outstanding,
+            "desirable_results": im.user.answers.perf_learner_boys_desirable,
+            "minimum_results": im.user.answers.perf_learner_boys_minimum,
+            "below_minimum_results": im.user.answers.perf_learner_boys_below_minimum,
+            "emis": "/api/v1/school/emis/" + emis + "/"
+        };
+
+        var data_girls = {
+            "gender": "girls",
+            "total_number_pupils": im.user.answers.perf_learner_girls_total,
+            "phonetic_awareness": im.user.answers.perf_learner_girls_phonics,
+            "vocabulary": im.user.answers.perf_learner_girls_vocab,
+            "reading_comprehension": im.user.answers.perf_learner_girls_comprehension,
+            "writing_diction": im.user.answers.perf_learner_girls_writing,
+            "outstanding_results": im.user.answers.perf_learner_girls_outstanding,
+            "desirable_results": im.user.answers.perf_learner_girls_desirable,
+            "minimum_results": im.user.answers.perf_learner_girls_minimum,
+            "below_minimum_results": im.user.answers.perf_learner_girls_below_minimum,
+            "emis": "/api/v1/school/emis/" + emis + "/"
+        };
+
+        return {boys: data_boys, girls: data_girls};
     }
 
 };
@@ -188,6 +236,7 @@ go.app = function() {
 
     var GoApp = App.extend(function(self) {
         App.call(self, 'initial_state');
+        var $ = self.$;
 
         self.init = function() {
             self.env = self.im.config.env;
@@ -202,10 +251,22 @@ go.app = function() {
         };
 
 
-        // INITIAL STATE
-        // -------------
+        // INITIAL STATES & END STATE
+        // --------------------------
 
         self.states.add('initial_state', function(name) {
+            if (_.isUndefined(self.contact.extra.rts_id)) {
+                // user is unregistered if doesn't have rts_id
+                return self.states.create('initial_state_unregistered');
+            } else if (_.isUndefined(self.contact.extra.rts_official_district_id)) {
+                // registered user is head teacher if doesn't have district_id
+                return self.states.create('initial_state_head_teacher');
+            } else {
+                return self.states.create('initial_state_district_official');
+            }
+        });
+
+        self.states.add('initial_state_unregistered', function(name) {
             return new ChoiceState(name, {
                 question: 'Welcome to the Zambia School Gateway! Options:',
 
@@ -228,7 +289,47 @@ go.app = function() {
                         };
                     }
                 }
-                });
+            });
+        });
+
+        self.states.add('initial_state_district_official', function(name) {
+            return new ChoiceState(name, {
+                question: 'What would you like to do?',
+
+                choices: [
+                    new Choice("add_emis_perf_teacher_ts_number", "Report on teacher performance."),
+                    new Choice("add_emis_perf_learner_boys_total", "Report on learner performance."),
+                ],
+
+                next: function(choice) {
+                    return choice.value;
+                }
+            });
+        });
+
+        self.states.add('initial_state_head_teacher', function(name) {
+            return new ChoiceState(name, {
+                question: 'What would you like to do?',
+
+                choices: [
+                    new Choice("perf_teacher_ts_number", "Report on teacher performance."),
+                    new Choice("perf_learner_boys_total", "Report on learner performance."),
+                    new Choice("manage_change_emis", "Change my school."),
+                    new Choice("manage_update_school_data", "Update my school's registration data.")
+                ],
+
+                next: function(choice) {
+                    return choice.value;
+                }
+            });
+        });
+
+        self.states.add('end_state', function(name) {
+            return new EndState(name, {
+                text: "Goodbye! Thank you for using the Gateway.",
+
+                next: "initial_state"
+            });
         });
 
 
@@ -366,17 +467,107 @@ go.app = function() {
         // LEARNER PERFORMANCE STATES
         // --------------------------
 
-        self.states.add('state_lp_start', function(name) {
-            return go.lp.state_lp_start(name);
+        self.states.add('add_emis_perf_learner_boys_total', function(name) {
+            return go.lp.add_emis_perf_learner_boys_total(name, $, self.array_emis, self.contact,
+                                                            self.im);
         });
 
-        self.states.add('state_lp_next', function(name) {
-            return go.lp.state_lp_next(name);
+
+        self.states.add('perf_learner_boys_total', function(name) {
+            return go.lp.perf_learner_boys_total(name, $);
         });
 
-        self.states.add('state_lp_exit', function(name) {
-            return go.lp.state_lp_exit(name);
+        self.states.add('perf_learner_boys_calc_error', function(name, opts) {
+            return go.lp.perf_learner_boys_calc_error(name, $, opts);
         });
+
+        self.states.add('perf_learner_boys_outstanding', function(name, opts) {
+            return go.lp.perf_learner_boys_outstanding(name, $, opts);
+        });
+
+        self.states.add('perf_learner_boys_desirable', function(name, opts) {
+            return go.lp.perf_learner_boys_desirable(name, $, opts);
+        });
+
+        self.states.add('perf_learner_boys_minimum', function(name, opts) {
+            return go.lp.perf_learner_boys_minimum(name, $, opts);
+        });
+
+        self.states.add('perf_learner_boys_below_minimum', function(name, opts) {
+            return go.lp.perf_learner_boys_below_minimum(name, $, opts);
+        });
+
+
+        self.states.add('perf_learner_girls_total', function(name) {
+            return go.lp.perf_learner_girls_total(name, $);
+        });
+
+        self.states.add('perf_learner_girls_calc_error', function(name, opts) {
+            return go.lp.perf_learner_girls_calc_error(name, $, opts);
+        });
+
+        self.states.add('perf_learner_girls_outstanding', function(name, opts) {
+            return go.lp.perf_learner_girls_outstanding(name, $, opts);
+        });
+
+        self.states.add('perf_learner_girls_desirable', function(name, opts) {
+            return go.lp.perf_learner_girls_desirable(name, $, opts);
+        });
+
+        self.states.add('perf_learner_girls_minimum', function(name, opts) {
+            return go.lp.perf_learner_girls_minimum(name, $, opts);
+        });
+
+        self.states.add('perf_learner_girls_below_minimum', function(name, opts) {
+            return go.lp.perf_learner_girls_below_minimum(name, $, opts);
+        });
+
+
+        self.states.add('perf_learner_boys_phonics', function(name) {
+            return go.lp.perf_learner_boys_phonics(name, $,
+                                                    self.im.user.answers.perf_learner_boys_total);
+        });
+
+        self.states.add('perf_learner_girls_phonics', function(name) {
+            return go.lp.perf_learner_girls_phonics(name, $,
+                                                    self.im.user.answers.perf_learner_girls_total);
+        });
+
+        self.states.add('perf_learner_boys_vocab', function(name) {
+            return go.lp.perf_learner_boys_vocab(name, $,
+                                                    self.im.user.answers.perf_learner_boys_total);
+        });
+
+        self.states.add('perf_learner_girls_vocab', function(name) {
+            return go.lp.perf_learner_girls_vocab(name, $,
+                                                    self.im.user.answers.perf_learner_girls_total);
+        });
+
+        self.states.add('perf_learner_boys_comprehension', function(name) {
+            return go.lp.perf_learner_boys_comprehension(name, $,
+                                                    self.im.user.answers.perf_learner_boys_total);
+        });
+
+        self.states.add('perf_learner_girls_comprehension', function(name) {
+            return go.lp.perf_learner_girls_comprehension(name, $,
+                                                    self.im.user.answers.perf_learner_girls_total);
+        });
+
+        self.states.add('perf_learner_boys_writing', function(name) {
+            return go.lp.perf_learner_boys_writing(name, $,
+                                                    self.im.user.answers.perf_learner_boys_total);
+        });
+
+        self.states.add('perf_learner_girls_writing', function(name) {
+            return go.lp.perf_learner_girls_writing(name, $,
+                                                    self.im.user.answers.perf_learner_girls_total, 
+                                                    self.contact, self.im);
+        });
+
+        self.states.add('perf_learner_completed', function(name) {
+            return go.lp.perf_learner_completed(name, $);
+        });
+
 
 
 
