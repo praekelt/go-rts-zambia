@@ -333,7 +333,16 @@ go.app = function() {
                 ],
 
                 next: function(choice) {
-                    return choice.value;
+                    if (choice.value === "manage_change_emis") {
+                        return {
+                            name: choice.value,
+                            creator_opts: {
+                                retry: false
+                            }
+                        };
+                    } else {
+                        return choice.value;
+                    }
                 }
             });
         });
@@ -375,6 +384,18 @@ go.app = function() {
 
         self.states.add('manage_change_msisdn_emis_retry_exit', function(name) {
             return go.cm.manage_change_msisdn_emis_retry_exit(name, $);
+        });
+
+        self.states.add('manage_change_emis', function(name, opts) {
+            return go.cm.manage_change_emis(name, $, self.array_emis, opts);
+        });
+
+        self.states.add('manage_change_emis_validates', function(name) {
+            return go.cm.manage_change_emis_validates(name, $);
+        });
+
+        self.states.add('manage_change_emis_retry_exit', function(name) {
+            return go.cm.manage_change_emis_retry_exit(name, $);
         });
 
 

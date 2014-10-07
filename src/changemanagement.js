@@ -94,6 +94,62 @@ go.cm = function() {
 
 
 
+        manage_change_emis: function(name, $, array_emis, opts) {
+            return new FreeText(name, {
+                question: $("Please enter your school's EMIS number. This should have 4-6 " +
+                            "digits e.g 4351."),
+
+                next: function(content) {
+                    if (go.utils.check_valid_emis(content, array_emis)) {
+                        return "manage_change_emis_validates";
+                    } else if (opts.retry === false) {
+                        return "manage_change_emis_retry_exit";
+                    } else if (opts.retry === true) {
+                        return "reg_exit_emis";
+                    }
+                }
+            });
+        },
+
+        manage_change_emis_validates: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    $("Thanks for claiming this EMIS. Redial this number if you ever " +
+                    "change cellphone number to reclaim the EMIS and continue to receive " +
+                    "SMS updates."),
+
+                choices: [
+                    new Choice('continue', $("Continue"))
+                ],
+
+                next: "reg_school_boys"
+            });
+        },
+
+        manage_change_emis_retry_exit: function(name, $) {
+            return new ChoiceState(name, {
+                question: $("There is a problem with the EMIS number you have entered."),
+
+                choices: [
+                    new Choice('retry', $("Try again")),
+                    new Choice('exit', $("Exit"))
+                ],
+
+                next: function(content) {
+                    if (content.value === 'retry') {
+                        return {
+                            name: "manage_change_emis",
+                            creator_opts: {
+                                retry: true
+                            }
+                        };
+                    } else {
+                        return "reg_exit_emis";
+                    }
+                }
+            });
+        },
+
 
 
         "commas": "commas"
