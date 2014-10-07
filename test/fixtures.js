@@ -482,7 +482,7 @@ module.exports = function() {
     // cms_change_management
     // ---------------------
 
-        // manage_change_msisdn_emis GET
+        // change cellphone number - get headteacher by emis (manage_change_msisdn_emis)
     {
         "request": {
             "method": "GET",
@@ -530,7 +530,7 @@ module.exports = function() {
     },
 
 
-        // manage_change_msisdn_emis PUT
+        // change cellphone number - put new msisdn in headteacher (manage_change_msisdn_emis)
     {
         "request": {
             "method": "PUT",
@@ -579,6 +579,166 @@ module.exports = function() {
             }
         }
     },
+
+
+
+
+        // change school - put new emis in headteacher (manage_change_emis)
+    {
+        "request": {
+            "method": "PUT",
+            "headers": {
+                'Content-Type': ['application/json']
+            },
+            "url": "http://qa/api/v1/data/headteacher/555/",
+            "data": {
+                "emis": "/api/v1/school/emis/2334/",
+            },
+        },
+        "response": {
+            "code": 201,
+            "data": {
+                "created_at": "2013-08-14T19:57:50.232678",
+                "date_of_birth": "1980-09-11T00:00:00",
+                "emis": {
+                    "emis": 2334,
+                    "id": 1,
+                    "name": "School One",
+                    "resource_uri": "/api/v1/school/1/",
+                    "zone": {
+                        "district": {
+                            "id": 1,
+                            "name": "District One",
+                            "province": {
+                                "id": 1,
+                                "name": "Province One",
+                                "resource_uri": "/api/v1/province/1/"
+                            },
+                            "resource_uri": "/api/v1/district/1/"
+                        },
+                        "id": 1,
+                        "name": "Zone One",
+                        "resource_uri": "/api/v1/zone/1/"
+                    }
+                },
+                "first_name": "Regina",
+                "gender": "female",
+                "id": 555,
+                "is_zonal_head": true,
+                "last_name": "Spektor",
+                "msisdn": "097555",
+                "resource_uri": "/api/data/headteacher/555/",
+                "zonal_head_name": "self"
+            }
+        }
+    },
+
+        // change school - post school data (manage_change_emis)
+
+    {
+        "request": {
+            "method": "POST",
+            "headers": {
+                'Content-Type': ['application/json']
+            },
+            "url": "http://qa/api/v1/data/school/",
+            "data": {
+                "classrooms": 5,
+                "teachers": 5,
+                "teachers_g1": 2,
+                "teachers_g2": 2,
+                "boys_g2": 10,
+                "girls_g2": 11,
+                "boys": 50,
+                "girls": 51,
+                "created_by": "/api/v1/data/headteacher/555/",
+                "emis": "/api/v1/school/emis/2334/"
+            }
+        },
+        "response": {
+            "code": 201,
+            "data": {}
+        }
+    },
+
+
+
+
+        // update school data - get headteacher by emis (manage_update_school_data)
+    {
+        "request": {
+            "method": "GET",
+            "headers": {
+                'Content-Type': ['application/json']
+            },
+            "url": "http://qa/api/v1/data/headteacher/?emis__emis=45"
+        },
+        "response": {
+            "code": 200,
+            "data": {
+                "created_at": "2013-08-14T19:57:50.232678",
+                "date_of_birth": "1980-09-11T00:00:00",
+                "emis": {
+                    "emis": 45,
+                    "id": 1,
+                    "name": "School One",
+                    "resource_uri": "/api/v1/school/1/",
+                    "zone": {
+                        "district": {
+                            "id": 1,
+                            "name": "District One",
+                            "province": {
+                                "id": 1,
+                                "name": "Province One",
+                                "resource_uri": "/api/v1/province/1/"
+                            },
+                            "resource_uri": "/api/v1/district/1/"
+                        },
+                        "id": 1,
+                        "name": "Zone One",
+                        "resource_uri": "/api/v1/zone/1/"
+                    }
+                },
+                "first_name": "Regina",
+                "gender": "female",
+                "id": 555,
+                "is_zonal_head": true,
+                "last_name": "Spektor",
+                "msisdn": "097555",
+                "resource_uri": "/api/data/headteacher/555/",
+                "zonal_head_name": "self"
+            }
+        }
+    },
+
+
+        // update school data - post school data (manage_update_school_data)
+    {
+        "request": {
+            "method": "POST",
+            "headers": {
+                'Content-Type': ['application/json']
+            },
+            "url": "http://qa/api/v1/data/school/",
+            "data": {
+                "classrooms": 5,
+                "teachers": 5,
+                "teachers_g1": 2,
+                "teachers_g2": 2,
+                "boys_g2": 10,
+                "girls_g2": 11,
+                "boys": 33,
+                "girls": 51,
+                "created_by": "/api/v1/data/headteacher/555/",
+                "emis": "/api/v1/school/emis/45/"
+            }
+        },
+        "response": {
+            "code": 201,
+            "data": {}
+        }
+    },
+
 
 
     // cms_learner_performance
