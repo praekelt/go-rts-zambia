@@ -1333,9 +1333,157 @@ describe("when an unregistered user logs on", function() {
             });
 
         });
+    });
 
 
+    // CHANGE CELLPHONE NUMBER
+    // -----------------------
 
+    describe("when uu chooses to change their cell number", function() {
+        it("should ask them for their school's EMIS number", function() {
+            return tester
+                .setup.user.addr('097666')
+                .inputs(
+                    'start',
+                    '4'  // initial_state
+                )
+                .check.interaction({
+                    state: 'manage_change_msisdn_emis',
+                    reply:
+                        "Please enter the school's EMIS number that you are currently " +
+                        "registered with. This should have 4-6 digits e.g 4351.",
+                })
+                .run();
+        });
+
+        describe("after entering an EMIS number", function() {
+
+            describe("if emis validates", function() {
+                it("should thank them and exit", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '1'  // manage_change_msisdn_emis
+                        )
+                        .check.interaction({
+                            state: 'manage_change_msisdn_emis_validates',
+                            reply:
+                                "Thank you! Your cell phone number is now the official number " +
+                                "that your school will use to communicate with the Gateway."
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once", function() {
+                it("should ask if they want to try again or exit", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '000A'  // manage_change_msisdn_emis
+                        )
+                        .check.interaction({
+                            state: 'manage_change_msisdn_emis_retry_exit',
+                            reply: [
+                                "There is a problem with the EMIS number you have entered.",
+                                "1. Try again",
+                                "2. Exit"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and chooses to exit", function() {
+                it("should instruct to send sms and exit", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '000A',  // manage_change_msisdn_emis
+                            '2'  // manage_change_msisdn_emis_retry_exit
+                        )
+                        .check.interaction({
+                            state: 'reg_exit_emis',
+                            reply: "We don't recognise your EMIS number. Please send a SMS with" +
+                                    " the words EMIS ERROR to 739 and your DEST will contact you" +
+                                    " to resolve the problem."
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and chooses to try again", function() {
+                it("should ask to enter emis number", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '000A',  // manage_change_msisdn_emis
+                            '1'  // manage_change_msisdn_emis_retry_exit
+                        )
+                        .check.interaction({
+                            state: 'manage_change_msisdn_emis',
+                            reply:
+                                "Please enter the school's EMIS number that you are currently " +
+                                "registered with. This should have 4-6 digits e.g 4351."
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and then a valid emis", function() {
+                it("should thank and instruct them to redial on num change", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '000A',  // manage_change_msisdn_emis
+                            '1',  // manage_change_msisdn_emis_retry_exit
+                            '0001'
+                        )
+                        .check.interaction({
+                            state: 'manage_change_msisdn_emis_validates',
+                            reply:
+                                "Thank you! Your cell phone number is now the official number " +
+                                "that your school will use to communicate with the Gateway."
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code twice", function() {
+                it("should instruct to send sms and exit", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '000A',  // manage_change_msisdn_emis
+                            '1',  // manage_change_msisdn_emis_retry_exit
+                            '000B'
+                        )
+                        .check.interaction({
+                            state: 'reg_exit_emis',
+                            reply: "We don't recognise your EMIS number. Please send a SMS with" +
+                                    " the words EMIS ERROR to 739 and your DEST will contact you" +
+                                    " to resolve the problem."
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
+        });
 
     });
 
