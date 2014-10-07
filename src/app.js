@@ -84,6 +84,20 @@ go.utils = {
         );
     },
 
+    cms_put: function(path, data, im) {
+        var json_api = new JsonApi(im);
+        var url = im.config.cms_api_root + path;
+        return json_api.put(
+            url,
+            {
+                data: data,
+                headers:{
+                    'Content-Type': ['application/json']
+                }
+            }
+        );
+    },
+
     array_parse_ints: function(target){
         // returns false if fails to parse
         for (var i = 0; i < target.length; i++) {
@@ -351,8 +365,16 @@ go.app = function() {
             return go.cm.manage_change_emis_error(name, $);
         });
 
-        self.states.add('manage_change_msisdn_emis', function(name) {
-            return go.cm.manage_change_msisdn_emis(name, $);
+        self.states.add('manage_change_msisdn_emis', function(name, opts) {
+            return go.cm.manage_change_msisdn_emis(name, $, self.array_emis, opts, self.im);
+        });
+
+        self.states.add('manage_change_msisdn_emis_validates', function(name) {
+            return go.cm.manage_change_msisdn_emis_validates(name, $);
+        });
+
+        self.states.add('manage_change_msisdn_emis_retry_exit', function(name) {
+            return go.cm.manage_change_msisdn_emis_retry_exit(name, $);
         });
 
 
