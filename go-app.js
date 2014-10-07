@@ -621,6 +621,20 @@ go.cm = function() {
 
 
 
+        manage_update_school_data: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    $("You'll now be asked to re-enter key school details to ensure the " +
+                    "records are accurate. Enter 1 to continue."),
+
+                choices: [
+                    new Choice('continue', $("Continue"))
+                ],
+
+                next: "reg_school_boys"
+            });
+        },
+
         "commas": "commas"
     };
 
@@ -1758,6 +1772,10 @@ go.app = function() {
 
         self.states.add('manage_change_emis_retry_exit', function(name) {
             return go.cm.manage_change_emis_retry_exit(name, $);
+        });
+
+        self.states.add('manage_update_school_data', function(name) {
+            return go.cm.manage_update_school_data(name, $);
         });
 
 
