@@ -303,19 +303,6 @@ go.rht = function() {
                             .then(function() {
                                 return choice.value;
                             });
-
-
-                        // var headteacher_data = go.utils.registration_data_headteacher_collect(im);
-
-                        // return go.utils
-                        //     .cms_post("data/headteacher/", headteacher_data, im)
-                        //     .then(function(result) {
-                        //         return go.utils
-                        //             .cms_update_school_and_contact(result, im, contact)
-                        //             .then(function() {
-                        //                 return choice.value;
-                        //             });
-                        //     });
                     } else {
                         return choice.value;
                     }
@@ -345,17 +332,6 @@ go.rht = function() {
                         .then(function() {
                             return "reg_thanks_head_teacher";
                         });
-
-                    // var headteacher_data = go.utils.registration_data_headteacher_collect(im);
-                    // return go.utils
-                    //     .cms_post("data/headteacher/", headteacher_data, im)
-                    //         .then(function(result) {
-                    //             return go.utils
-                    //                 .cms_update_school_and_contact(result, im, contact)
-                    //                 .then(function() {
-                    //                     return "reg_thanks_head_teacher";
-                    //                 });
-                    //         });
                 }
             });
         },
