@@ -70,7 +70,7 @@ describe("app", function() {
 // uu = unregistered user
 
 describe("when an unregistered user logs on", function() {
-    
+
     describe("when uu starts a session", function() {
         it("should ask them want they want to do", function() {
             return tester
@@ -95,7 +95,7 @@ describe("when an unregistered user logs on", function() {
     // -------------------------
 
     describe("when uu chooses to register as head teacher", function() {
-        
+
         it("should ask for emis code", function() {
             return tester
                 .setup.user.addr('097123')
@@ -317,7 +317,7 @@ describe("when an unregistered user logs on", function() {
                     )
                     .check.interaction({
                         state: 'reg_date_of_birth',
-                        reply: 
+                        reply:
                             "Please enter your date of birth. Start with the day, followed by " +
                             "the month and year, e.g. 27111980"
                     })
@@ -525,7 +525,7 @@ describe("when an unregistered user logs on", function() {
                         )
                         .check.interaction({
                             state: 'reg_school_teachers',
-                            reply: 
+                            reply:
                                 "How many teachers are presently working in your school, " +
                                 "including the head teacher?"
                         })
@@ -898,7 +898,7 @@ describe("when an unregistered user logs on", function() {
                     )
                     .check.interaction({
                         state: 'reg_thanks_zonal_head',
-                        reply: 
+                        reply:
                             "Well done! You are now registered as a Zonal Head " +
                             "Teacher. When you are ready, dial in to start " +
                             "reporting. You will also receive monthly SMS's from " +
@@ -1001,13 +1001,55 @@ describe("when an unregistered user logs on", function() {
                     )
                     .check.interaction({
                         state: 'reg_thanks_head_teacher',
-                        reply: 
+                        reply:
                             "Congratulations! You are now registered as a user of " +
                             "the Gateway! Please dial in again when you are ready to " +
                             "start reporting on teacher and learner performance."
                     })
                     .check.reply.ends_session()
                     .run();
+            });
+        });
+
+        describe("after the user completes registration", function() {
+            describe("if they start a new session", function() {
+                it("should show the registered initial_state options", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5',  // reg_school_classrooms
+                            '5',  // reg_school_teachers
+                            '2',  // reg_school_teachers_g1
+                            '2',  // reg_school_teachers_g2
+                            '10',  // reg_school_students_g2_boys
+                            '11',  // reg_school_students_g2_girls
+                            '2',  // reg_zonal_head
+                            'Jim Carey',  // reg_zonal_head_name
+                            {session_event: 'new'}
+                        )
+                        .check.interaction({
+                            state: 'initial_state_head_teacher',
+                            reply: [
+                                'What would you like to do?',
+                                '1. Report on teacher performance.',
+                                '2. Report on learner performance.',
+                                '3. Change my school.',
+                                "4. Update my school's registration data."
+                            ].join('\n')
+                        })
+                        .run();
+                });
             });
         });
 
@@ -1018,7 +1060,7 @@ describe("when an unregistered user logs on", function() {
     // ------------------------------
 
     describe("when uu chooses to register as district official", function() {
-        
+
         it("should ask for district name", function() {
             return tester
                 .setup.user.addr('097123')
@@ -1292,7 +1334,7 @@ describe("when an unregistered user logs on", function() {
 
         });
 
-    
+
 
 
     });
@@ -1357,7 +1399,7 @@ describe("when a registered user logs on", function() {
                     )
                     .check.interaction({
                         state: 'add_emis_perf_learner_boys_total',
-                        reply: 
+                        reply:
                             "Please enter the school's EMIS number that you would like " +
                             "to report on. This should have 4-6 digits e.g 4351."
                     })
@@ -1482,7 +1524,7 @@ describe("when a registered user logs on", function() {
 
             // boys total
             describe("when the user enters boys total", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for boys outstanding results", function() {
                         return tester
@@ -1524,7 +1566,7 @@ describe("when a registered user logs on", function() {
 
             // boys outstanding
             describe("when the user enters boys outstanding results", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for boys desirable results", function() {
                         return tester
@@ -1587,7 +1629,7 @@ describe("when a registered user logs on", function() {
 
             // boys desirable
             describe("when the user enters boys desirable results", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for boys minimum results", function() {
                         return tester
@@ -1653,7 +1695,7 @@ describe("when a registered user logs on", function() {
 
             // boys minimum
             describe("when the user enters boys minimum results", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for boys below minimum results", function() {
                         return tester
@@ -1725,7 +1767,7 @@ describe("when a registered user logs on", function() {
 
             // boys below minimum
             describe("when the user enters boys below minimum results", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls total", function() {
                         return tester
@@ -1802,7 +1844,7 @@ describe("when a registered user logs on", function() {
 
             // girls total
             describe("when the user enters girls total", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls outstanding results", function() {
                         return tester
@@ -1830,7 +1872,7 @@ describe("when a registered user logs on", function() {
 
             // girls outstanding
             describe("when the user enters girls outstanding results", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls desirable results", function() {
                         return tester
@@ -1908,7 +1950,7 @@ describe("when a registered user logs on", function() {
 
             // girls desirable
             describe("when the user enters girls desirable results", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls minimum results", function() {
                         return tester
@@ -1989,7 +2031,7 @@ describe("when a registered user logs on", function() {
 
             // girls minimum
             describe("when the user enters girls minimum results", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls below minimum results", function() {
                         return tester
@@ -2048,7 +2090,7 @@ describe("when a registered user logs on", function() {
 
             // girls below minimum
             describe("when the user enters girls below minimum results", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for boys phonics", function() {
                         return tester
@@ -2141,7 +2183,7 @@ describe("when a registered user logs on", function() {
 
             // boys phonics
             describe("when the user enters boys phonics result", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls phonics result", function() {
                         return tester
@@ -2232,7 +2274,7 @@ describe("when a registered user logs on", function() {
 
             // girls phonics
             describe("when the user enters girls phonics result", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for boys vocab result", function() {
                         return tester
@@ -2327,7 +2369,7 @@ describe("when a registered user logs on", function() {
 
             // boys vocab
             describe("when the user enters boys vocab result", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls vocab result", function() {
                         return tester
@@ -2362,7 +2404,7 @@ describe("when a registered user logs on", function() {
 
             // girls vocab
             describe("when the user enters girls vocab result", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for boys comprehension result", function() {
                         return tester
@@ -2399,7 +2441,7 @@ describe("when a registered user logs on", function() {
 
             // boys comprehension
             describe("when the user enters boys comprehension result", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls comprehension result", function() {
                         return tester
@@ -2436,7 +2478,7 @@ describe("when a registered user logs on", function() {
 
             // girls comprehension
             describe("when the user enters girls comprehension result", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for boys writing result", function() {
                         return tester
@@ -2475,7 +2517,7 @@ describe("when a registered user logs on", function() {
 
             // boys writing
             describe("when the user enters boys writing result", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls writing result", function() {
                         return tester
@@ -2514,7 +2556,7 @@ describe("when a registered user logs on", function() {
 
             // girls writing
             describe("when the user enters girls writing result", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should show success and options", function() {
                         return tester
@@ -2581,7 +2623,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_learner_girls_writing',
-                                reply: 
+                                reply:
                                     "Please provide a valid number value for total girls achieving 2 out of 4" +
                                     " correct answers for Writing."
                             })
