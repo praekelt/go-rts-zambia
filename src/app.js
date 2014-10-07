@@ -208,7 +208,7 @@ go.utils = {
         return school_data;
     },
 
-    performance_data_learner_collect: function(emis, im){
+    performance_data_learner_collect: function(emis, im) {
         var data_boys = {
             "gender": "boys",
             "total_number_pupils": im.user.answers.perf_learner_boys_total,
@@ -238,6 +238,32 @@ go.utils = {
         };
 
         return {boys: data_boys, girls: data_girls};
+    },
+
+    performance_data_teacher_collect: function(emis, im) {
+        var data = {
+            "ts_number": im.user.answers.perf_teacher_ts_number,
+            "gender": im.user.answers.perf_teacher_gender,
+            "age": im.user.answers.perf_teacher_age,
+            "years_experience": im.user.answers.perf_teacher_years_experience,
+            "g2_pupils_present": im.user.answers.perf_teacher_g2_pupils_present,
+            "g2_pupils_registered": im.user.answers.perf_teacher_g2_pupils_registered,
+            "classroom_environment_score": im.user.answers.perf_teacher_classroom_environment_score,
+            "t_l_materials": im.user.answers.perf_teacher_t_l_materials,
+            "pupils_materials_score": im.user.answers.perf_teacher_pupils_materials_score,
+            "pupils_books_number": im.user.answers.perf_teacher_pupils_books_number,
+            "reading_lesson": im.user.answers.perf_teacher_reading_lesson,
+            "pupil_engagement_score": im.user.answers.perf_teacher_pupil_engagement_score,
+            "attitudes_and_beliefs": im.user.answers.perf_teacher_attitudes_and_beliefs,
+            "training_subtotal": im.user.answers.perf_teacher_training_subtotal,
+            "academic_level": "/api/v1/data/achievement/" +
+                                im.user.answers.perf_teacher_academic_level + "/",
+            "reading_assessment": im.user.answers.perf_teacher_reading_assessment,
+            "reading_total": im.user.answers.perf_teacher_reading_total,
+            "emis": "/api/v1/school/emis/" + emis + "/"
+        };
+
+        return data;
     }
 
 };
@@ -282,13 +308,13 @@ go.app = function() {
 
         self.states.add('initial_state_unregistered', function(name) {
             return new ChoiceState(name, {
-                question: 'Welcome to the Zambia School Gateway! Options:',
+                question: $('Welcome to the Zambia School Gateway! Options:'),
 
                 choices: [
-                    new Choice("reg_emis", "Register as Head Teacher"),
-                    new Choice("reg_district_official", "Register as District Official"),
-                    new Choice("manage_change_emis_error", "Change my school"),
-                    new Choice("manage_change_msisdn_emis", "Change my primary cell number")
+                    new Choice("reg_emis", $("Register as Head Teacher")),
+                    new Choice("reg_district_official", $("Register as District Official")),
+                    new Choice("manage_change_emis_error", $("Change my school")),
+                    new Choice("manage_change_msisdn_emis", $("Change my primary cell number"))
                 ],
 
                 next: function(choice) {
@@ -308,11 +334,11 @@ go.app = function() {
 
         self.states.add('initial_state_district_official', function(name) {
             return new ChoiceState(name, {
-                question: 'What would you like to do?',
+                question: $('What would you like to do?'),
 
                 choices: [
-                    new Choice("add_emis_perf_teacher_ts_number", "Report on teacher performance."),
-                    new Choice("add_emis_perf_learner_boys_total", "Report on learner performance."),
+                    new Choice("add_emis_perf_teacher_ts_number", $("Report on teacher performance.")),
+                    new Choice("add_emis_perf_learner_boys_total", $("Report on learner performance.")),
                 ],
 
                 next: function(choice) {
@@ -323,13 +349,13 @@ go.app = function() {
 
         self.states.add('initial_state_head_teacher', function(name) {
             return new ChoiceState(name, {
-                question: 'What would you like to do?',
+                question: $('What would you like to do?'),
 
                 choices: [
-                    new Choice("perf_teacher_ts_number", "Report on teacher performance."),
-                    new Choice("perf_learner_boys_total", "Report on learner performance."),
-                    new Choice("manage_change_emis", "Change my school."),
-                    new Choice("manage_update_school_data", "Update my school's registration data.")
+                    new Choice("perf_teacher_ts_number", $("Report on teacher performance.")),
+                    new Choice("perf_learner_boys_total", $("Report on learner performance.")),
+                    new Choice("manage_change_emis", $("Change my school.")),
+                    new Choice("manage_update_school_data", $("Update my school's registration data."))
                 ],
 
                 next: function(choice) {
@@ -359,7 +385,7 @@ go.app = function() {
 
         self.states.add('end_state', function(name) {
             return new EndState(name, {
-                text: "Goodbye! Thank you for using the Gateway.",
+                text: $("Goodbye! Thank you for using the Gateway."),
 
                 next: "initial_state"
             });
@@ -408,83 +434,83 @@ go.app = function() {
         // ----------------------------
 
         self.states.add('reg_emis', function(name, opts) {
-            return go.rht.reg_emis(name, self.array_emis, opts);
+            return go.rht.reg_emis(name, $, self.array_emis, opts);
         });
 
         self.states.add('reg_emis_validates', function(name) {
-            return go.rht.reg_emis_validates(name);
+            return go.rht.reg_emis_validates(name, $);
         });
 
         self.states.add('reg_emis_retry_exit', function(name) {
-            return go.rht.reg_emis_retry_exit(name);
+            return go.rht.reg_emis_retry_exit(name, $);
         });
 
         self.states.add('reg_school_name', function(name) {
-            return go.rht.reg_school_name(name);
+            return go.rht.reg_school_name(name, $);
         });
 
         self.states.add('reg_first_name', function(name) {
-            return go.rht.reg_first_name(name);
+            return go.rht.reg_first_name(name, $);
         });
 
         self.states.add('reg_surname', function(name) {
-            return go.rht.reg_surname(name);
+            return go.rht.reg_surname(name, $);
         });
 
         self.states.add('reg_date_of_birth', function(name) {
-            return go.rht.reg_date_of_birth(name);
+            return go.rht.reg_date_of_birth(name, $);
         });
 
         self.states.add('reg_gender', function(name) {
-            return go.rht.reg_gender(name);
+            return go.rht.reg_gender(name, $);
         });
 
         self.states.add('reg_school_boys', function(name) {
-            return go.rht.reg_school_boys(name);
+            return go.rht.reg_school_boys(name, $);
         });
 
         self.states.add('reg_school_girls', function(name) {
-            return go.rht.reg_school_girls(name);
+            return go.rht.reg_school_girls(name, $);
         });
 
         self.states.add('reg_school_classrooms', function(name) {
-            return go.rht.reg_school_classrooms(name);
+            return go.rht.reg_school_classrooms(name, $);
         });
 
         self.states.add('reg_school_teachers', function(name) {
-            return go.rht.reg_school_teachers(name);
+            return go.rht.reg_school_teachers(name, $);
         });
 
         self.states.add('reg_school_teachers_g1', function(name) {
-            return go.rht.reg_school_teachers_g1(name);
+            return go.rht.reg_school_teachers_g1(name, $);
         });
 
         self.states.add('reg_school_teachers_g2', function(name) {
-            return go.rht.reg_school_teachers_g2(name);
+            return go.rht.reg_school_teachers_g2(name, $);
         });
 
         self.states.add('reg_school_students_g2_boys', function(name) {
-            return go.rht.reg_school_students_g2_boys(name);
+            return go.rht.reg_school_students_g2_boys(name, $);
         });
 
         self.states.add('reg_school_students_g2_girls', function(name) {
-            return go.rht.reg_school_students_g2_girls(name);
+            return go.rht.reg_school_students_g2_girls(name, $);
         });
 
         self.states.add('reg_zonal_head', function(name) {
-            return go.rht.reg_zonal_head(name, self.im, self.contact);
+            return go.rht.reg_zonal_head(name, $, self.im, self.contact);
         });
 
         self.states.add('reg_thanks_zonal_head', function(name) {
-            return go.rht.reg_thanks_zonal_head(name);
+            return go.rht.reg_thanks_zonal_head(name, $);
         });
 
         self.states.add('reg_zonal_head_name', function(name) {
-            return go.rht.reg_zonal_head_name(name, self.im, self.contact);
+            return go.rht.reg_zonal_head_name(name, $, self.im, self.contact);
         });
 
         self.states.add('reg_thanks_head_teacher', function(name) {
-            return go.rht.reg_thanks_head_teacher(name);
+            return go.rht.reg_thanks_head_teacher(name, $);
         });
 
 
@@ -493,27 +519,27 @@ go.app = function() {
         // ---------------------------------
 
         self.states.add('reg_district_official', function(name) {
-            return go.rdo.reg_district_official(name, self.districts);
+            return go.rdo.reg_district_official(name, $, self.districts);
         });
 
         self.states.add('reg_district_official_first_name', function(name) {
-            return go.rdo.reg_district_official_first_name(name);
+            return go.rdo.reg_district_official_first_name(name, $);
         });
 
         self.states.add('reg_district_official_surname', function(name) {
-            return go.rdo.reg_district_official_surname(name);
+            return go.rdo.reg_district_official_surname(name, $);
         });
 
         self.states.add('reg_district_official_id_number', function(name) {
-            return go.rdo.reg_district_official_id_number(name);
+            return go.rdo.reg_district_official_id_number(name, $);
         });
 
         self.states.add('reg_district_official_dob', function(name) {
-            return go.rdo.reg_district_official_dob(name, self.im, self.contact);
+            return go.rdo.reg_district_official_dob(name, $, self.im, self.contact);
         });
 
         self.states.add('reg_district_official_thanks', function(name) {
-            return go.rdo.reg_district_official_thanks(name);
+            return go.rdo.reg_district_official_thanks(name, $);
         });
 
 
@@ -628,16 +654,81 @@ go.app = function() {
         // TEACHER PERFORMANCE STATES
         // --------------------------
 
-        self.states.add('state_tp_start', function(name) {
-            return go.tp.state_tp_start(name);
+        self.states.add('add_emis_perf_teacher_ts_number', function(name) {
+            return go.tp.add_emis_perf_teacher_ts_number(name, $, self.array_emis, self.contact,
+                                                        self.im);
         });
 
-        self.states.add('state_tp_next', function(name) {
-            return go.tp.state_tp_next(name);
+        self.states.add('perf_teacher_ts_number', function(name) {
+            return go.tp.perf_teacher_ts_number(name, $);
         });
 
-        self.states.add('state_tp_exit', function(name) {
-            return go.tp.state_tp_exit(name);
+        self.states.add('perf_teacher_gender', function(name) {
+            return go.tp.perf_teacher_gender(name, $);
+        });
+
+        self.states.add('perf_teacher_age', function(name) {
+            return go.tp.perf_teacher_age(name, $);
+        });
+
+        self.states.add('perf_teacher_academic_level', function(name) {
+            return go.tp.perf_teacher_academic_level(name, $);
+        });
+
+        self.states.add('perf_teacher_years_experience', function(name) {
+            return go.tp.perf_teacher_years_experience(name, $);
+        });
+
+        self.states.add('perf_teacher_g2_pupils_present', function(name) {
+            return go.tp.perf_teacher_g2_pupils_present(name, $);
+        });
+
+        self.states.add('perf_teacher_g2_pupils_registered', function(name) {
+            return go.tp.perf_teacher_g2_pupils_registered(name, $);
+        });
+
+        self.states.add('perf_teacher_classroom_environment_score', function(name) {
+            return go.tp.perf_teacher_classroom_environment_score(name, $);
+        });
+
+        self.states.add('perf_teacher_t_l_materials', function(name) {
+            return go.tp.perf_teacher_t_l_materials(name, $);
+        });
+
+        self.states.add('perf_teacher_pupils_books_number', function(name) {
+            return go.tp.perf_teacher_pupils_books_number(name, $);
+        });
+
+        self.states.add('perf_teacher_pupils_materials_score', function(name) {
+            return go.tp.perf_teacher_pupils_materials_score(name, $);
+        });
+
+        self.states.add('perf_teacher_reading_lesson', function(name) {
+            return go.tp.perf_teacher_reading_lesson(name, $);
+        });
+
+        self.states.add('perf_teacher_pupil_engagement_score', function(name) {
+            return go.tp.perf_teacher_pupil_engagement_score(name, $);
+        });
+
+        self.states.add('perf_teacher_attitudes_and_beliefs', function(name) {
+            return go.tp.perf_teacher_attitudes_and_beliefs(name, $);
+        });
+
+        self.states.add('perf_teacher_training_subtotal', function(name) {
+            return go.tp.perf_teacher_training_subtotal(name, $);
+        });
+
+        self.states.add('perf_teacher_reading_assessment', function(name) {
+            return go.tp.perf_teacher_reading_assessment(name, $);
+        });
+
+        self.states.add('perf_teacher_reading_total', function(name) {
+            return go.tp.perf_teacher_reading_total(name, $, self.contact, self.im);
+        });
+
+        self.states.add('perf_teacher_completed', function(name) {
+            return go.tp.perf_teacher_completed(name, $);
         });
 
 
@@ -656,6 +747,7 @@ go.app = function() {
         self.states.add('state_sp_exit', function(name) {
             return go.sp.state_sp_exit(name);
         });
+
 
     });
 
