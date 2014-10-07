@@ -2869,7 +2869,7 @@ describe("when a registered user logs on", function() {
     // CHANGE SCHOOL
     // -------------
 
-    describe.only("when user chooses to change their school", function() {
+    describe("when user chooses to change their school", function() {
         it("should ask them for their school's EMIS number", function() {
             return tester
                 .setup.user.addr('097555')
@@ -2926,6 +2926,37 @@ describe("when a registered user logs on", function() {
                             .run();
                     });
                 });
+
+                describe.skip("if the user completes school change process", function() {
+                    it("should save data", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '3',  // initial_state_head_teacher
+                                '2334',  // manage_change_emis
+                                '1',  // manage_change_emis_validates
+                                '50',  // reg_school_boys
+                                '51',  // reg_school_girls
+                                '5',  // reg_school_classrooms
+                                '5',  // reg_school_teachers
+                                '2',  // reg_school_teachers_g1
+                                '2',  // reg_school_teachers_g2
+                                '10',  // reg_school_students_g2_boys
+                                '11',  // reg_school_students_g2_girls
+                                '1'  // reg_zonal_head
+                            )
+                            .check(function(api) {
+                                var contact = api.contacts.store[1];
+                                assert.equal(contact.extra.rts_id, '555');
+                                assert.equal(contact.extra.rts_emis, '2334');
+                                assert.equal(contact.name, 'Regina');
+                                assert.equal(contact.surname, 'Spektor');
+                            })
+                            .run();
+                    });
+                });
+
             });
 
             describe("if the user enters an invalid emis code once", function() {
