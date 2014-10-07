@@ -94,14 +94,19 @@ go.cm = function() {
 
 
 
-        manage_change_emis: function(name, $, array_emis, opts) {
+        manage_change_emis: function(name, $, array_emis, opts, contact, im) {
             return new FreeText(name, {
                 question: $("Please enter your school's EMIS number. This should have 4-6 " +
                             "digits e.g 4351."),
 
                 next: function(content) {
                     if (go.utils.check_valid_emis(content, array_emis)) {
-                        return "manage_change_emis_validates";
+                        contact.extra.registration_origin = name;
+                        return im.contacts
+                            .save(contact)
+                            .then(function() {
+                                return "manage_change_emis_validates";
+                            });
                     } else if (opts.retry === false) {
                         return "manage_change_emis_retry_exit";
                     } else if (opts.retry === true) {
@@ -152,7 +157,7 @@ go.cm = function() {
 
 
 
-        manage_update_school_data: function(name, $) {
+        manage_update_school_data: function(name, $, contact, im) {
             return new ChoiceState(name, {
                 question:
                     $("You'll now be asked to re-enter key school details to ensure the " +
@@ -162,7 +167,14 @@ go.cm = function() {
                     new Choice('continue', $("Continue"))
                 ],
 
-                next: "reg_school_boys"
+                next: function() {
+                    contact.extra.registration_origin = name;
+                    return im.contacts
+                        .save(contact)
+                        .then(function() {
+                            return "reg_school_boys";
+                        });
+                }
             });
         },
 
