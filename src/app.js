@@ -342,14 +342,14 @@ go.app = function() {
 
         self.states.add('initial_state_zonal_head', function(name) {
             return new ChoiceState(name, {
-                question: $('What would you like to do?'),
+                question: $('Welcome to Zambia School Gateway!'),
 
                 choices: [
-                    new Choice("perf_teacher_ts_number", $("Report on teacher performance.")),
-                    new Choice("perf_learner_boys_total", $("Report on learner performance.")),
-                    new Choice("add_emis_school_monitoring", $("Report on a school monitoring visit.")),
-                    new Choice("manage_change_emis", $("Change my school.")),
-                    new Choice("manage_update_school_data", $("Update my school's registration data."))
+                    new Choice("perf_teacher_ts_number", $("Report on teachers")),
+                    new Choice("perf_learner_boys_total", $("Report on learners")),
+                    new Choice("add_emis_school_monitoring", $("Report on school monitoring visit")),
+                    new Choice("manage_change_emis", $("Change my school")),
+                    new Choice("manage_update_school_data", $("Update my school data"))
                 ],
 
                 next: function(choice) {
@@ -708,76 +708,76 @@ go.app = function() {
         // --------------------------
 
         self.states.add('add_emis_school_monitoring', function(name) {
-            return go.tp.add_emis_school_monitoring(name, $, self.array_emis, self.contact,
+            return go.sp.add_emis_school_monitoring(name, $, self.array_emis, self.contact,
                                                         self.im);
         });
 
         self.states.add('monitor_school_see_lpip', function(name) {
-            return go.tp.monitor_school_see_lpip(name, $);
+            return go.sp.monitor_school_see_lpip(name, $);
         });
 
         self.states.add('monitor_school_teaching', function(name) {
-            return go.tp.monitor_school_teaching(name, $);
+            return go.sp.monitor_school_teaching(name, $);
         });
 
         self.states.add('monitor_school_learner_assessment', function(name) {
-            return go.tp.monitor_school_learner_assessment(name, $);
+            return go.sp.monitor_school_learner_assessment(name, $);
         });
 
         self.states.add('monitor_school_learning_materials', function(name) {
-            return go.tp.monitor_school_learning_materials(name, $);
+            return go.sp.monitor_school_learning_materials(name, $);
         });
 
         self.states.add('monitor_school_learner_attendance', function(name) {
-            return go.tp.monitor_school_learner_attendance(name, $);
+            return go.sp.monitor_school_learner_attendance(name, $);
         });
 
         self.states.add('monitor_school_reading_time', function(name) {
-            return go.tp.monitor_school_reading_time(name, $);
+            return go.sp.monitor_school_reading_time(name, $);
         });
 
         self.states.add('monitor_school_struggling_learners', function(name) {
-            return go.tp.monitor_school_struggling_learners(name, $);
+            return go.sp.monitor_school_struggling_learners(name, $);
         });
 
         self.states.add('monitor_school_g2_observation_results', function(name) {
-            return go.tp.monitor_school_g2_observation_results(name, $);
+            return go.sp.monitor_school_g2_observation_results(name, $);
         });
 
         self.states.add('monitor_school_ht_feedback', function(name) {
-            return go.tp.monitor_school_ht_feedback(name, $);
+            return go.sp.monitor_school_ht_feedback(name, $);
         });
 
         self.states.add('monitor_school_submitted_classroom', function(name) {
-            return go.tp.monitor_school_submitted_classroom(name, $);
+            return go.sp.monitor_school_submitted_classroom(name, $);
         });
 
         self.states.add('monitor_school_gala_sheets', function(name) {
-            return go.tp.monitor_school_gala_sheets(name, $);
+            return go.sp.monitor_school_gala_sheets(name, $);
         });
 
         self.states.add('monitor_school_summary_worksheet', function(name) {
-            return go.tp.monitor_school_summary_worksheet(name, $);
+            return go.sp.monitor_school_summary_worksheet(name, $);
         });
 
         self.states.add('monitor_school_ht_feedback_literacy', function(name) {
-            return go.tp.monitor_school_ht_feedback_literacy(name, $);
+            return go.sp.monitor_school_ht_feedback_literacy(name, $);
         });
 
         self.states.add('monitor_school_submitted_gala', function(name) {
-            return go.tp.monitor_school_submitted_gala(name, $);
+            return go.sp.monitor_school_submitted_gala(name, $);
         });
 
         self.states.add('monitor_school_talking_wall', function(name) {
-            return go.tp.monitor_school_talking_wall(name, $);
+            return go.sp.monitor_school_talking_wall(name, $);
         });
 
         self.states.add('monitor_school_completed', function(name) {
-            return go.tp.monitor_school_completed(name, $);
+            return go.sp.monitor_school_completed(name, $);
         });
 
         self.states.add('monitor_school_falling_behind', function(name) {
-            return go.tp.monitor_school_falling_behind(name, $);
+            return go.sp.monitor_school_falling_behind(name, $);
         });
 
     });
