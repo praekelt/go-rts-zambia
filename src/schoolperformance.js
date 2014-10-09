@@ -3,29 +3,6 @@ go.sp = function() {
     var ChoiceState = vumigo.states.ChoiceState;
     var Choice = vumigo.states.Choice;
 
-    var choices_yes_incomplete_no = [
-        new Choice('yes', $("YES - completed")),
-        new Choice('yes_incomplete', $("YES - in progress")),
-        new Choice('no', $("NO"))
-    ];
-
-    var choices_yes_no = [
-        new Choice('yes', $("YES")),
-        new Choice('no', $("NO"))
-    ];
-
-    var choices_yes_submitted_no = [
-        new Choice('yes_cellphone', $("YES submitted by cell phone")),
-        new Choice('yes_paper', $("YES submitted paper form to DEBS office")),
-        new Choice('no', $("NO"))
-    ];
-
-    var choices_yes_updated_no = [
-        new Choice('yes', $("YES")),
-        new Choice('yes_incomplete', $("YES but not updated")),
-        new Choice('no', $("NO"))
-    ];
-
 
     var sp = {
         // School Monitoring States
@@ -64,7 +41,11 @@ go.sp = function() {
                     "Please complete the following questions after the visit is complete. " +
                     "Did you see the School Learner Performance Improvement Plan for this year?",
 
-                choices: choices_yes_incomplete_no,
+                choices: [
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
 
                 next: function(choice) {
                     if(choice.value === 'no') {
@@ -83,7 +64,11 @@ go.sp = function() {
                     "Please indicate the status of key LPIP activities: Is there an activity " +
                     "for improving the teaching of early grade reading?",
 
-                choices: choices_yes_incomplete_no,
+                choices: [
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
 
                 next: 'monitor_school_learner_assessment'
             });
@@ -95,7 +80,11 @@ go.sp = function() {
                 question:
                     "Is there an activity for improving learner assessment?",
 
-                choices: choices_yes_incomplete_no,
+                choices: [
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
 
                 next: 'monitor_school_learning_materials'
             });
@@ -107,7 +96,11 @@ go.sp = function() {
                 question:
                     "Is there an activity for buying or making teaching and learning materials?",
 
-                choices: choices_yes_incomplete_no,
+                choices: [
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
 
                 next: 'monitor_school_learner_attendance'
             });
@@ -119,7 +112,11 @@ go.sp = function() {
                 question:
                     "Is there an activity for improving learner attendance?",
 
-                choices: choices_yes_incomplete_no,
+                choices: [
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
 
                 next: 'monitor_school_reading_time'
             });
@@ -132,7 +129,11 @@ go.sp = function() {
                     "Is there an activity for increasing the time available for children to " +
                     "read, inside or outside school?",
 
-                choices: choices_yes_incomplete_no,
+                choices: [
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
 
                 next: 'monitor_school_struggling_learners'
             });
@@ -145,7 +146,11 @@ go.sp = function() {
                     "Is there an activity to give extra or remedial support to struggling " +
                     "learners?",
 
-                choices: choices_yes_incomplete_no,
+                choices: [
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
 
                 next: 'monitor_school_g2_observation_results'
             });
@@ -158,7 +163,11 @@ go.sp = function() {
                     "Did you see the Grade 2 reading lesson observation results done by the " +
                     "head teacher for the current term?",
 
-                choices: choices_yes_incomplete_no,
+                choices: [
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
 
                 next: function(choice) {
                     if(choice.value === 'no') {
@@ -177,7 +186,10 @@ go.sp = function() {
                     "According to the teacher observed, has the Head Teacher given him/her " +
                     "feedback?",
 
-                choices: choices_yes_no,
+                choices: [
+                    new Choice('yes', $("YES")),
+                    new Choice('no', $("NO"))
+                ],
 
                 next: 'monitor_school_submitted_classroom'
             });
@@ -189,7 +201,11 @@ go.sp = function() {
                 question:
                     "Has the Head Teacher submitted the classroom observation results to the ZSG?",
 
-                choices: choices_yes_submitted_no,
+                choices: [
+                    new Choice('yes_cellphone', $("YES submitted by cell phone")),
+                    new Choice('yes_paper', $("YES submitted paper form to DEBS office")),
+                    new Choice('no', $("NO"))
+                ],
 
                 next: 'monitor_school_gala_sheets'
             });
@@ -202,7 +218,11 @@ go.sp = function() {
                     "Did you see the GALA stimulus sheets completed by the learners for the " +
                     "current term?",
 
-                choices: choices_yes_incomplete_no,
+                choices: [
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
 
                 next: function(choice) {
                     if(choice.value === 'no') {
@@ -220,7 +240,10 @@ go.sp = function() {
                 question:
                     "Was the summary worksheet accurately completed by the Head Teacher?",
 
-                choices: choices_yes_no,
+                choices: [
+                    new Choice('yes', $("YES")),
+                    new Choice('no', $("NO"))
+                ],
 
                 next: 'monitor_school_ht_feedback_literacy'
             });
@@ -233,7 +256,10 @@ go.sp = function() {
                     "According to the teacher observed, has the Head Teacher given him/her " +
                     "feedback on the literacy assessment results?",
 
-                choices: choices_yes_no,
+                choices: [
+                    new Choice('yes', $("YES")),
+                    new Choice('no', $("NO"))
+                ],
 
                 next: 'monitor_school_submitted_gala'
             });
@@ -245,7 +271,11 @@ go.sp = function() {
                 question:
                     "Has the Head Teacher submitted the GALA results to the ZSG?",
 
-                choices: choices_yes_submitted_no,
+                choices: [
+                    new Choice('yes_cellphone', $("YES submitted by cell phone")),
+                    new Choice('yes_paper', $("YES submitted paper form to DEBS office")),
+                    new Choice('no', $("NO"))
+                ],
 
                 next: 'monitor_school_talking_wall'
             });
@@ -257,7 +287,11 @@ go.sp = function() {
                 question:
                     "Is the Talking Wall poster on display and up to date?",
 
-                choices: choices_yes_updated_no,
+                choices: [
+                    new Choice('yes', $("YES")),
+                    new Choice('yes_incomplete', $("YES but not updated")),
+                    new Choice('no', $("NO"))
+                ],
 
                 next: 'monitor_school_completed'
             });

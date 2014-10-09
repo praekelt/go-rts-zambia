@@ -1545,56 +1545,340 @@ go.tp = function() {
 go.sp = function() {
     var vumigo = require('vumigo_v02');
     var ChoiceState = vumigo.states.ChoiceState;
-    var EndState = vumigo.states.EndState;
     var Choice = vumigo.states.Choice;
 
 
     var sp = {
-        // LearnerPerformance States
+        // School Monitoring States
 
-        state_sp_start: function(name) {
+        add_emis_school_monitoring: function(name, $, array_emis, contact, im) {
+            var error = $("The emis does not exist, please try again. " +
+                        "This should have 4-6 digits e.g 4351.");
+
+            var question = $("Please enter the school's EMIS number that you would " +
+                            "like to report on. This should have 4-6 digits e.g 4351.");
+
+            return new FreeText(name, {
+                question: question,
+
+                check: function(content) {
+                    if (go.utils.check_valid_emis(content, array_emis) === false) {
+                        return error;
+                    }
+                },
+
+                next: function(content) {
+                    contact.extra.school_monitoring_emis = content;
+                    return im.contacts
+                        .save(contact)
+                        .then(function() {
+                            return "monitor_school_see_lpip";
+                        });
+                }
+
+            });
+        },
+
+        monitor_school_see_lpip: function(name, $) {
             return new ChoiceState(name, {
-                question: 'Hi there! What do you want to do?',
+                question:
+                    "Please complete the following questions after the visit is complete. " +
+                    "Did you see the School Learner Performance Improvement Plan for this year?",
 
                 choices: [
-                    new Choice('next', 'Go to next state'),
-                    new Choice('exit', 'Exit')],
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
 
                 next: function(choice) {
-                    if(choice.value === 'next') {
-                        return 'state_sp_next';
+                    if(choice.value === 'no') {
+                        return 'monitor_school_g2_observation_results';
                     } else {
-                        return 'state_sp_exit';
+                        return 'monitor_school_teaching';
                     }
                 }
             });
         },
 
-        state_sp_next: function(name) {
+         // q01
+        monitor_school_teaching: function(name, $) {
             return new ChoiceState(name, {
-                question: 'Hi there! What do you want to do?',
+                question:
+                    "Please indicate the status of key LPIP activities: Is there an activity " +
+                    "for improving the teaching of early grade reading?",
 
                 choices: [
-                    new Choice('to_tp', 'Switch to TeacherPerformance'),
-                    new Choice('exit', 'Exit')],
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
+
+                next: 'monitor_school_learner_assessment'
+            });
+        },
+
+        // q02
+        monitor_school_learner_assessment: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    "Is there an activity for improving learner assessment?",
+
+                choices: [
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
+
+                next: 'monitor_school_learning_materials'
+            });
+        },
+
+        // q03
+        monitor_school_learning_materials: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    "Is there an activity for buying or making teaching and learning materials?",
+
+                choices: [
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
+
+                next: 'monitor_school_learner_attendance'
+            });
+        },
+
+        // q04
+        monitor_school_learner_attendance: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    "Is there an activity for improving learner attendance?",
+
+                choices: [
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
+
+                next: 'monitor_school_reading_time'
+            });
+        },
+
+        // q05
+        monitor_school_reading_time: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    "Is there an activity for increasing the time available for children to " +
+                    "read, inside or outside school?",
+
+                choices: [
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
+
+                next: 'monitor_school_struggling_learners'
+            });
+        },
+
+        // q06
+        monitor_school_struggling_learners: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    "Is there an activity to give extra or remedial support to struggling " +
+                    "learners?",
+
+                choices: [
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
+
+                next: 'monitor_school_g2_observation_results'
+            });
+        },
+
+        // q07
+        monitor_school_g2_observation_results: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    "Did you see the Grade 2 reading lesson observation results done by the " +
+                    "head teacher for the current term?",
+
+                choices: [
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
 
                 next: function(choice) {
-                    if(choice.value === 'to_tp') {
-                        return 'state_tp_start'; // Switch to TP
+                    if(choice.value === 'no') {
+                        return 'monitor_school_gala_sheets';
                     } else {
-                        return 'state_sp_exit';
+                        return 'monitor_school_ht_feedback';
                     }
                 }
             });
         },
 
-        state_sp_exit: function(name) {
-            return new EndState(name, {
-                text: 'Thanks, cheers!',
-                next: 'state_sp_start'
-            });
-        }
+        // q08
+        monitor_school_ht_feedback: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    "According to the teacher observed, has the Head Teacher given him/her " +
+                    "feedback?",
 
+                choices: [
+                    new Choice('yes', $("YES")),
+                    new Choice('no', $("NO"))
+                ],
+
+                next: 'monitor_school_submitted_classroom'
+            });
+        },
+
+        // q09
+        monitor_school_submitted_classroom: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    "Has the Head Teacher submitted the classroom observation results to the ZSG?",
+
+                choices: [
+                    new Choice('yes_cellphone', $("YES submitted by cell phone")),
+                    new Choice('yes_paper', $("YES submitted paper form to DEBS office")),
+                    new Choice('no', $("NO"))
+                ],
+
+                next: 'monitor_school_gala_sheets'
+            });
+        },
+
+        // q10
+        monitor_school_gala_sheets: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    "Did you see the GALA stimulus sheets completed by the learners for the " +
+                    "current term?",
+
+                choices: [
+                    new Choice('yes', $("YES - completed")),
+                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('no', $("NO"))
+                ],
+
+                next: function(choice) {
+                    if(choice.value === 'no') {
+                        return 'monitor_school_falling_behind';
+                    } else {
+                        return 'monitor_school_summary_worksheet';
+                    }
+                }
+            });
+        },
+
+        // q11
+        monitor_school_summary_worksheet: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    "Was the summary worksheet accurately completed by the Head Teacher?",
+
+                choices: [
+                    new Choice('yes', $("YES")),
+                    new Choice('no', $("NO"))
+                ],
+
+                next: 'monitor_school_ht_feedback_literacy'
+            });
+        },
+
+        // q12
+        monitor_school_ht_feedback_literacy: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    "According to the teacher observed, has the Head Teacher given him/her " +
+                    "feedback on the literacy assessment results?",
+
+                choices: [
+                    new Choice('yes', $("YES")),
+                    new Choice('no', $("NO"))
+                ],
+
+                next: 'monitor_school_submitted_gala'
+            });
+        },
+
+        // q13
+        monitor_school_submitted_gala: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    "Has the Head Teacher submitted the GALA results to the ZSG?",
+
+                choices: [
+                    new Choice('yes_cellphone', $("YES submitted by cell phone")),
+                    new Choice('yes_paper', $("YES submitted paper form to DEBS office")),
+                    new Choice('no', $("NO"))
+                ],
+
+                next: 'monitor_school_talking_wall'
+            });
+        },
+
+        // q14
+        monitor_school_talking_wall: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    "Is the Talking Wall poster on display and up to date?",
+
+                choices: [
+                    new Choice('yes', $("YES")),
+                    new Choice('yes_incomplete', $("YES but not updated")),
+                    new Choice('no', $("NO"))
+                ],
+
+                next: 'monitor_school_completed'
+            });
+        },
+
+        // q15
+        monitor_school_completed: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    "Congratulations, you have finished reporting on this school.",
+
+                choices: [
+                    new Choice('add_emis_school_monitoring',
+                                    $("Report on another school monitoring visit")),
+                    new Choice('initial_state', $("Go back to the main menu")),
+                    new Choice('end_state', $("Exit"))
+                ],
+
+                next: function(choice) {
+                    return choice.value();
+                }
+            });
+        },
+
+        // q16
+        monitor_school_falling_behind: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    "This school is falling behind with their LPIP and E-SIMON " +
+                    "responsibilities. Please assist the Head Teacher to catch up.",
+
+                choices: [
+                    new Choice('initial_state', $("Go back to the main menu")),
+                    new Choice('end_state', $("Exit"))
+                ],
+
+                next: function(choice) {
+                    return choice.value();
+                }
+            });
+        },
+
+        "commas": "commas"
     };
 
     return sp;
@@ -1648,6 +1932,7 @@ go.utils = {
     cms_update_school_and_contact: function(result, im, contact) {
         parsed_result = JSON.parse(result.body);
         var headteacher_id = parsed_result.id;
+        var headteacher_is_zonal_head = parsed_result.is_zonal_head;
         var emis = parsed_result.emis.emis;
         var school_data = go.utils.registration_data_school_collect(im);
         school_data.created_by = "/api/v1/data/headteacher/" + headteacher_id + "/";
@@ -1657,6 +1942,7 @@ go.utils = {
             .then(function(result) {
                 contact.extra.rts_id = headteacher_id.toString();
                 contact.extra.rts_emis = emis.toString();
+                contact.extra.is_zonal_head = headteacher_is_zonal_head.toString();
                 contact.name = im.user.answers.reg_first_name;
                 contact.surname = im.user.answers.reg_surname;
                 return im.contacts.save(contact);
@@ -1677,9 +1963,9 @@ go.utils = {
         var json_api = new JsonApi(im);
         var url = im.config.cms_api_root + path;
         return json_api.post(
-            url, 
+            url,
             {
-                data: data, 
+                data: data,
                 headers:{
                     'Content-Type': ['application/json']
                 }
@@ -1735,13 +2021,13 @@ go.utils = {
     update_calculated_totals: function(opts, content) {
         // calculate new totals to be passed through to next state as creator_opts
         opts.current_sum = opts.current_sum + parseInt(content, 10);
-        
+
         if (opts.sum_as_string === "") {
             opts.sum_as_string = content;
         } else {
-            opts.sum_as_string = opts.sum_as_string + "+" + content;    
+            opts.sum_as_string = opts.sum_as_string + "+" + content;
         }
-        
+
         return opts;
     },
 
@@ -1871,7 +2157,7 @@ go.app = function() {
             self.env = self.im.config.env;
             self.districts = go.utils.cms_district_load(self.im);
             self.array_emis = go.utils.cms_emis_load(self.im);
-            
+
             return self.im.contacts
                 .for_user()
                 .then(function(user_contact) {
@@ -1887,6 +2173,10 @@ go.app = function() {
             if (_.isUndefined(self.contact.extra.rts_id)) {
                 // user is unregistered if doesn't have rts_id
                 return self.states.create('initial_state_unregistered');
+            } else if (_.isUndefined(self.contact.extra.rts_official_district_id)
+                        && (self.contact.extra.is_zonal_head === 'true')) {
+                // is a head teacher and a zonal head
+                return self.states.create('initial_state_zonal_head');
             } else if (_.isUndefined(self.contact.extra.rts_official_district_id)) {
                 // registered user is head teacher if doesn't have district_id
                 return self.states.create('initial_state_head_teacher');
@@ -1928,6 +2218,25 @@ go.app = function() {
                 choices: [
                     new Choice("add_emis_perf_teacher_ts_number", $("Report on teacher performance.")),
                     new Choice("add_emis_perf_learner_boys_total", $("Report on learner performance.")),
+                    new Choice("add_emis_school_monitoring", $("Report on a school monitoring visit."))
+                ],
+
+                next: function(choice) {
+                    return choice.value;
+                }
+            });
+        });
+
+        self.states.add('initial_state_zonal_head', function(name) {
+            return new ChoiceState(name, {
+                question: $('What would you like to do?'),
+
+                choices: [
+                    new Choice("perf_teacher_ts_number", $("Report on teacher performance.")),
+                    new Choice("perf_learner_boys_total", $("Report on learner performance.")),
+                    new Choice("add_emis_school_monitoring", $("Report on a school monitoring visit.")),
+                    new Choice("manage_change_emis", $("Change my school.")),
+                    new Choice("manage_update_school_data", $("Update my school's registration data."))
                 ],
 
                 next: function(choice) {
@@ -2048,7 +2357,7 @@ go.app = function() {
 
         self.states.add('reg_thanks_head_teacher', function(name) {
             return go.rht.reg_thanks_head_teacher(name, $);
-        });        
+        });
 
 
 
@@ -2189,7 +2498,7 @@ go.app = function() {
 
         self.states.add('perf_learner_girls_writing', function(name) {
             return go.lp.perf_learner_girls_writing(name, $,
-                                                    self.im.user.answers.perf_learner_girls_total, 
+                                                    self.im.user.answers.perf_learner_girls_total,
                                                     self.contact, self.im);
         });
 
@@ -2282,21 +2591,81 @@ go.app = function() {
 
 
 
-        // SCHOOL PERFORMANCE STATES
+        // SCHOOL MONITORING STATES
         // --------------------------
 
-        self.states.add('state_sp_start', function(name) {
-            return go.sp.state_sp_start(name);
+        self.states.add('add_emis_school_monitoring', function(name) {
+            return go.tp.add_emis_school_monitoring(name, $, self.array_emis, self.contact,
+                                                        self.im);
         });
 
-        self.states.add('state_sp_next', function(name) {
-            return go.sp.state_sp_next(name);
+        self.states.add('monitor_school_see_lpip', function(name) {
+            return go.tp.monitor_school_see_lpip(name, $);
         });
 
-        self.states.add('state_sp_exit', function(name) {
-            return go.sp.state_sp_exit(name);
+        self.states.add('monitor_school_teaching', function(name) {
+            return go.tp.monitor_school_teaching(name, $);
         });
 
+        self.states.add('monitor_school_learner_assessment', function(name) {
+            return go.tp.monitor_school_learner_assessment(name, $);
+        });
+
+        self.states.add('monitor_school_learning_materials', function(name) {
+            return go.tp.monitor_school_learning_materials(name, $);
+        });
+
+        self.states.add('monitor_school_learner_attendance', function(name) {
+            return go.tp.monitor_school_learner_attendance(name, $);
+        });
+
+        self.states.add('monitor_school_reading_time', function(name) {
+            return go.tp.monitor_school_reading_time(name, $);
+        });
+
+        self.states.add('monitor_school_struggling_learners', function(name) {
+            return go.tp.monitor_school_struggling_learners(name, $);
+        });
+
+        self.states.add('monitor_school_g2_observation_results', function(name) {
+            return go.tp.monitor_school_g2_observation_results(name, $);
+        });
+
+        self.states.add('monitor_school_ht_feedback', function(name) {
+            return go.tp.monitor_school_ht_feedback(name, $);
+        });
+
+        self.states.add('monitor_school_submitted_classroom', function(name) {
+            return go.tp.monitor_school_submitted_classroom(name, $);
+        });
+
+        self.states.add('monitor_school_gala_sheets', function(name) {
+            return go.tp.monitor_school_gala_sheets(name, $);
+        });
+
+        self.states.add('monitor_school_summary_worksheet', function(name) {
+            return go.tp.monitor_school_summary_worksheet(name, $);
+        });
+
+        self.states.add('monitor_school_ht_feedback_literacy', function(name) {
+            return go.tp.monitor_school_ht_feedback_literacy(name, $);
+        });
+
+        self.states.add('monitor_school_submitted_gala', function(name) {
+            return go.tp.monitor_school_submitted_gala(name, $);
+        });
+
+        self.states.add('monitor_school_talking_wall', function(name) {
+            return go.tp.monitor_school_talking_wall(name, $);
+        });
+
+        self.states.add('monitor_school_completed', function(name) {
+            return go.tp.monitor_school_completed(name, $);
+        });
+
+        self.states.add('monitor_school_falling_behind', function(name) {
+            return go.tp.monitor_school_falling_behind(name, $);
+        });
 
     });
 
