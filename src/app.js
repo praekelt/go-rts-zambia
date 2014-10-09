@@ -45,6 +45,7 @@ go.utils = {
     cms_update_school_and_contact: function(result, im, contact) {
         parsed_result = JSON.parse(result.body);
         var headteacher_id = parsed_result.id;
+        var headteacher_is_zonal_head = parsed_result.is_zonal_head;
         var emis = parsed_result.emis.emis;
         var school_data = go.utils.registration_data_school_collect(im);
         school_data.created_by = "/api/v1/data/headteacher/" + headteacher_id + "/";
@@ -54,6 +55,7 @@ go.utils = {
             .then(function(result) {
                 contact.extra.rts_id = headteacher_id.toString();
                 contact.extra.rts_emis = emis.toString();
+                contact.extra.is_zonal_head = headteacher_is_zonal_head.toString();
                 contact.name = im.user.answers.reg_first_name;
                 contact.surname = im.user.answers.reg_surname;
                 return im.contacts.save(contact);
@@ -74,9 +76,9 @@ go.utils = {
         var json_api = new JsonApi(im);
         var url = im.config.cms_api_root + path;
         return json_api.post(
-            url, 
+            url,
             {
-                data: data, 
+                data: data,
                 headers:{
                     'Content-Type': ['application/json']
                 }
@@ -132,13 +134,13 @@ go.utils = {
     update_calculated_totals: function(opts, content) {
         // calculate new totals to be passed through to next state as creator_opts
         opts.current_sum = opts.current_sum + parseInt(content, 10);
-        
+
         if (opts.sum_as_string === "") {
             opts.sum_as_string = content;
         } else {
-            opts.sum_as_string = opts.sum_as_string + "+" + content;    
+            opts.sum_as_string = opts.sum_as_string + "+" + content;
         }
-        
+
         return opts;
     },
 
@@ -268,7 +270,7 @@ go.app = function() {
             self.env = self.im.config.env;
             self.districts = go.utils.cms_district_load(self.im);
             self.array_emis = go.utils.cms_emis_load(self.im);
-            
+
             return self.im.contacts
                 .for_user()
                 .then(function(user_contact) {
@@ -284,6 +286,10 @@ go.app = function() {
             if (_.isUndefined(self.contact.extra.rts_id)) {
                 // user is unregistered if doesn't have rts_id
                 return self.states.create('initial_state_unregistered');
+            } else if (_.isUndefined(self.contact.extra.rts_official_district_id)
+                        && (self.contact.extra.is_zonal_head === 'true')) {
+                // is a head teacher and a zonal head
+                return self.states.create('initial_state_zonal_head');
             } else if (_.isUndefined(self.contact.extra.rts_official_district_id)) {
                 // registered user is head teacher if doesn't have district_id
                 return self.states.create('initial_state_head_teacher');
@@ -325,6 +331,25 @@ go.app = function() {
                 choices: [
                     new Choice("add_emis_perf_teacher_ts_number", $("Report on teacher performance.")),
                     new Choice("add_emis_perf_learner_boys_total", $("Report on learner performance.")),
+                    new Choice("add_emis_school_monitoring", $("Report on a school monitoring visit."))
+                ],
+
+                next: function(choice) {
+                    return choice.value;
+                }
+            });
+        });
+
+        self.states.add('initial_state_zonal_head', function(name) {
+            return new ChoiceState(name, {
+                question: $('What would you like to do?'),
+
+                choices: [
+                    new Choice("perf_teacher_ts_number", $("Report on teacher performance.")),
+                    new Choice("perf_learner_boys_total", $("Report on learner performance.")),
+                    new Choice("add_emis_school_monitoring", $("Report on a school monitoring visit.")),
+                    new Choice("manage_change_emis", $("Change my school.")),
+                    new Choice("manage_update_school_data", $("Update my school's registration data."))
                 ],
 
                 next: function(choice) {
@@ -445,7 +470,7 @@ go.app = function() {
 
         self.states.add('reg_thanks_head_teacher', function(name) {
             return go.rht.reg_thanks_head_teacher(name, $);
-        });        
+        });
 
 
 
@@ -586,7 +611,7 @@ go.app = function() {
 
         self.states.add('perf_learner_girls_writing', function(name) {
             return go.lp.perf_learner_girls_writing(name, $,
-                                                    self.im.user.answers.perf_learner_girls_total, 
+                                                    self.im.user.answers.perf_learner_girls_total,
                                                     self.contact, self.im);
         });
 
