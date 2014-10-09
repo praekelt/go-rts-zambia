@@ -707,17 +707,6 @@ go.app = function() {
         // SCHOOL MONITORING STATES
         // --------------------------
 
-        self.states.add('state_sp_start', function(name) {
-            return go.sp.state_sp_start(name);
-        });
-
-        self.states.add('state_sp_next', function(name) {
-            return go.sp.state_sp_next(name);
-        });
-
-        self.states.add('state_sp_exit', function(name) {
-            return go.sp.state_sp_exit(name);
-        });
 
 
     });
