@@ -330,7 +330,7 @@ go.sp = function() {
                 ],
 
                 next: function(choice) {
-                    return choice.value();
+                    return choice.value;
                 }
             });
         },
