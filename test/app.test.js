@@ -3720,6 +3720,641 @@ describe("when a registered user logs on", function() {
 
     });
 
+    // SCHOOL MONITORING
+    // -----------------
+
+    describe.only("when the user chooses to report on school monitoring", function() {
+        it("should ask for emis number", function() {
+            return tester
+                .setup.user.addr('097555')  // zonal head
+                .inputs(
+                    'start',
+                    '3'  // initial_state_zonal_head
+                )
+                .check.interaction({
+                    state: 'add_emis_school_monitoring',
+                    reply:
+                        "Please enter the school's EMIS number that you would " +
+                        "like to report on. This should have 4-6 digits e.g 4351."
+                })
+                .run();
+        });
+
+        describe("after entering an emis number", function() {
+            describe("if the emis does not validate", function() {
+                it("should ask for the emis again", function() {
+                    return tester
+                        .setup.user.addr('097555')  // zonal head
+                        .inputs(
+                            'start',
+                            '3',  // initial_state_zonal_head
+                            '000A'  // add_emis_school_monitoring
+                        )
+                        .check.interaction({
+                            state: 'add_emis_school_monitoring',
+                            reply:
+                                "The emis does not exist, please try again. " +
+                                "This should have 4-6 digits e.g 4351."
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the emis validates", function() {
+                it("should ask if they saw the School LPIP", function() {
+                    return tester
+                        .setup.user.addr('097555')  // zonal head
+                        .inputs(
+                            'start',
+                            '3',  // initial_state_zonal_head
+                            '4342'  // add_emis_school_monitoring
+                        )
+                        .check.interaction({
+                            state: 'monitor_school_see_lpip',
+                            reply: [
+                                "Please complete the following questions after the visit is " +
+                                "complete. Did you see the School Learner Performance " +
+                                "Improvement Plan for this year?",
+                                "1. YES - completed",
+                                "2. YES - in progress",
+                                "3. NO"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+        });
+
+        describe("if they answer YES to seeing the School LPIP", function() {
+            it("should ask about activity for improving teaching", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '1'  // monitor_school_see_lpip
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_teaching',
+                        reply: [
+                            "Please indicate the status of key LPIP activities: Is there an " +
+                            "activity for improving the teaching of early grade reading?",
+                            "1. YES - completed",
+                            "2. YES - in progress",
+                            "3. NO"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
+        describe("after answering teaching", function() {
+            it("should ask about activity for improving learner assessment", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_see_lpip
+                        '3'  // monitor_school_teaching
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_learner_assessment',
+                        reply: [
+                            "Is there an activity for improving learner assessment?",
+                            "1. YES - completed",
+                            "2. YES - in progress",
+                            "3. NO"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
+        describe("after answering learner assessment", function() {
+            it("should ask about activity for improving learning materials", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_see_lpip
+                        '3',  // monitor_school_teaching
+                        '2'  // monitor_school_learner_assessment
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_learning_materials',
+                        reply: [
+                            "Is there an activity for buying or making teaching and learning " +
+                            "materials?",
+                            "1. YES - completed",
+                            "2. YES - in progress",
+                            "3. NO"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
+        describe("after answering learning materials", function() {
+            it("should ask about activity for improving learner attendance", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_see_lpip
+                        '3',  // monitor_school_teaching
+                        '2',  // monitor_school_learner_assessment
+                        '1'  // monitor_school_learning_materials
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_learner_attendance',
+                        reply: [
+                            "Is there an activity for improving learner attendance?",
+                            "1. YES - completed",
+                            "2. YES - in progress",
+                            "3. NO"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
+        describe("after answering learner attendance", function() {
+            it("should ask about activity for increasing reading time", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_see_lpip
+                        '3',  // monitor_school_teaching
+                        '2',  // monitor_school_learner_assessment
+                        '1',  // monitor_school_learning_materials
+                        '3'  // monitor_school_learner_attendance
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_reading_time',
+                        reply: [
+                            "Is there an activity for increasing the time available for " +
+                            "children to read, inside or outside school?",
+                            "1. YES - completed",
+                            "2. YES - in progress",
+                            "3. NO"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
+        describe("after answering reading time", function() {
+            it("should ask about activity for struggling learners", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_see_lpip
+                        '3',  // monitor_school_teaching
+                        '2',  // monitor_school_learner_assessment
+                        '1',  // monitor_school_learning_materials
+                        '3',  // monitor_school_learner_attendance
+                        '2'  // monitor_school_reading_time
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_struggling_learners',
+                        reply: [
+                            "Is there an activity to give extra or remedial support to " +
+                            "struggling learners?",
+                            "1. YES - completed",
+                            "2. YES - in progress",
+                            "3. NO"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
+        describe("after answering struggling learners", function() {
+            it("should ask about Grade 2 reading lesson observation results", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_see_lpip
+                        '3',  // monitor_school_teaching
+                        '2',  // monitor_school_learner_assessment
+                        '1',  // monitor_school_learning_materials
+                        '3',  // monitor_school_learner_attendance
+                        '2',  // monitor_school_reading_time
+                        '1'  // monitor_school_struggling_learners
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_g2_observation_results',
+                        reply: [
+                            "Did you see the Grade 2 reading lesson observation results done " +
+                            "by the head teacher for the current term?",
+                            "1. YES - completed",
+                            "2. YES - in progress",
+                            "3. NO"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
+        describe("if they answer YES to seeing Grade 2 reading lesson observation", function() {
+            it("should ask about head teacher feedback", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_see_lpip
+                        '3',  // monitor_school_teaching
+                        '2',  // monitor_school_learner_assessment
+                        '1',  // monitor_school_learning_materials
+                        '3',  // monitor_school_learner_attendance
+                        '2',  // monitor_school_reading_time
+                        '1',  // monitor_school_struggling_learners
+                        '2'  // monitor_school_g2_observation_results
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_ht_feedback',
+                        reply: [
+                            "According to the teacher observed, has the Head Teacher given " +
+                            "him/her feedback?",
+                            "1. YES",
+                            "2. NO"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
+        describe("after answering head teacher feedback", function() {
+            it("should ask about submitting classroom observation results", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_see_lpip
+                        '3',  // monitor_school_teaching
+                        '2',  // monitor_school_learner_assessment
+                        '1',  // monitor_school_learning_materials
+                        '3',  // monitor_school_learner_attendance
+                        '2',  // monitor_school_reading_time
+                        '1',  // monitor_school_struggling_learners
+                        '2',  // monitor_school_g2_observation_results
+                        '1'  // monitor_school_ht_feedback
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_submitted_classroom',
+                        reply: [
+                            "Has the Head Teacher submitted the classroom observation results to " +
+                            "the ZSG?",
+                            "1. YES submitted by cell phone",
+                            "2. YES submitted paper form to DEBS office",
+                            "3. NO"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
+        describe("after answering submitting classroom", function() {
+            it("should ask about seeing gala sheets", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_see_lpip
+                        '3',  // monitor_school_teaching
+                        '2',  // monitor_school_learner_assessment
+                        '1',  // monitor_school_learning_materials
+                        '3',  // monitor_school_learner_attendance
+                        '2',  // monitor_school_reading_time
+                        '1',  // monitor_school_struggling_learners
+                        '2',  // monitor_school_g2_observation_results
+                        '1',  // monitor_school_ht_feedback
+                        '2'  // monitor_school_submitted_classroom
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_gala_sheets',
+                        reply: [
+                            "Did you see the GALA stimulus sheets completed by the learners for " +
+                            "the current term?",
+                            "1. YES - completed",
+                            "2. YES - in progress",
+                            "3. NO"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
+        describe("if they answer YES to seeing gala sheets", function() {
+            it("should ask about summary worksheet", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_see_lpip
+                        '3',  // monitor_school_teaching q01
+                        '2',  // monitor_school_learner_assessment q02
+                        '1',  // monitor_school_learning_materials q03
+                        '3',  // monitor_school_learner_attendance q04
+                        '2',  // monitor_school_reading_time q05
+                        '1',  // monitor_school_struggling_learners q06
+                        '2',  // monitor_school_g2_observation_results q07
+                        '1',  // monitor_school_ht_feedback q08
+                        '2',  // monitor_school_submitted_classroom q09
+                        '1'  // monitor_school_gala_sheets q10
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_summary_worksheet',
+                        reply: [
+                            "Was the summary worksheet accurately completed by the Head Teacher?",
+                            "1. YES",
+                            "2. NO"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
+        describe("after answering summary worksheet", function() {
+            it("should ask about receiving feedback on literacy assessment", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_see_lpip
+                        '3',  // monitor_school_teaching q01
+                        '2',  // monitor_school_learner_assessment q02
+                        '1',  // monitor_school_learning_materials q03
+                        '3',  // monitor_school_learner_attendance q04
+                        '2',  // monitor_school_reading_time q05
+                        '1',  // monitor_school_struggling_learners q06
+                        '2',  // monitor_school_g2_observation_results q07
+                        '1',  // monitor_school_ht_feedback q08
+                        '2',  // monitor_school_submitted_classroom q09
+                        '1',  // monitor_school_gala_sheets q10
+                        '2'  // monitor_school_summary_worksheet q11
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_ht_feedback_literacy',
+                        reply: [
+                            "According to the teacher observed, has the Head Teacher given " +
+                            "him/her feedback on the literacy assessment results?",
+                            "1. YES",
+                            "2. NO"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
+        describe("after answering literacy assessment feedback", function() {
+            it("should ask about submitting gala results", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_see_lpip
+                        '3',  // monitor_school_teaching q01
+                        '2',  // monitor_school_learner_assessment q02
+                        '1',  // monitor_school_learning_materials q03
+                        '3',  // monitor_school_learner_attendance q04
+                        '2',  // monitor_school_reading_time q05
+                        '1',  // monitor_school_struggling_learners q06
+                        '2',  // monitor_school_g2_observation_results q07
+                        '1',  // monitor_school_ht_feedback q08
+                        '2',  // monitor_school_submitted_classroom q09
+                        '1',  // monitor_school_gala_sheets q10
+                        '2',  // monitor_school_summary_worksheet q11
+                        '1'  // monitor_school_ht_feedback_literacy q12
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_submitted_gala',
+                        reply: [
+                            "Has the Head Teacher submitted the GALA results to the ZSG?",
+                            "1. YES submitted by cell phone",
+                            "2. YES submitted paper form to DEBS office",
+                            "3. NO"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
+        describe("after answering submitting gala sheets", function() {
+            it("should ask about talking wall poster", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_see_lpip
+                        '3',  // monitor_school_teaching q01
+                        '2',  // monitor_school_learner_assessment q02
+                        '1',  // monitor_school_learning_materials q03
+                        '3',  // monitor_school_learner_attendance q04
+                        '2',  // monitor_school_reading_time q05
+                        '1',  // monitor_school_struggling_learners q06
+                        '2',  // monitor_school_g2_observation_results q07
+                        '1',  // monitor_school_ht_feedback q08
+                        '2',  // monitor_school_submitted_classroom q09
+                        '1',  // monitor_school_gala_sheets q10
+                        '2',  // monitor_school_summary_worksheet q11
+                        '1',  // monitor_school_ht_feedback_literacy q12
+                        '3'  // monitor_school_submitted_gala q13
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_talking_wall',
+                        reply: [
+                            "Is the Talking Wall poster on display and up to date?",
+                            "1. YES",
+                            "2. YES but not updated",
+                            "3. NO"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
+        describe("after answering talking wall", function() {
+            it("should congratulate and ask what they want to do", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_see_lpip
+                        '3',  // monitor_school_teaching q01
+                        '2',  // monitor_school_learner_assessment q02
+                        '1',  // monitor_school_learning_materials q03
+                        '3',  // monitor_school_learner_attendance q04
+                        '2',  // monitor_school_reading_time q05
+                        '1',  // monitor_school_struggling_learners q06
+                        '2',  // monitor_school_g2_observation_results q07
+                        '1',  // monitor_school_ht_feedback q08
+                        '2',  // monitor_school_submitted_classroom q09
+                        '1',  // monitor_school_gala_sheets q10
+                        '2',  // monitor_school_summary_worksheet q11
+                        '1',  // monitor_school_ht_feedback_literacy q12
+                        '3',  // monitor_school_submitted_gala q13
+                        '2'  // monitor_school_talking_wall q14
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_completed',
+                        reply: [
+                            "Congratulations, you have finished reporting on this school.",
+                            "1. Report on another school monitoring visit",
+                            "2. Go back to the main menu",
+                            "3. Exit"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
+        describe("after completing monitoring", function() {
+
+            describe("if the chooses to report on another school", function() {
+                it("should ask them to enter emis number", function() {
+                    return tester
+                        .setup.user.addr('097555')  // zonal head
+                        .inputs(
+                            'start',
+                            '3',  // initial_state_zonal_head
+                            '4342',  // add_emis_school_monitoring
+                            '1',  // monitor_school_see_lpip
+                            '3',  // monitor_school_teaching q01
+                            '2',  // monitor_school_learner_assessment q02
+                            '1',  // monitor_school_learning_materials q03
+                            '3',  // monitor_school_learner_attendance q04
+                            '2',  // monitor_school_reading_time q05
+                            '1',  // monitor_school_struggling_learners q06
+                            '2',  // monitor_school_g2_observation_results q07
+                            '1',  // monitor_school_ht_feedback q08
+                            '2',  // monitor_school_submitted_classroom q09
+                            '1',  // monitor_school_gala_sheets q10
+                            '2',  // monitor_school_summary_worksheet q11
+                            '1',  // monitor_school_ht_feedback_literacy q12
+                            '3',  // monitor_school_submitted_gala q13
+                            '2',  // monitor_school_talking_wall q14
+                            '1'  // monitor_school_completed q15
+                        )
+                        .check.interaction({
+                            state: 'add_emis_school_monitoring',
+                            reply:
+                                "Please enter the school's EMIS number that you would " +
+                                "like to report on. This should have 4-6 digits e.g 4351."
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the chooses to report on another school", function() {
+                it("should ask them to enter emis number", function() {
+                    return tester
+                        .setup.user.addr('097555')  // zonal head
+                        .inputs(
+                            'start',
+                            '3',  // initial_state_zonal_head
+                            '4342',  // add_emis_school_monitoring
+                            '1',  // monitor_school_see_lpip
+                            '3',  // monitor_school_teaching q01
+                            '2',  // monitor_school_learner_assessment q02
+                            '1',  // monitor_school_learning_materials q03
+                            '3',  // monitor_school_learner_attendance q04
+                            '2',  // monitor_school_reading_time q05
+                            '1',  // monitor_school_struggling_learners q06
+                            '2',  // monitor_school_g2_observation_results q07
+                            '1',  // monitor_school_ht_feedback q08
+                            '2',  // monitor_school_submitted_classroom q09
+                            '1',  // monitor_school_gala_sheets q10
+                            '2',  // monitor_school_summary_worksheet q11
+                            '1',  // monitor_school_ht_feedback_literacy q12
+                            '3',  // monitor_school_submitted_gala q13
+                            '2',  // monitor_school_talking_wall q14
+                            '2'  // monitor_school_completed q15
+                        )
+                        .check.interaction({
+                            state: 'initial_state_zonal_head',
+                            reply: [
+                                'Welcome to Zambia School Gateway!',
+                                '1. Report on teachers',
+                                '2. Report on learners',
+                                '3. Report on school monitoring visit',
+                                '4. Change my school',
+                                "5. Update my school data"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the chooses to exit", function() {
+                it("should ask them and exit", function() {
+                    return tester
+                        .setup.user.addr('097555')  // zonal head
+                        .inputs(
+                            'start',
+                            '3',  // initial_state_zonal_head
+                            '4342',  // add_emis_school_monitoring
+                            '1',  // monitor_school_see_lpip
+                            '3',  // monitor_school_teaching q01
+                            '2',  // monitor_school_learner_assessment q02
+                            '1',  // monitor_school_learning_materials q03
+                            '3',  // monitor_school_learner_attendance q04
+                            '2',  // monitor_school_reading_time q05
+                            '1',  // monitor_school_struggling_learners q06
+                            '2',  // monitor_school_g2_observation_results q07
+                            '1',  // monitor_school_ht_feedback q08
+                            '2',  // monitor_school_submitted_classroom q09
+                            '1',  // monitor_school_gala_sheets q10
+                            '2',  // monitor_school_summary_worksheet q11
+                            '1',  // monitor_school_ht_feedback_literacy q12
+                            '3',  // monitor_school_submitted_gala q13
+                            '2',  // monitor_school_talking_wall q14
+                            '3'  // monitor_school_completed q15
+                        )
+                        .check.interaction({
+                            state: 'end_state',
+                            reply: "Goodbye! Thank you for using the Gateway."
+                        })
+                        .run();
+                });
+            });
+
+        });
+
+    });
+
 });
 
 
