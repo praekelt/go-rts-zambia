@@ -704,7 +704,7 @@ go.app = function() {
 
 
 
-        // SCHOOL PERFORMANCE STATES
+        // SCHOOL MONITORING STATES
         // --------------------------
 
         self.states.add('state_sp_start', function(name) {

@@ -112,15 +112,16 @@ go.sp = function() {
 
                 next: function(choice) {
                     if(choice.value === 'no') {
-                        return 'q07';
+                        return 'monitor_school_g2_observation_results';
                     } else {
-                        return 'q01';
+                        return 'monitor_school_teaching';
                     }
                 }
             });
         },
 
-        q01: function(name, $) {
+         // q01
+       monitor_school_teaching: function(name, $) {
             return new ChoiceState(name, {
                 question:
                     "Please indicate the status of key LPIP activities: Is there an activity " +
@@ -128,44 +129,48 @@ go.sp = function() {
 
                 choices: choices_yes_incomplete_no,
 
-                next: 'q02'
+                next: 'monitor_school_learner_assessment'
             });
         },
 
-        q02: function(name, $) {
+        // q02
+        monitor_school_learner_assessment: function(name, $) {
             return new ChoiceState(name, {
                 question:
                     "Is there an activity for improving learner assessment?",
 
                 choices: choices_yes_incomplete_no,
 
-                next: 'q03'
+                next: 'monitor_school_learning_materials'
             });
         },
 
-        q03: function(name, $) {
+        // q03
+        monitor_school_learning_materials: function(name, $) {
             return new ChoiceState(name, {
                 question:
                     "Is there an activity for buying or making teaching and learning materials?",
 
                 choices: choices_yes_incomplete_no,
 
-                next: 'q04'
+                next: 'monitor_school_learner_attendance'
             });
         },
 
-        q04: function(name, $) {
+        // q04
+        monitor_school_learner_attendance: function(name, $) {
             return new ChoiceState(name, {
                 question:
                     "Is there an activity for improving learner attendance?",
 
                 choices: choices_yes_incomplete_no,
 
-                next: 'q05'
+                next: 'monitor_school_reading_time'
             });
         },
 
-        q05: function(name, $) {
+        // q05
+        monitor_school_reading_time: function(name, $) {
             return new ChoiceState(name, {
                 question:
                     "Is there an activity for increasing the time available for children to " +
@@ -173,11 +178,12 @@ go.sp = function() {
 
                 choices: choices_yes_incomplete_no,
 
-                next: 'q06'
+                next: 'monitor_school_struggling_learners'
             });
         },
 
-        q06: function(name, $) {
+        // q06
+        monitor_school_struggling_learners: function(name, $) {
             return new ChoiceState(name, {
                 question:
                     "Is there an activity to give extra or remedial support to struggling " +
@@ -185,11 +191,12 @@ go.sp = function() {
 
                 choices: choices_yes_incomplete_no,
 
-                next: 'q07'
+                next: 'monitor_school_g2_observation_results'
             });
         },
 
-        q07: function(name, $) {
+        // q07
+        monitor_school_g2_observation_results: function(name, $) {
             return new ChoiceState(name, {
                 question:
                     "Did you see the Grade 2 reading lesson observation results done by the " +
@@ -199,15 +206,16 @@ go.sp = function() {
 
                 next: function(choice) {
                     if(choice.value === 'no') {
-                        return 'q10';
+                        return 'monitor_school_gala_sheets';
                     } else {
-                        return 'q08';
+                        return 'monitor_school_ht_feedback';
                     }
                 }
             });
         },
 
-        q08: function(name, $) {
+        // q08
+        monitor_school_ht_feedback: function(name, $) {
             return new ChoiceState(name, {
                 question:
                     "According to the teacher observed, has the Head Teacher given him/her " +
@@ -215,22 +223,24 @@ go.sp = function() {
 
                 choices: choices_yes_no,
 
-                next: 'q09'
+                next: 'monitor_school_submitted_classroom'
             });
         },
 
-        q09: function(name, $) {
+        // q09
+        monitor_school_submitted_classroom: function(name, $) {
             return new ChoiceState(name, {
                 question:
                     "Has the Head Teacher submitted the classroom observation results to the ZSG?",
 
                 choices: choices_yes_submitted_no,
 
-                next: 'q10'
+                next: 'monitor_school_gala_sheets'
             });
         },
 
-        q10: function(name, $) {
+        // q10
+        monitor_school_gala_sheets: function(name, $) {
             return new ChoiceState(name, {
                 question:
                     "Did you see the GALA stimulus sheets completed by the learners for the " +
@@ -240,26 +250,28 @@ go.sp = function() {
 
                 next: function(choice) {
                     if(choice.value === 'no') {
-                        return 'q16';
+                        return 'monitor_school_falling_behind';
                     } else {
-                        return 'q11';
+                        return 'monitor_school_summary_worksheet';
                     }
                 }
             });
         },
 
-        q11: function(name, $) {
+        // q11
+        monitor_school_summary_worksheet: function(name, $) {
             return new ChoiceState(name, {
                 question:
                     "Was the summary worksheet accurately completed by the Head Teacher?",
 
                 choices: choices_yes_no,
 
-                next: 'q12'
+                next: 'monitor_school_ht_feedback_literacy'
             });
         },
 
-        q12: function(name, $) {
+        // q12
+        monitor_school_ht_feedback_literacy: function(name, $) {
             return new ChoiceState(name, {
                 question:
                     "According to the teacher observed, has the Head Teacher given him/her " +
@@ -267,33 +279,36 @@ go.sp = function() {
 
                 choices: choices_yes_no,
 
-                next: 'q13'
+                next: 'monitor_school_submitted_gala'
             });
         },
 
-        q13: function(name, $) {
+        // q13
+        monitor_school_submitted_gala: function(name, $) {
             return new ChoiceState(name, {
                 question:
                     "Has the Head Teacher submitted the GALA results to the ZSG?",
 
                 choices: choices_yes_submitted_no,
 
-                next: 'q14'
+                next: 'monitor_school_talking_wall'
             });
         },
 
-        q14: function(name, $) {
+        // q14
+        monitor_school_talking_wall: function(name, $) {
             return new ChoiceState(name, {
                 question:
                     "Is the Talking Wall poster on display and up to date?",
 
                 choices: choices_yes_updated_no,
 
-                next: 'q15'
+                next: 'monitor_school_completed'
             });
         },
 
-        q15: function(name, $) {
+        // q15
+        monitor_school_completed: function(name, $) {
             return new ChoiceState(name, {
                 question:
                     "Congratulations, you have finished reporting on this school.",
@@ -311,7 +326,8 @@ go.sp = function() {
             });
         },
 
-        q16: function(name, $) {
+        // q16
+        monitor_school_falling_behind: function(name, $) {
             return new ChoiceState(name, {
                 question:
                     "This school is falling behind with their LPIP and E-SIMON " +
