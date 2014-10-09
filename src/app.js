@@ -18,8 +18,7 @@ go.utils = {
         return go.utils
             .cms_get("district/", im)
             .then(function(result) {
-                parsed_result = JSON.parse(result.body);
-                var districts = (parsed_result.objects);
+                var districts = result.data.objects;
                 districts.sort(
                     function(a, b) {
                         return ((a.name < b.name) ? -1 : ((a.name > b.name) ? 1 : 0));
@@ -33,19 +32,17 @@ go.utils = {
         return go.utils
             .cms_get("hierarchy/", im)
             .then(function(result) {
-                parsed_result = JSON.parse(result.body);
                 var array_emis = [];
-                for (var i=0; i<parsed_result.objects.length; i++) {
-                    array_emis.push(parsed_result.objects[i].emis);
+                for (var i=0; i<result.data.objects.length; i++) {
+                    array_emis.push(result.data.objects[i].emis);
                 }
                 return array_emis;
             });
     },
 
     cms_update_school_and_contact: function(result, im, contact) {
-        parsed_result = JSON.parse(result.body);
-        var headteacher_id = parsed_result.id;
-        var emis = parsed_result.emis.emis;
+        var headteacher_id = result.data.id;
+        var emis = result.data.emis.emis;
         var school_data = go.utils.registration_data_school_collect(im);
         school_data.created_by = "/api/v1/data/headteacher/" + headteacher_id + "/";
         school_data.emis = "/api/v1/school/emis/" + emis + "/";

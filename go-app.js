@@ -383,7 +383,7 @@ go.rdo = function() {
 
                 next: 'reg_district_official_first_name'
             });
-            
+
         },
 
         reg_district_official_first_name: function(name, $) {
@@ -413,7 +413,7 @@ go.rdo = function() {
         reg_district_official_dob: function(name, $, im, contact) {
             var error = $("Please enter your date of birth formatted DDMMYYYY");
 
-            var question = 
+            var question =
                     $("Please enter your date of birth. Start with the day," +
                     " followed by the month and year, e.g. 27111980.");
 
@@ -431,10 +431,9 @@ go.rdo = function() {
                     return go.utils
                         .cms_post("district_admin/", district_official_data, im)
                         .then(function(result) {
-                            parsed_result = JSON.parse(result.body);
-                            contact.extra.rts_id = parsed_result.id.toString();
-                            contact.extra.rts_district_official_id_number = parsed_result.id_number;
-                            contact.extra.rts_official_district_id = parsed_result.district.id.toString();
+                            contact.extra.rts_id = result.data.id.toString();
+                            contact.extra.rts_district_official_id_number = result.data.id_number;
+                            contact.extra.rts_official_district_id = result.data.district.id.toString();
                             contact.name = district_official_data.first_name;
                             contact.surname = district_official_data.last_name;
                             return im.contacts
@@ -1755,8 +1754,7 @@ go.utils = {
         return go.utils
             .cms_get("district/", im)
             .then(function(result) {
-                parsed_result = JSON.parse(result.body);
-                var districts = (parsed_result.objects);
+                var districts = result.data.objects;
                 districts.sort(
                     function(a, b) {
                         return ((a.name < b.name) ? -1 : ((a.name > b.name) ? 1 : 0));
@@ -1770,19 +1768,17 @@ go.utils = {
         return go.utils
             .cms_get("hierarchy/", im)
             .then(function(result) {
-                parsed_result = JSON.parse(result.body);
                 var array_emis = [];
-                for (var i=0; i<parsed_result.objects.length; i++) {
-                    array_emis.push(parsed_result.objects[i].emis);
+                for (var i=0; i<result.data.objects.length; i++) {
+                    array_emis.push(result.data.objects[i].emis);
                 }
                 return array_emis;
             });
     },
 
     cms_update_school_and_contact: function(result, im, contact) {
-        parsed_result = JSON.parse(result.body);
-        var headteacher_id = parsed_result.id;
-        var emis = parsed_result.emis.emis;
+        var headteacher_id = result.data.id;
+        var emis = result.data.emis.emis;
         var school_data = go.utils.registration_data_school_collect(im);
         school_data.created_by = "/api/v1/data/headteacher/" + headteacher_id + "/";
         school_data.emis = "/api/v1/school/emis/" + emis + "/";
