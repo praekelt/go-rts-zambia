@@ -707,7 +707,78 @@ go.app = function() {
         // SCHOOL MONITORING STATES
         // --------------------------
 
+        self.states.add('add_emis_school_monitoring', function(name) {
+            return go.tp.add_emis_school_monitoring(name, $, self.array_emis, self.contact,
+                                                        self.im);
+        });
 
+        self.states.add('monitor_school_see_lpip', function(name) {
+            return go.tp.monitor_school_see_lpip(name, $);
+        });
+
+        self.states.add('monitor_school_teaching', function(name) {
+            return go.tp.monitor_school_teaching(name, $);
+        });
+
+        self.states.add('monitor_school_learner_assessment', function(name) {
+            return go.tp.monitor_school_learner_assessment(name, $);
+        });
+
+        self.states.add('monitor_school_learning_materials', function(name) {
+            return go.tp.monitor_school_learning_materials(name, $);
+        });
+
+        self.states.add('monitor_school_learner_attendance', function(name) {
+            return go.tp.monitor_school_learner_attendance(name, $);
+        });
+
+        self.states.add('monitor_school_reading_time', function(name) {
+            return go.tp.monitor_school_reading_time(name, $);
+        });
+
+        self.states.add('monitor_school_struggling_learners', function(name) {
+            return go.tp.monitor_school_struggling_learners(name, $);
+        });
+
+        self.states.add('monitor_school_g2_observation_results', function(name) {
+            return go.tp.monitor_school_g2_observation_results(name, $);
+        });
+
+        self.states.add('monitor_school_ht_feedback', function(name) {
+            return go.tp.monitor_school_ht_feedback(name, $);
+        });
+
+        self.states.add('monitor_school_submitted_classroom', function(name) {
+            return go.tp.monitor_school_submitted_classroom(name, $);
+        });
+
+        self.states.add('monitor_school_gala_sheets', function(name) {
+            return go.tp.monitor_school_gala_sheets(name, $);
+        });
+
+        self.states.add('monitor_school_summary_worksheet', function(name) {
+            return go.tp.monitor_school_summary_worksheet(name, $);
+        });
+
+        self.states.add('monitor_school_ht_feedback_literacy', function(name) {
+            return go.tp.monitor_school_ht_feedback_literacy(name, $);
+        });
+
+        self.states.add('monitor_school_submitted_gala', function(name) {
+            return go.tp.monitor_school_submitted_gala(name, $);
+        });
+
+        self.states.add('monitor_school_talking_wall', function(name) {
+            return go.tp.monitor_school_talking_wall(name, $);
+        });
+
+        self.states.add('monitor_school_completed', function(name) {
+            return go.tp.monitor_school_completed(name, $);
+        });
+
+        self.states.add('monitor_school_falling_behind', function(name) {
+            return go.tp.monitor_school_falling_behind(name, $);
+        });
 
     });
 
