@@ -77,7 +77,7 @@ go.sp = function() {
         },
 
          // q01
-       monitor_school_teaching: function(name, $) {
+        monitor_school_teaching: function(name, $) {
             return new ChoiceState(name, {
                 question:
                     "Please indicate the status of key LPIP activities: Is there an activity " +
