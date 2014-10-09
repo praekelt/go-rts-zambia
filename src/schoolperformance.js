@@ -1,6 +1,7 @@
 go.sp = function() {
     var vumigo = require('vumigo_v02');
     var ChoiceState = vumigo.states.ChoiceState;
+    var FreeText = vumigo.states.FreeText;
     var Choice = vumigo.states.Choice;
 
 
@@ -38,8 +39,8 @@ go.sp = function() {
         monitor_school_see_lpip: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    "Please complete the following questions after the visit is complete. " +
-                    "Did you see the School Learner Performance Improvement Plan for this year?",
+                    $("Please complete the following questions after the visit is complete. " +
+                    "Did you see the School Learner Performance Improvement"),
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
@@ -61,8 +62,8 @@ go.sp = function() {
         monitor_school_teaching: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    "Please indicate the status of key LPIP activities: Is there an activity " +
-                    "for improving the teaching of early grade reading?",
+                    $("Please indicate the status of key LPIP activities: Is there an activity " +
+                    "for improving the teaching of early grade reading?"),
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
@@ -78,7 +79,7 @@ go.sp = function() {
         monitor_school_learner_assessment: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    "Is there an activity for improving learner assessment?",
+                    $("Is there an activity for improving learner assessment?"),
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
@@ -94,7 +95,7 @@ go.sp = function() {
         monitor_school_learning_materials: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    "Is there an activity for buying or making teaching and learning materials?",
+                    $("Is there an activity for buying or making teaching and learning materials?"),
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
@@ -110,7 +111,7 @@ go.sp = function() {
         monitor_school_learner_attendance: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    "Is there an activity for improving learner attendance?",
+                    $("Is there an activity for improving learner attendance?"),
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
@@ -126,8 +127,8 @@ go.sp = function() {
         monitor_school_reading_time: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    "Is there an activity for increasing the time available for children to " +
-                    "read, inside or outside school?",
+                    $("Is there an activity for increasing the time available for children to " +
+                    "read, inside or outside school?"),
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
@@ -143,8 +144,8 @@ go.sp = function() {
         monitor_school_struggling_learners: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    "Is there an activity to give extra or remedial support to struggling " +
-                    "learners?",
+                    $("Is there an activity to give extra or remedial support to struggling " +
+                    "learners?"),
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
@@ -160,8 +161,8 @@ go.sp = function() {
         monitor_school_g2_observation_results: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    "Did you see the Grade 2 reading lesson observation results done by the " +
-                    "head teacher for the current term?",
+                    $("Did you see the Grade 2 reading lesson observation results done by the " +
+                    "head teacher for the current term?"),
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
@@ -183,8 +184,8 @@ go.sp = function() {
         monitor_school_ht_feedback: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    "According to the teacher observed, has the Head Teacher given him/her " +
-                    "feedback?",
+                    $("According to the teacher observed, has the Head Teacher given him/her " +
+                    "feedback?"),
 
                 choices: [
                     new Choice('yes', $("YES")),
@@ -199,7 +200,7 @@ go.sp = function() {
         monitor_school_submitted_classroom: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    "Has the Head Teacher submitted the classroom observation results to the ZSG?",
+                    $("Has the Head Teacher submitted the classroom observation results to the ZSG?"),
 
                 choices: [
                     new Choice('yes_cellphone', $("YES submitted by cell phone")),
@@ -215,8 +216,8 @@ go.sp = function() {
         monitor_school_gala_sheets: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    "Did you see the GALA stimulus sheets completed by the learners for the " +
-                    "current term?",
+                    $("Did you see the GALA stimulus sheets completed by the learners for the " +
+                    "current term?"),
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
@@ -238,7 +239,7 @@ go.sp = function() {
         monitor_school_summary_worksheet: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    "Was the summary worksheet accurately completed by the Head Teacher?",
+                    $("Was the summary worksheet accurately completed by the Head Teacher?"),
 
                 choices: [
                     new Choice('yes', $("YES")),
@@ -253,8 +254,8 @@ go.sp = function() {
         monitor_school_ht_feedback_literacy: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    "According to the teacher observed, has the Head Teacher given him/her " +
-                    "feedback on the literacy assessment results?",
+                    $("According to the teacher observed, has the Head Teacher given him/her " +
+                    "feedback on the literacy assessment results?"),
 
                 choices: [
                     new Choice('yes', $("YES")),
@@ -269,7 +270,7 @@ go.sp = function() {
         monitor_school_submitted_gala: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    "Has the Head Teacher submitted the GALA results to the ZSG?",
+                    $("Has the Head Teacher submitted the GALA results to the ZSG?"),
 
                 choices: [
                     new Choice('yes_cellphone', $("YES submitted by cell phone")),
@@ -285,7 +286,7 @@ go.sp = function() {
         monitor_school_talking_wall: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    "Is the Talking Wall poster on display and up to date?",
+                    $("Is the Talking Wall poster on display and up to date?"),
 
                 choices: [
                     new Choice('yes', $("YES")),
@@ -301,7 +302,7 @@ go.sp = function() {
         monitor_school_completed: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    "Congratulations, you have finished reporting on this school.",
+                    $("Congratulations, you have finished reporting on this school."),
 
                 choices: [
                     new Choice('add_emis_school_monitoring',
@@ -320,8 +321,8 @@ go.sp = function() {
         monitor_school_falling_behind: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    "This school is falling behind with their LPIP and E-SIMON " +
-                    "responsibilities. Please assist the Head Teacher to catch up.",
+                    $("This school is falling behind with their LPIP and E-SIMON " +
+                    "responsibilities. Please assist the Head Teacher to catch up."),
 
                 choices: [
                     new Choice('initial_state', $("Go back to the main menu")),
