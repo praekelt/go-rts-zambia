@@ -40,7 +40,7 @@ go.sp = function() {
             return new ChoiceState(name, {
                 question:
                     $("Please complete the following questions after the visit is complete. " +
-                    "Did you see the School Learner Performance Improvement"),
+                    "Did you see the School Learner Performance Improvement Plan for this year?"),
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
@@ -157,7 +157,7 @@ go.sp = function() {
             });
         },
 
-        // q07
+        // q07 - diverts
         monitor_school_g2_observation_results: function(name, $) {
             return new ChoiceState(name, {
                 question:
@@ -212,7 +212,7 @@ go.sp = function() {
             });
         },
 
-        // q10
+        // q10 - diverts
         monitor_school_gala_sheets: function(name, $) {
             return new ChoiceState(name, {
                 question:
@@ -312,7 +312,7 @@ go.sp = function() {
                 ],
 
                 next: function(choice) {
-                    return choice.value();
+                    return choice.value;
                 }
             });
         },
