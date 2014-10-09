@@ -3782,6 +3782,21 @@ describe("when a registered user logs on", function() {
                         })
                         .run();
                 });
+
+                it("should save the emis to their contact as an extra", function() {
+                    return tester
+                        .setup.user.addr('097555')  // zonal head
+                        .inputs(
+                            'start',
+                            '3',  // initial_state_zonal_head
+                            '4342'  // add_emis_school_monitoring
+                        )
+                        .check(function(api) {
+                            var contact = api.contacts.store[1];
+                            assert.equal(contact.extra.school_monitoring_emis, '4342');
+                        })
+                        .run();
+                });
             });
         });
 
@@ -3800,6 +3815,30 @@ describe("when a registered user logs on", function() {
                         reply: [
                             "Please indicate the status of key LPIP activities: Is there an " +
                             "activity for improving the teaching of early grade reading?",
+                            "1. YES - completed",
+                            "2. YES - in progress",
+                            "3. NO"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
+        describe("if they answer NO to seeing the School LPIP", function() {
+            it("should ask about Grade 2 reading lesson observation results", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '3'  // monitor_school_see_lpip
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_g2_observation_results',
+                        reply: [
+                            "Did you see the Grade 2 reading lesson observation results done " +
+                            "by the head teacher for the current term?",
                             "1. YES - completed",
                             "2. YES - in progress",
                             "3. NO"
@@ -4002,6 +4041,31 @@ describe("when a registered user logs on", function() {
             });
         });
 
+        describe("if they answer NO to seeing Grade 2 reading lesson observation", function() {
+            it("should ask about seeing gala sheets", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '3',  // monitor_school_see_lpip
+                        '3'  // monitor_school_g2_observation_results
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_gala_sheets',
+                        reply: [
+                            "Did you see the GALA stimulus sheets completed by the learners for " +
+                            "the current term?",
+                            "1. YES - completed",
+                            "2. YES - in progress",
+                            "3. NO"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
         describe("after answering head teacher feedback", function() {
             it("should ask about submitting classroom observation results", function() {
                 return tester
@@ -4098,6 +4162,84 @@ describe("when a registered user logs on", function() {
                     .run();
             });
         });
+
+        describe("if they answer NO to seeing gala sheets", function() {
+            it("should ask them to assist with LPIP and E-SIMON", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '3',  // monitor_school_see_lpip
+                        '3',  // monitor_school_g2_observation_results
+                        '3'  // monitor_school_gala_sheets
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_falling_behind',
+                        reply: [
+                            "This school is falling behind with their LPIP and E-SIMON " +
+                            "responsibilities. Please assist the Head Teacher to catch up.",
+                            "1. Go back to the main menu",
+                            "2. Exit"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
+        describe("after seeing the falling behind screen", function() {
+
+            describe("if the user chooses to go back to main menu", function() {
+                it("should ask them what they want to do", function() {
+                    return tester
+                        .setup.user.addr('097555')  // zonal head
+                        .inputs(
+                            'start',
+                            '3',  // initial_state_zonal_head
+                            '4342',  // add_emis_school_monitoring
+                            '3',  // monitor_school_see_lpip
+                            '3',  // monitor_school_g2_observation_results
+                            '3',  // monitor_school_gala_sheets
+                            '1'  // monitor_school_falling_behind
+                        )
+                        .check.interaction({
+                            state: 'initial_state_zonal_head',
+                            reply: [
+                                'Welcome to Zambia School Gateway!',
+                                '1. Report on teachers',
+                                '2. Report on learners',
+                                '3. Report on school monitoring visit',
+                                '4. Change my school',
+                                "5. Update my school data"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the chooses to exit", function() {
+                it("should thank them and exit", function() {
+                    return tester
+                        .setup.user.addr('097555')  // zonal head
+                        .inputs(
+                            'start',
+                            '3',  // initial_state_zonal_head
+                            '4342',  // add_emis_school_monitoring
+                            '3',  // monitor_school_see_lpip
+                            '3',  // monitor_school_g2_observation_results
+                            '3',  // monitor_school_gala_sheets
+                            '2'  // monitor_school_falling_behind
+                        )
+                        .check.interaction({
+                            state: 'end_state',
+                            reply: "Goodbye! Thank you for using the Gateway."
+                        })
+                        .run();
+                });
+            });
+        });
+
 
         describe("after answering summary worksheet", function() {
             it("should ask about receiving feedback on literacy assessment", function() {
@@ -4278,8 +4420,8 @@ describe("when a registered user logs on", function() {
                 });
             });
 
-            describe("if the chooses to report on another school", function() {
-                it("should ask them to enter emis number", function() {
+            describe("if the user chooses to go back to main menu", function() {
+                it("should ask them what they want to do", function() {
                     return tester
                         .setup.user.addr('097555')  // zonal head
                         .inputs(
@@ -4319,7 +4461,7 @@ describe("when a registered user logs on", function() {
             });
 
             describe("if the chooses to exit", function() {
-                it("should ask them and exit", function() {
+                it("should thank them and exit", function() {
                     return tester
                         .setup.user.addr('097555')  // zonal head
                         .inputs(
