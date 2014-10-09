@@ -1788,7 +1788,7 @@ go.utils = {
                 contact.extra.rts_id = headteacher_id.toString();
                 contact.extra.rts_emis = emis.toString();
                 contact.extra.registration_origin = "";
-                if (contact.name === null) {
+                if (contact.name === null || _.isUndefined(contact.name)) {
                     // only applicable if name has not been saved before
                     contact.name = im.user.answers.reg_first_name;
                     contact.surname = im.user.answers.reg_surname;
