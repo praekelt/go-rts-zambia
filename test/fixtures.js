@@ -940,6 +940,63 @@ module.exports = function() {
 
 
 
+    // cms_school_monitoring
+    // ---------------------
+
+        // no-plan school
+    {
+        "request": {
+            "method": "POST",
+            "headers": {
+                'Content-Type': ['application/json']
+            },
+            "url": "http://qa/api/v1/data/school_monitoring/",
+            "data": {
+                "see_lpip":"no",
+                "g2_observation_results":"no",
+                "gala_sheets":"no",
+                "emis":"/api/v1/school/emis/4342/"
+            }
+        },
+        "response": {
+            "code": 201,
+            "data": {}
+        }
+    },
+
+
+        // good-plan school
+    {
+        "request": {
+            "method": "POST",
+            "headers": {
+                'Content-Type': ['application/json']
+            },
+            "url": "http://qa/api/v1/data/school_monitoring/",
+            "data": {
+                "see_lpip":"yes",
+                "teaching":"no",
+                "learner_assessment":"yes_incomplete",
+                "learning_materials":"yes",
+                "learner_attendance":"no",
+                "reading_time":"yes_incomplete",
+                "struggling_learners":"yes",
+                "g2_observation_results":"yes_incomplete",
+                "ht_feedback":"yes",
+                "submitted_classroom":"yes_paper",
+                "gala_sheets":"yes",
+                "summary_worksheet":"no",
+                "submitted_gala":"no",
+                "talking_wall":"yes_incomplete",
+                "emis":"/api/v1/school/emis/4342/"
+            }
+        },
+        "response": {
+            "code": 201,
+            "data": {}
+        }
+    },
+
 
     ];
 };
