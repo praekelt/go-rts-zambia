@@ -252,6 +252,27 @@ go.utils = {
         };
 
         return data;
+    },
+
+    school_monitoring_data_collect: function(emis, im) {
+        var fields = ["see_lpip", "teaching", "learner_assessment", "learning_materials",
+                        "learner_attendance", "reading_time", "struggling_learners",
+                        "g2_observation_results", "ht_feedback", "submitted_classroom",
+                        "gala_sheets", "summary_worksheet", "feedback_literacy",
+                        "submitted_gala", "talking_wall"];
+        var data = {};
+
+        for (var field in fields) {
+            var field_name = fields[field];
+            var state_name = "monitor_school_" + field_name;
+            if (!_.isUndefined(im.user.answers[state_name])) {
+                data[field_name] = im.user.answers[state_name];
+            }
+        }
+
+        data.emis = "/api/v1/school/emis/" + emis + "/";
+
+        return data;
     }
 
 };
