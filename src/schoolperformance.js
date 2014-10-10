@@ -62,8 +62,8 @@ go.sp = function() {
         monitor_school_teaching: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    $("Please indicate the status of key LPIP activities: Is there an activity " +
-                    "for improving the teaching of early grade reading?"),
+                    $("Please indicate the following: Is there an activity in the LPIP for " +
+                    "improving the teaching of early grade reading?"),
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
@@ -213,7 +213,7 @@ go.sp = function() {
         },
 
         // q10 - diverts
-        monitor_school_gala_sheets: function(name, $) {
+        monitor_school_gala_sheets: function(name, $, im, contact) {
             return new ChoiceState(name, {
                 question:
                     $("Did you see the GALA stimulus sheets completed by the learners for the " +
@@ -227,7 +227,18 @@ go.sp = function() {
 
                 next: function(choice) {
                     if(choice.value === 'no') {
-                        return 'monitor_school_falling_behind';
+                        var emis = contact.extra.school_monitoring_emis;
+                        var school_monitoring_data = go.utils.school_monitoring_data_collect(emis, im);
+                        return go.utils
+                            .cms_post("school_monitoring/", school_monitoring_data, im)
+                            .then(function(result) {
+                                contact.extra.school_monitoring_emis = "";
+                                return im.contacts
+                                    .save(contact)
+                                    .then(function() {
+                                        return 'monitor_school_falling_behind';
+                                    });
+                            });
                     } else {
                         return 'monitor_school_summary_worksheet';
                     }
@@ -294,7 +305,20 @@ go.sp = function() {
                     new Choice('no', $("NO"))
                 ],
 
-                next: 'monitor_school_completed'
+                next: function(choice) {
+                    var emis = contact.extra.school_monitoring_emis;
+                    var school_monitoring_data = go.utils.school_monitoring_data_collect(emis, im);
+                    return go.utils
+                        .cms_post("school_monitoring/", school_monitoring_data, im)
+                        .then(function(result) {
+                            contact.extra.school_monitoring_emis = "";
+                            return im.contacts
+                                .save(contact)
+                                .then(function() {
+                                    return 'monitor_school_falling_behind';
+                                });
+                        });
+                }
             });
         },
 
