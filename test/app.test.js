@@ -70,7 +70,7 @@ describe("app", function() {
 // uu = unregistered user
 
 describe("when an unregistered user logs on", function() {
-    
+
     describe("when uu starts a session", function() {
         it("should ask them want they want to do", function() {
             return tester
@@ -95,7 +95,7 @@ describe("when an unregistered user logs on", function() {
     // -------------------------
 
     describe("when uu chooses to register as head teacher", function() {
-        
+
         it("should ask for emis code", function() {
             return tester
                 .setup.user.addr('097123')
@@ -317,7 +317,7 @@ describe("when an unregistered user logs on", function() {
                     )
                     .check.interaction({
                         state: 'reg_date_of_birth',
-                        reply: 
+                        reply:
                             "Please enter your date of birth. Start with the day, followed by " +
                             "the month and year, e.g. 27111980"
                     })
@@ -525,7 +525,7 @@ describe("when an unregistered user logs on", function() {
                         )
                         .check.interaction({
                             state: 'reg_school_teachers',
-                            reply: 
+                            reply:
                                 "How many teachers are presently working in your school, " +
                                 "including the head teacher?"
                         })
@@ -898,7 +898,7 @@ describe("when an unregistered user logs on", function() {
                     )
                     .check.interaction({
                         state: 'reg_thanks_zonal_head',
-                        reply: 
+                        reply:
                             "Well done! You are now registered as a Zonal Head " +
                             "Teacher. When you are ready, dial in to start " +
                             "reporting. You will also receive monthly SMS's from " +
@@ -1001,7 +1001,7 @@ describe("when an unregistered user logs on", function() {
                     )
                     .check.interaction({
                         state: 'reg_thanks_head_teacher',
-                        reply: 
+                        reply:
                             "Congratulations! You are now registered as a user of " +
                             "the Gateway! Please dial in again when you are ready to " +
                             "start reporting on teacher and learner performance."
@@ -1011,15 +1011,56 @@ describe("when an unregistered user logs on", function() {
             });
         });
 
-    });
+        describe("after the user completes registration", function() {
+            describe("if they start a new session", function() {
+                it("should show the registered initial_state options", function() {
+                    return tester
+                        .setup.user.addr('097123')
+                        .inputs(
+                            'start',
+                            '1',  // initial_state
+                            '0001',  // reg_emis
+                            '1',  // reg_emis_validates
+                            'School One',  //reg_school_name
+                            'Jack',  // reg_first_name
+                            'Black',  // reg_surname
+                            '11091980',  // reg_date_of_birth
+                            '2',  // reg_gender
+                            '50',  // reg_school_boys
+                            '51',  // reg_school_girls
+                            '5',  // reg_school_classrooms
+                            '5',  // reg_school_teachers
+                            '2',  // reg_school_teachers_g1
+                            '2',  // reg_school_teachers_g2
+                            '10',  // reg_school_students_g2_boys
+                            '11',  // reg_school_students_g2_girls
+                            '2',  // reg_zonal_head
+                            'Jim Carey',  // reg_zonal_head_name
+                            {session_event: 'new'}
+                        )
+                        .check.interaction({
+                            state: 'initial_state_head_teacher',
+                            reply: [
+                                'What would you like to do?',
+                                '1. Report on teacher performance.',
+                                '2. Report on learner performance.',
+                                '3. Change my school.',
+                                "4. Update my school's registration data."
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+        });
 
+    });
 
 
     // DISTRICT OFFICIAL REGISTRATION
     // ------------------------------
 
     describe("when uu chooses to register as district official", function() {
-        
+
         it("should ask for district name", function() {
             return tester
                 .setup.user.addr('097123')
@@ -1223,6 +1264,229 @@ describe("when an unregistered user logs on", function() {
         });
 
     });
+
+
+    // CHANGE SCHOOL
+    // -------------
+
+    describe("when uu chooses to change their school", function() {
+        it("should tell them to associate their number with EMIS first", function() {
+            return tester
+                .setup.user.addr('097123')
+                .inputs(
+                    'start',
+                    '3'  // initial_state
+                )
+                .check.interaction({
+                    state: 'manage_change_emis_error',
+                    reply: [
+                        "Your cell phone number is unrecognised. Please associate your new " +
+                        "number with your old EMIS first before requesting to change school.",
+                        "1. Main menu.",
+                        "2. Exit."
+                    ].join("\n")
+                })
+                .run();
+        });
+
+        describe("after seeing the associate EMIS message", function() {
+
+            describe("if they choose main menu", function() {
+                it("should go back to initial state", function() {
+                    return tester
+                    .setup.user.addr('097123')
+                    .inputs(
+                        'start',
+                        '3',  // initial_state
+                        '1'  // manage_change_emis_error
+                    )
+                    .check.interaction({
+                        state: 'initial_state_unregistered',
+                        reply: [
+                            'Welcome to the Zambia School Gateway! Options:',
+                            '1. Register as Head Teacher',
+                            '2. Register as District Official',
+                            '3. Change my school',
+                            '4. Change my primary cell number'
+                        ].join('\n')
+                    })
+                    .run();
+                });
+            });
+
+            describe("if they choose to exit", function() {
+                it("should thank them and exit", function() {
+                    return tester
+                    .setup.user.addr('097123')
+                    .inputs(
+                        'start',
+                        '3',  // initial_state
+                        '2'  // manage_change_emis_error
+                    )
+                    .check.interaction({
+                        state: 'end_state',
+                        reply: "Goodbye! Thank you for using the Gateway.",
+                    })
+                    .check.reply.ends_session()
+                    .run();
+                });
+            });
+
+        });
+    });
+
+
+    // CHANGE CELLPHONE NUMBER
+    // -----------------------
+
+    describe("when uu chooses to change their cell number", function() {
+        it("should ask them for their school's EMIS number", function() {
+            return tester
+                .setup.user.addr('097666')
+                .inputs(
+                    'start',
+                    '4'  // initial_state
+                )
+                .check.interaction({
+                    state: 'manage_change_msisdn_emis',
+                    reply:
+                        "Please enter the school's EMIS number that you are currently " +
+                        "registered with. This should have 4-6 digits e.g 4351.",
+                })
+                .run();
+        });
+
+        describe("after entering an EMIS number", function() {
+
+            describe("if emis validates", function() {
+                it("should thank them and exit", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '1'  // manage_change_msisdn_emis
+                        )
+                        .check.interaction({
+                            state: 'manage_change_msisdn_emis_validates',
+                            reply:
+                                "Thank you! Your cell phone number is now the official number " +
+                                "that your school will use to communicate with the Gateway."
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once", function() {
+                it("should ask if they want to try again or exit", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '000A'  // manage_change_msisdn_emis
+                        )
+                        .check.interaction({
+                            state: 'manage_change_msisdn_emis_retry_exit',
+                            reply: [
+                                "There is a problem with the EMIS number you have entered.",
+                                "1. Try again",
+                                "2. Exit"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and chooses to exit", function() {
+                it("should instruct to send sms and exit", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '000A',  // manage_change_msisdn_emis
+                            '2'  // manage_change_msisdn_emis_retry_exit
+                        )
+                        .check.interaction({
+                            state: 'reg_exit_emis',
+                            reply: "We don't recognise your EMIS number. Please send a SMS with" +
+                                    " the words EMIS ERROR to 739 and your DEST will contact you" +
+                                    " to resolve the problem."
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and chooses to try again", function() {
+                it("should ask to enter emis number", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '000A',  // manage_change_msisdn_emis
+                            '1'  // manage_change_msisdn_emis_retry_exit
+                        )
+                        .check.interaction({
+                            state: 'manage_change_msisdn_emis',
+                            reply:
+                                "Please enter the school's EMIS number that you are currently " +
+                                "registered with. This should have 4-6 digits e.g 4351."
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and then a valid emis", function() {
+                it("should thank and instruct them to redial on num change", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '000A',  // manage_change_msisdn_emis
+                            '1',  // manage_change_msisdn_emis_retry_exit
+                            '0001'
+                        )
+                        .check.interaction({
+                            state: 'manage_change_msisdn_emis_validates',
+                            reply:
+                                "Thank you! Your cell phone number is now the official number " +
+                                "that your school will use to communicate with the Gateway."
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code twice", function() {
+                it("should instruct to send sms and exit", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '000A',  // manage_change_msisdn_emis
+                            '1',  // manage_change_msisdn_emis_retry_exit
+                            '000B'
+                        )
+                        .check.interaction({
+                            state: 'reg_exit_emis',
+                            reply: "We don't recognise your EMIS number. Please send a SMS with" +
+                                    " the words EMIS ERROR to 739 and your DEST will contact you" +
+                                    " to resolve the problem."
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
+        });
+
+    });
+
 });
 
 
@@ -1283,7 +1547,7 @@ describe("when a registered user logs on", function() {
                     )
                     .check.interaction({
                         state: 'add_emis_perf_teacher_ts_number',
-                        reply: 
+                        reply:
                             "Please enter the school's EMIS number that you would like " +
                             "to report on. This should have 4-6 digits e.g 4351."
                     })
@@ -1408,7 +1672,7 @@ describe("when a registered user logs on", function() {
 
             // ts number
             describe("when the user enters TS number", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for teacher gender", function() {
                         return tester
@@ -1463,7 +1727,7 @@ describe("when a registered user logs on", function() {
                         )
                         .check.interaction({
                             state: 'perf_teacher_age',
-                            reply: 
+                            reply:
                                 "Please enter the teacher's age in years e.g. 26."
                         })
                         .run();
@@ -1588,7 +1852,7 @@ describe("when a registered user logs on", function() {
                         )
                         .check.interaction({
                             state: 'perf_teacher_g2_pupils_present',
-                            reply: 
+                            reply:
                                 "How many children were PRESENT during the observed lesson?"
                         })
                         .run();
@@ -1612,7 +1876,7 @@ describe("when a registered user logs on", function() {
                         )
                         .check.interaction({
                             state: 'perf_teacher_g2_pupils_registered',
-                            reply: 
+                            reply:
                                 "How many children are ENROLLED in the Grade 2 class that " +
                                 "was observed?"
                         })
@@ -1638,7 +1902,7 @@ describe("when a registered user logs on", function() {
                         )
                         .check.interaction({
                             state: 'perf_teacher_classroom_environment_score',
-                            reply: 
+                            reply:
                                 "Enter the subtotal that the teacher achieved during the " +
                                 "classroom observation for Section 2 (Classroom Environment)."
                         })
@@ -1667,7 +1931,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_t_l_materials',
-                                reply: 
+                                reply:
                                     "Enter the subtotal that the teacher achieved during the classroom " +
                                     "observation for Section 3 (Teaching and Learning Materials).",
                             })
@@ -1724,7 +1988,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_pupils_books_number',
-                                reply: 
+                                reply:
                                     "Enter the number of learners' books (text books) for " +
                                     "literacy that were available in the classroom during the " +
                                     "lesson observation.",
@@ -1782,7 +2046,7 @@ describe("when a registered user logs on", function() {
                         )
                         .check.interaction({
                             state: 'perf_teacher_pupils_materials_score',
-                            reply: 
+                            reply:
                                 "Enter the subtotal that the teacher achieved during the " +
                                 "classroom observation for Section 4 (Learner Materials)."
                         })
@@ -1814,7 +2078,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_reading_lesson',
-                                reply: 
+                                reply:
                                     "Enter the subtotal that the teacher achieved during the " +
                                     "classroom observation for Section 5 (Time on Task and " +
                                     "Reading Practice)"
@@ -1878,7 +2142,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_pupil_engagement_score',
-                                reply: 
+                                reply:
                                     "Enter the subtotal that the teacher achieved during the " +
                                     "classroom observation for Section 6 (Learner Engagement)",
                             })
@@ -1943,7 +2207,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_attitudes_and_beliefs',
-                                reply: 
+                                reply:
                                     "Enter the subtotal that the teacher achieved during the " +
                                     "interview on Section 7.1. (Teacher Attitudes and Beliefs)",
                             })
@@ -2010,7 +2274,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_training_subtotal',
-                                reply: 
+                                reply:
                                     "Enter the subtotal that the teacher achieved during the " +
                                     "interview on Section 7.2. (Teacher Training)",
                             })
@@ -2079,7 +2343,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_reading_assessment',
-                                reply: 
+                                reply:
                                     "Enter the subtotal that the teacher achieved during the " +
                                     "interview on Section 7.3. (Reading Assessment).",
                             })
@@ -2150,7 +2414,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_reading_total',
-                                reply: 
+                                reply:
                                     "According to your assessment records, how many of the " +
                                     "pupils in the class that was observed have broken " +
                                     "through/can read?",
@@ -2235,7 +2499,7 @@ describe("when a registered user logs on", function() {
 
             // after completion
             describe("when the user has completed the report", function() {
-                
+
                 describe("if they choose to report on another teacher", function() {
                     it("should ask for the teacher TS number", function() {
                         return tester
@@ -2264,7 +2528,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_teacher_ts_number',
-                                reply: 
+                                reply:
                                     "Please enter the teacher's TS number."
                             })
                             .run();
@@ -2346,7 +2610,7 @@ describe("when a registered user logs on", function() {
                             .run();
                     });
                 });
-                    
+
             });
         });
     });
@@ -2367,7 +2631,7 @@ describe("when a registered user logs on", function() {
                     )
                     .check.interaction({
                         state: 'add_emis_perf_learner_boys_total',
-                        reply: 
+                        reply:
                             "Please enter the school's EMIS number that you would like " +
                             "to report on. This should have 4-6 digits e.g 4351."
                     })
@@ -2492,7 +2756,7 @@ describe("when a registered user logs on", function() {
 
             // boys total
             describe("when the user enters boys total", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for boys outstanding results", function() {
                         return tester
@@ -2534,7 +2798,7 @@ describe("when a registered user logs on", function() {
 
             // boys outstanding
             describe("when the user enters boys outstanding results", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for boys desirable results", function() {
                         return tester
@@ -2597,7 +2861,7 @@ describe("when a registered user logs on", function() {
 
             // boys desirable
             describe("when the user enters boys desirable results", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for boys minimum results", function() {
                         return tester
@@ -2663,7 +2927,7 @@ describe("when a registered user logs on", function() {
 
             // boys minimum
             describe("when the user enters boys minimum results", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for boys below minimum results", function() {
                         return tester
@@ -2735,7 +2999,7 @@ describe("when a registered user logs on", function() {
 
             // boys below minimum
             describe("when the user enters boys below minimum results", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls total", function() {
                         return tester
@@ -2812,7 +3076,7 @@ describe("when a registered user logs on", function() {
 
             // girls total
             describe("when the user enters girls total", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls outstanding results", function() {
                         return tester
@@ -2840,7 +3104,7 @@ describe("when a registered user logs on", function() {
 
             // girls outstanding
             describe("when the user enters girls outstanding results", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls desirable results", function() {
                         return tester
@@ -2918,7 +3182,7 @@ describe("when a registered user logs on", function() {
 
             // girls desirable
             describe("when the user enters girls desirable results", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls minimum results", function() {
                         return tester
@@ -2999,7 +3263,7 @@ describe("when a registered user logs on", function() {
 
             // girls minimum
             describe("when the user enters girls minimum results", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls below minimum results", function() {
                         return tester
@@ -3058,7 +3322,7 @@ describe("when a registered user logs on", function() {
 
             // girls below minimum
             describe("when the user enters girls below minimum results", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for boys phonics", function() {
                         return tester
@@ -3151,7 +3415,7 @@ describe("when a registered user logs on", function() {
 
             // boys phonics
             describe("when the user enters boys phonics result", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls phonics result", function() {
                         return tester
@@ -3242,7 +3506,7 @@ describe("when a registered user logs on", function() {
 
             // girls phonics
             describe("when the user enters girls phonics result", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for boys vocab result", function() {
                         return tester
@@ -3337,7 +3601,7 @@ describe("when a registered user logs on", function() {
 
             // boys vocab
             describe("when the user enters boys vocab result", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls vocab result", function() {
                         return tester
@@ -3372,7 +3636,7 @@ describe("when a registered user logs on", function() {
 
             // girls vocab
             describe("when the user enters girls vocab result", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for boys comprehension result", function() {
                         return tester
@@ -3409,7 +3673,7 @@ describe("when a registered user logs on", function() {
 
             // boys comprehension
             describe("when the user enters boys comprehension result", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls comprehension result", function() {
                         return tester
@@ -3446,7 +3710,7 @@ describe("when a registered user logs on", function() {
 
             // girls comprehension
             describe("when the user enters girls comprehension result", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for boys writing result", function() {
                         return tester
@@ -3485,7 +3749,7 @@ describe("when a registered user logs on", function() {
 
             // boys writing
             describe("when the user enters boys writing result", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should ask for girls writing result", function() {
                         return tester
@@ -3524,7 +3788,7 @@ describe("when a registered user logs on", function() {
 
             // girls writing
             describe("when the user enters girls writing result", function() {
-                
+
                 describe("if the number validates", function() {
                     it("should show success and options", function() {
                         return tester
@@ -3591,7 +3855,7 @@ describe("when a registered user logs on", function() {
                             )
                             .check.interaction({
                                 state: 'perf_learner_girls_writing',
-                                reply: 
+                                reply:
                                     "Please provide a valid number value for total girls achieving 2 out of 4" +
                                     " correct answers for Writing."
                             })
@@ -3684,6 +3948,304 @@ describe("when a registered user logs on", function() {
         });
 
     });
+
+
+    // CHANGE SCHOOL
+    // -------------
+
+    describe("when user chooses to change their school", function() {
+        it("should ask them for their school's EMIS number", function() {
+            return tester
+                .setup.user.addr('097555')
+                .inputs(
+                    'start',
+                    '3'  // initial_state_head_teacher
+                )
+                .check.interaction({
+                    state: 'manage_change_emis',
+                    reply:
+                        "Please enter your school's EMIS number. This should have 4-6 " +
+                        "digits e.g 4351.",
+                })
+                .run();
+        });
+
+        describe("after entering an EMIS number", function() {
+
+            describe("if emis validates", function() {
+                it("should thank and instruct to redial", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '3',  // initial_state_head_teacher
+                            '2334'  // manage_change_emis
+                        )
+                        .check.interaction({
+                            state: 'manage_change_emis_validates',
+                            reply: [
+                                "Thanks for claiming this EMIS. Redial this number if you ever " +
+                                "change cellphone number to reclaim the EMIS and continue to " +
+                                "receive SMS updates.",
+                                "1. Continue"
+                            ].join("\n")
+                        })
+                        .run();
+                });
+
+                describe("if they choose to continue after reading message", function() {
+                    it("should ask them for number of boys at the school", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '3',  // initial_state_head_teacher
+                                '2334',  // manage_change_emis
+                                '1'  // manage_change_emis_validates
+                            )
+                            .check.interaction({
+                                state: 'reg_school_boys',
+                                reply: "How many boys do you have in your school?"
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if the user completes school change process", function() {
+                    it("should save data", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '3',  // initial_state_head_teacher
+                                '2334',  // manage_change_emis
+                                '1',  // manage_change_emis_validates
+                                '50',  // reg_school_boys
+                                '51',  // reg_school_girls
+                                '5',  // reg_school_classrooms
+                                '5',  // reg_school_teachers
+                                '2',  // reg_school_teachers_g1
+                                '2',  // reg_school_teachers_g2
+                                '10',  // reg_school_students_g2_boys
+                                '11',  // reg_school_students_g2_girls
+                                '1'  // reg_zonal_head
+                            )
+                            .check(function(api) {
+                                var contact = api.contacts.store[1];
+                                assert.equal(contact.extra.rts_id, '555');
+                                assert.equal(contact.extra.rts_emis, '2334');
+                                assert.equal(contact.extra.registration_origin, '');
+                                assert.equal(contact.name, 'Regina');
+                                assert.equal(contact.surname, 'Spektor');
+                            })
+                            .run();
+                    });
+                });
+
+            });
+
+            describe("if the user enters an invalid emis code once", function() {
+                it("should ask if they want to try again or exit", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '3',  // initial_state_head_teacher
+                            '000A'  // manage_change_emis
+                        )
+                        .check.interaction({
+                            state: 'manage_change_emis_retry_exit',
+                            reply: [
+                                "There is a problem with the EMIS number you have entered.",
+                                "1. Try again",
+                                "2. Exit"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and chooses to exit", function() {
+                it("should instruct to send sms and exit", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '3',  // initial_state_head_teacher
+                            '000A',  // manage_change_emis
+                            '2'  // manage_change_emis_retry_exit
+                        )
+                        .check.interaction({
+                            state: 'reg_exit_emis',
+                            reply: "We don't recognise your EMIS number. Please send a SMS with" +
+                                    " the words EMIS ERROR to 739 and your DEST will contact you" +
+                                    " to resolve the problem."
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and chooses to try again", function() {
+                it("should ask to enter emis number", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '3',  // initial_state_head_teacher
+                            '000A',  // manage_change_emis
+                            '1'  // manage_change_emis_retry_exit
+                        )
+                        .check.interaction({
+                            state: 'manage_change_emis',
+                            reply:
+                                "Please enter your school's EMIS number. This should have 4-6 " +
+                                "digits e.g 4351.",
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and then a valid emis", function() {
+                it("should thank and instruct them to redial", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '3',  // initial_state_head_teacher
+                            '000A',  // manage_change_emis
+                            '1',  // manage_change_emis_retry_exit
+                            '2334'  // manage_change_emis
+                        )
+                        .check.interaction({
+                            state: 'manage_change_emis_validates',
+                            reply: [
+                                "Thanks for claiming this EMIS. Redial this number if you ever " +
+                                "change cellphone number to reclaim the EMIS and continue to " +
+                                "receive SMS updates.",
+                                "1. Continue"
+                            ].join("\n")
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code twice", function() {
+                it("should instruct to send sms and exit", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '3',  // initial_state_head_teacher
+                            '000A',  // manage_change_emis
+                            '1',  // manage_change_emis_retry_exit
+                            '000B'  // manage_change_emis
+                        )
+                        .check.interaction({
+                            state: 'reg_exit_emis',
+                            reply: "We don't recognise your EMIS number. Please send a SMS with" +
+                                    " the words EMIS ERROR to 739 and your DEST will contact you" +
+                                    " to resolve the problem."
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
+        });
+
+    });
+
+
+    // UPDATE SCHOOL DATA
+    // ------------------
+
+    describe("when user chooses to update their school data", function() {
+        it("should give instruction, ask to continue", function() {
+            return tester
+                .setup.user.addr('097555')
+                .inputs(
+                    'start',
+                    '4'  // initial_state_head_teacher
+                )
+                .check.interaction({
+                    state: 'manage_update_school_data',
+                    reply: [
+                        "You'll now be asked to re-enter key school details to ensure the " +
+                        "records are accurate. Enter 1 to continue.",
+                        "1. Continue"
+                    ].join("\n")
+                })
+                .run();
+        });
+
+        describe("if they choose to continue after reading message", function() {
+            it("should ask them for number of boys at the school", function() {
+                return tester
+                    .setup.user.addr('097555')
+                    .inputs(
+                        'start',
+                        '4',  // initial_state_head_teacher
+                        '1'  // manage_update_school_data
+                    )
+                    .check.interaction({
+                        state: 'reg_school_boys',
+                        reply: "How many boys do you have in your school?"
+                    })
+                    .run();
+            });
+        });
+
+        describe("if the user completes school update process", function() {
+            it("should save data", function() {
+                return tester
+                    .setup.user.addr('097555')
+                    .inputs(
+                        'start',
+                        '4',  // initial_state_head_teacher
+                        '1',  // manage_update_school_data
+                        '33',  // reg_school_boys
+                        '51',  // reg_school_girls
+                        '5',  // reg_school_classrooms
+                        '5',  // reg_school_teachers
+                        '2',  // reg_school_teachers_g1
+                        '2',  // reg_school_teachers_g2
+                        '10',  // reg_school_students_g2_boys
+                        '11',  // reg_school_students_g2_girls
+                        '1'  // reg_zonal_head
+                    )
+                    .check(function(api) {
+                        var contact = api.contacts.store[1];
+                        assert.equal(contact.extra.rts_id, '555');
+                        assert.equal(contact.extra.rts_emis, '45');
+                        assert.equal(contact.extra.registration_origin, '');
+                        assert.equal(contact.name, 'Regina');
+                        assert.equal(contact.surname, 'Spektor');
+                    })
+                    .run();
+            });
+        });
+
+
+        describe("if they choose to continue after reading message", function() {
+            it("should ask them for number of boys at the school", function() {
+                return tester
+                    .setup.user.addr('097555')
+                    .inputs(
+                        'start',
+                        '4',  // initial_state_head_teacher
+                        '1'  // manage_update_school_data
+                    )
+                    .check.interaction({
+                        state: 'reg_school_boys',
+                        reply: "How many boys do you have in your school?"
+                    })
+                    .run();
+            });
+        });
+
+    });
+
 
 });
 
