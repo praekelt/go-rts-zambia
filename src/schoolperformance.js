@@ -294,7 +294,7 @@ go.sp = function() {
         },
 
         // q14
-        monitor_school_talking_wall: function(name, $) {
+        monitor_school_talking_wall: function(name, $, im, contact) {
             return new ChoiceState(name, {
                 question:
                     $("Is the Talking Wall poster on display and up to date?"),

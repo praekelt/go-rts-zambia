@@ -422,7 +422,16 @@ go.app = function() {
                 ],
 
                 next: function(choice) {
-                    return choice.value;
+                    if (choice.value === "manage_change_emis") {
+                        return {
+                            name: choice.value,
+                            creator_opts: {
+                                retry: false
+                            }
+                        };
+                    } else {
+                        return choice.value;
+                    }
                 }
             });
         });
@@ -862,7 +871,7 @@ go.app = function() {
         });
 
         self.states.add('monitor_school_gala_sheets', function(name) {
-            return go.sp.monitor_school_gala_sheets(name, $);
+            return go.sp.monitor_school_gala_sheets(name, $, self.im, self.contact);
         });
 
         self.states.add('monitor_school_summary_worksheet', function(name) {
@@ -878,7 +887,7 @@ go.app = function() {
         });
 
         self.states.add('monitor_school_talking_wall', function(name) {
-            return go.sp.monitor_school_talking_wall(name, $);
+            return go.sp.monitor_school_talking_wall(name, $, self.im, self.contact);
         });
 
         self.states.add('monitor_school_completed', function(name) {
