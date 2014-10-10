@@ -18,8 +18,7 @@ go.utils = {
         return go.utils
             .cms_get("district/", im)
             .then(function(result) {
-                parsed_result = JSON.parse(result.body);
-                var districts = (parsed_result.objects);
+                var districts = result.data.objects;
                 districts.sort(
                     function(a, b) {
                         return ((a.name < b.name) ? -1 : ((a.name > b.name) ? 1 : 0));
@@ -33,20 +32,18 @@ go.utils = {
         return go.utils
             .cms_get("hierarchy/", im)
             .then(function(result) {
-                parsed_result = JSON.parse(result.body);
                 var array_emis = [];
-                for (var i=0; i<parsed_result.objects.length; i++) {
-                    array_emis.push(parsed_result.objects[i].emis);
+                for (var i=0; i<result.data.objects.length; i++) {
+                    array_emis.push(result.data.objects[i].emis);
                 }
                 return array_emis;
             });
     },
 
     cms_update_school_and_contact: function(result, im, contact) {
-        parsed_result = JSON.parse(result.body);
-        var headteacher_id = parsed_result.id;
-        var headteacher_is_zonal_head = parsed_result.is_zonal_head;
-        var emis = parsed_result.emis.emis;
+        var headteacher_id = result.data.id;
+        var headteacher_is_zonal_head = result.data.is_zonal_head;
+        var emis = result.data.emis.emis;
         var school_data = go.utils.registration_data_school_collect(im);
         school_data.created_by = "/api/v1/data/headteacher/" + headteacher_id + "/";
         school_data.emis = "/api/v1/school/emis/" + emis + "/";
@@ -56,10 +53,47 @@ go.utils = {
                 contact.extra.rts_id = headteacher_id.toString();
                 contact.extra.rts_emis = emis.toString();
                 contact.extra.is_zonal_head = headteacher_is_zonal_head.toString();
-                contact.name = im.user.answers.reg_first_name;
-                contact.surname = im.user.answers.reg_surname;
+                contact.extra.registration_origin = "";
+                if (contact.name === null || _.isUndefined(contact.name)) {
+                    // only applicable if name has not been saved before i.e. during registration
+                    contact.name = im.user.answers.reg_first_name;
+                    contact.surname = im.user.answers.reg_surname;
+                }
                 return im.contacts.save(contact);
             });
+    },
+
+    cms_registration: function(im, contact) {
+        var headteacher_data;
+
+        if (contact.extra.registration_origin === "manage_change_emis") {
+            // Registered head teacher started process with "Change my school"
+            headteacher_data = {
+                emis: "/api/v1/school/emis/" + parseInt(im.user.answers.manage_change_emis, 10) + "/"
+            };
+            return go.utils
+                .cms_put("data/headteacher/" + contact.extra.rts_id + "/", headteacher_data, im)
+                .then(function(result) {
+                    return go.utils.cms_update_school_and_contact(result, im, contact);
+                });
+
+        } else if (contact.extra.registration_origin === "manage_update_school_data") {
+            // Registered head teacher started process with "Update my school's registration data"
+            return go.utils
+                .cms_get("data/headteacher/?emis__emis=" + contact.extra.rts_emis, im)
+                .then(function(result) {
+                    return go.utils.cms_update_school_and_contact(result, im, contact);
+                });
+
+        } else {
+            // Unregistered head teacher registers for the first time
+            headteacher_data = go.utils.registration_data_headteacher_collect(im);
+            return go.utils
+                .cms_post("data/headteacher/", headteacher_data, im)
+                .then(function(result) {
+                    return go.utils.cms_update_school_and_contact(result, im, contact);
+                });
+        }
     },
 
 
@@ -76,6 +110,20 @@ go.utils = {
         var json_api = new JsonApi(im);
         var url = im.config.cms_api_root + path;
         return json_api.post(
+            url,
+            {
+                data: data,
+                headers:{
+                    'Content-Type': ['application/json']
+                }
+            }
+        );
+    },
+
+    cms_put: function(path, data, im) {
+        var json_api = new JsonApi(im);
+        var url = im.config.cms_api_root + path;
+        return json_api.put(
             url,
             {
                 data: data,
@@ -331,15 +379,15 @@ go.app = function() {
                 ],
 
                 next: function(choice) {
-                    if (choice.value != 'reg_emis') {
-                        return choice.value;
-                    } else {
+                    if (choice.value === 'reg_emis' || choice.value === 'manage_change_msisdn_emis') {
                         return {
-                            name: 'reg_emis',
+                            name: choice.value,
                             creator_opts: {
                                 retry: false
                             }
                         };
+                    } else {
+                        return choice.value;
                     }
                 }
             });
@@ -391,8 +439,27 @@ go.app = function() {
                 ],
 
                 next: function(choice) {
-                    return choice.value;
+                    if (choice.value === "manage_change_emis") {
+                        return {
+                            name: choice.value,
+                            creator_opts: {
+                                retry: false
+                            }
+                        };
+                    } else {
+                        return choice.value;
+                    }
                 }
+            });
+        });
+
+        self.states.add('reg_exit_emis', function(name) {
+            return new EndState(name, {
+                text: $("We don't recognise your EMIS number. Please send a SMS with" +
+                        " the words EMIS ERROR to 739 and your DEST will contact you" +
+                        " to resolve the problem."),
+
+                next: "initial_state"
             });
         });
 
@@ -402,6 +469,43 @@ go.app = function() {
 
                 next: "initial_state"
             });
+        });
+
+
+
+        // CHANGE MANAGEMENT STATES
+        // ------------------------
+
+        self.states.add('manage_change_emis_error', function(name) {
+            return go.cm.manage_change_emis_error(name, $);
+        });
+
+        self.states.add('manage_change_msisdn_emis', function(name, opts) {
+            return go.cm.manage_change_msisdn_emis(name, $, self.array_emis, opts, self.im);
+        });
+
+        self.states.add('manage_change_msisdn_emis_validates', function(name) {
+            return go.cm.manage_change_msisdn_emis_validates(name, $);
+        });
+
+        self.states.add('manage_change_msisdn_emis_retry_exit', function(name) {
+            return go.cm.manage_change_msisdn_emis_retry_exit(name, $);
+        });
+
+        self.states.add('manage_change_emis', function(name, opts) {
+            return go.cm.manage_change_emis(name, $, self.array_emis, opts, self.contact, self.im);
+        });
+
+        self.states.add('manage_change_emis_validates', function(name) {
+            return go.cm.manage_change_emis_validates(name, $);
+        });
+
+        self.states.add('manage_change_emis_retry_exit', function(name) {
+            return go.cm.manage_change_emis_retry_exit(name, $);
+        });
+
+        self.states.add('manage_update_school_data', function(name) {
+            return go.cm.manage_update_school_data(name, $, self.contact, self.im);
         });
 
 
@@ -419,10 +523,6 @@ go.app = function() {
 
         self.states.add('reg_emis_retry_exit', function(name) {
             return go.rht.reg_emis_retry_exit(name, $);
-        });
-
-        self.states.add('reg_exit_emis', function(name) {
-            return go.rht.reg_exit_emis(name, $);
         });
 
         self.states.add('reg_school_name', function(name) {
@@ -520,18 +620,6 @@ go.app = function() {
 
         self.states.add('reg_district_official_thanks', function(name) {
             return go.rdo.reg_district_official_thanks(name, $);
-        });
-
-
-        // CHANGE MANAGEMENT STATES
-        // ------------------------
-
-        self.states.add('state_cm_start', function(name, $) {
-            return go.cm.state_cm_start(name);
-        });
-
-        self.states.add('state_cm_exit', function(name, $) {
-            return go.cm.state_cm_exit(name);
         });
 
 

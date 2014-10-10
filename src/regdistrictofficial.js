@@ -28,7 +28,7 @@ go.rdo = function() {
 
                 next: 'reg_district_official_first_name'
             });
-            
+
         },
 
         reg_district_official_first_name: function(name, $) {
@@ -58,7 +58,7 @@ go.rdo = function() {
         reg_district_official_dob: function(name, $, im, contact) {
             var error = $("Please enter your date of birth formatted DDMMYYYY");
 
-            var question = 
+            var question =
                     $("Please enter your date of birth. Start with the day," +
                     " followed by the month and year, e.g. 27111980.");
 
@@ -76,10 +76,9 @@ go.rdo = function() {
                     return go.utils
                         .cms_post("district_admin/", district_official_data, im)
                         .then(function(result) {
-                            parsed_result = JSON.parse(result.body);
-                            contact.extra.rts_id = parsed_result.id.toString();
-                            contact.extra.rts_district_official_id_number = parsed_result.id_number;
-                            contact.extra.rts_official_district_id = parsed_result.district.id.toString();
+                            contact.extra.rts_id = result.data.id.toString();
+                            contact.extra.rts_district_official_id_number = result.data.id_number;
+                            contact.extra.rts_official_district_id = result.data.district.id.toString();
                             contact.name = district_official_data.first_name;
                             contact.surname = district_official_data.last_name;
                             return im.contacts

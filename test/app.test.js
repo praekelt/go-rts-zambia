@@ -1028,7 +1028,6 @@ describe.skip("when an unregistered user logs on", function() {
     });
 
 
-
     // DISTRICT OFFICIAL REGISTRATION
     // ------------------------------
 
@@ -1237,6 +1236,229 @@ describe.skip("when an unregistered user logs on", function() {
         });
 
     });
+
+
+    // CHANGE SCHOOL
+    // -------------
+
+    describe("when uu chooses to change their school", function() {
+        it("should tell them to associate their number with EMIS first", function() {
+            return tester
+                .setup.user.addr('097123')
+                .inputs(
+                    'start',
+                    '3'  // initial_state
+                )
+                .check.interaction({
+                    state: 'manage_change_emis_error',
+                    reply: [
+                        "Your cell phone number is unrecognised. Please associate your new " +
+                        "number with your old EMIS first before requesting to change school.",
+                        "1. Main menu.",
+                        "2. Exit."
+                    ].join("\n")
+                })
+                .run();
+        });
+
+        describe("after seeing the associate EMIS message", function() {
+
+            describe("if they choose main menu", function() {
+                it("should go back to initial state", function() {
+                    return tester
+                    .setup.user.addr('097123')
+                    .inputs(
+                        'start',
+                        '3',  // initial_state
+                        '1'  // manage_change_emis_error
+                    )
+                    .check.interaction({
+                        state: 'initial_state_unregistered',
+                        reply: [
+                            'Welcome to the Zambia School Gateway! Options:',
+                            '1. Register as Head Teacher',
+                            '2. Register as District Official',
+                            '3. Change my school',
+                            '4. Change my primary cell number'
+                        ].join('\n')
+                    })
+                    .run();
+                });
+            });
+
+            describe("if they choose to exit", function() {
+                it("should thank them and exit", function() {
+                    return tester
+                    .setup.user.addr('097123')
+                    .inputs(
+                        'start',
+                        '3',  // initial_state
+                        '2'  // manage_change_emis_error
+                    )
+                    .check.interaction({
+                        state: 'end_state',
+                        reply: "Goodbye! Thank you for using the Gateway.",
+                    })
+                    .check.reply.ends_session()
+                    .run();
+                });
+            });
+
+        });
+    });
+
+
+    // CHANGE CELLPHONE NUMBER
+    // -----------------------
+
+    describe("when uu chooses to change their cell number", function() {
+        it("should ask them for their school's EMIS number", function() {
+            return tester
+                .setup.user.addr('097666')
+                .inputs(
+                    'start',
+                    '4'  // initial_state
+                )
+                .check.interaction({
+                    state: 'manage_change_msisdn_emis',
+                    reply:
+                        "Please enter the school's EMIS number that you are currently " +
+                        "registered with. This should have 4-6 digits e.g 4351.",
+                })
+                .run();
+        });
+
+        describe("after entering an EMIS number", function() {
+
+            describe("if emis validates", function() {
+                it("should thank them and exit", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '1'  // manage_change_msisdn_emis
+                        )
+                        .check.interaction({
+                            state: 'manage_change_msisdn_emis_validates',
+                            reply:
+                                "Thank you! Your cell phone number is now the official number " +
+                                "that your school will use to communicate with the Gateway."
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once", function() {
+                it("should ask if they want to try again or exit", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '000A'  // manage_change_msisdn_emis
+                        )
+                        .check.interaction({
+                            state: 'manage_change_msisdn_emis_retry_exit',
+                            reply: [
+                                "There is a problem with the EMIS number you have entered.",
+                                "1. Try again",
+                                "2. Exit"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and chooses to exit", function() {
+                it("should instruct to send sms and exit", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '000A',  // manage_change_msisdn_emis
+                            '2'  // manage_change_msisdn_emis_retry_exit
+                        )
+                        .check.interaction({
+                            state: 'reg_exit_emis',
+                            reply: "We don't recognise your EMIS number. Please send a SMS with" +
+                                    " the words EMIS ERROR to 739 and your DEST will contact you" +
+                                    " to resolve the problem."
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and chooses to try again", function() {
+                it("should ask to enter emis number", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '000A',  // manage_change_msisdn_emis
+                            '1'  // manage_change_msisdn_emis_retry_exit
+                        )
+                        .check.interaction({
+                            state: 'manage_change_msisdn_emis',
+                            reply:
+                                "Please enter the school's EMIS number that you are currently " +
+                                "registered with. This should have 4-6 digits e.g 4351."
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and then a valid emis", function() {
+                it("should thank and instruct them to redial on num change", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '000A',  // manage_change_msisdn_emis
+                            '1',  // manage_change_msisdn_emis_retry_exit
+                            '0001'
+                        )
+                        .check.interaction({
+                            state: 'manage_change_msisdn_emis_validates',
+                            reply:
+                                "Thank you! Your cell phone number is now the official number " +
+                                "that your school will use to communicate with the Gateway."
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code twice", function() {
+                it("should instruct to send sms and exit", function() {
+                    return tester
+                        .setup.user.addr('097666')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state
+                            '000A',  // manage_change_msisdn_emis
+                            '1',  // manage_change_msisdn_emis_retry_exit
+                            '000B'
+                        )
+                        .check.interaction({
+                            state: 'reg_exit_emis',
+                            reply: "We don't recognise your EMIS number. Please send a SMS with" +
+                                    " the words EMIS ERROR to 739 and your DEST will contact you" +
+                                    " to resolve the problem."
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
+        });
+
+    });
+
 });
 
 
@@ -1301,7 +1523,6 @@ describe("when a registered user logs on", function() {
                 .run();
         });
     });
-
 
 
     // TEACHER PERFORMANCE MONITORING
@@ -2333,13 +2554,14 @@ describe("when a registered user logs on", function() {
                                 '2'  // perf_teacher_completed
                             )
                             .check.interaction({
-                                state: 'initial_state_head_teacher',
+                                state: 'initial_state_zonal_head',
                                 reply: [
-                                    'What would you like to do?',
-                                    '1. Report on teacher performance.',
-                                    '2. Report on learner performance.',
-                                    '3. Change my school.',
-                                    "4. Update my school's registration data."
+                                    'Welcome to Zambia School Gateway!',
+                                    '1. Report on teachers',
+                                    '2. Report on learners',
+                                    '3. Report on school monitoring visit',
+                                    '4. Change my school',
+                                    "5. Update my school data"
                                 ].join('\n')
                             })
                             .run();
@@ -3665,13 +3887,14 @@ describe("when a registered user logs on", function() {
                             '1'  // perf_learner_completed
                         )
                         .check.interaction({
-                            state: 'initial_state_head_teacher',
+                            state: 'initial_state_zonal_head',
                             reply: [
-                                'What would you like to do?',
-                                '1. Report on teacher performance.',
-                                '2. Report on learner performance.',
-                                '3. Change my school.',
-                                "4. Update my school's registration data."
+                                'Welcome to Zambia School Gateway!',
+                                '1. Report on teachers',
+                                '2. Report on learners',
+                                '3. Report on school monitoring visit',
+                                '4. Change my school',
+                                "5. Update my school data"
                             ].join('\n')
                         })
                         .run();
@@ -3719,6 +3942,7 @@ describe("when a registered user logs on", function() {
         });
 
     });
+
 
     // SCHOOL MONITORING
     // -----------------
@@ -4512,6 +4736,303 @@ describe("when a registered user logs on", function() {
                 });
             });
 
+        });
+
+    });
+
+
+    // CHANGE SCHOOL
+    // -------------
+
+    describe.skip("when user chooses to change their school", function() {
+        it("should ask them for their school's EMIS number", function() {
+            return tester
+                .setup.user.addr('097555')
+                .inputs(
+                    'start',
+                    '4'  // initial_state_zonal_head
+                )
+                .check.interaction({
+                    state: 'manage_change_emis',
+                    reply:
+                        "Please enter your school's EMIS number. This should have 4-6 " +
+                        "digits e.g 4351.",
+                })
+                .run();
+        });
+
+        describe("after entering an EMIS number", function() {
+
+            describe("if emis validates", function() {
+                it("should thank and instruct to redial", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state_zonal_head
+                            '2334'  // manage_change_emis
+                        )
+                        .check.interaction({
+                            state: 'manage_change_emis_validates',
+                            reply: [
+                                "Thanks for claiming this EMIS. Redial this number if you ever " +
+                                "change cellphone number to reclaim the EMIS and continue to " +
+                                "receive SMS updates.",
+                                "1. Continue"
+                            ].join("\n")
+                        })
+                        .run();
+                });
+
+                describe("if they choose to continue after reading message", function() {
+                    it("should ask them for number of boys at the school", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '4',  // initial_state_zonal_head
+                                '2334',  // manage_change_emis
+                                '1'  // manage_change_emis_validates
+                            )
+                            .check.interaction({
+                                state: 'reg_school_boys',
+                                reply: "How many boys do you have in your school?"
+                            })
+                            .run();
+                    });
+                });
+
+                describe("if the user completes school change process", function() {
+                    it("should save data", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '4',  // initial_state_zonal_head
+                                '2334',  // manage_change_emis
+                                '1',  // manage_change_emis_validates
+                                '50',  // reg_school_boys
+                                '51',  // reg_school_girls
+                                '5',  // reg_school_classrooms
+                                '5',  // reg_school_teachers
+                                '2',  // reg_school_teachers_g1
+                                '2',  // reg_school_teachers_g2
+                                '10',  // reg_school_students_g2_boys
+                                '11',  // reg_school_students_g2_girls
+                                '1'  // reg_zonal_head
+                            )
+                            .check(function(api) {
+                                var contact = api.contacts.store[1];
+                                assert.equal(contact.extra.rts_id, '555');
+                                assert.equal(contact.extra.rts_emis, '2334');
+                                assert.equal(contact.extra.registration_origin, '');
+                                assert.equal(contact.name, 'Regina');
+                                assert.equal(contact.surname, 'Spektor');
+                            })
+                            .run();
+                    });
+                });
+
+            });
+
+            describe("if the user enters an invalid emis code once", function() {
+                it("should ask if they want to try again or exit", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state_zonal_head
+                            '000A'  // manage_change_emis
+                        )
+                        .check.interaction({
+                            state: 'manage_change_emis_retry_exit',
+                            reply: [
+                                "There is a problem with the EMIS number you have entered.",
+                                "1. Try again",
+                                "2. Exit"
+                            ].join('\n')
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and chooses to exit", function() {
+                it("should instruct to send sms and exit", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state_zonal_head
+                            '000A',  // manage_change_emis
+                            '2'  // manage_change_emis_retry_exit
+                        )
+                        .check.interaction({
+                            state: 'reg_exit_emis',
+                            reply: "We don't recognise your EMIS number. Please send a SMS with" +
+                                    " the words EMIS ERROR to 739 and your DEST will contact you" +
+                                    " to resolve the problem."
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and chooses to try again", function() {
+                it("should ask to enter emis number", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state_zonal_head
+                            '000A',  // manage_change_emis
+                            '1'  // manage_change_emis_retry_exit
+                        )
+                        .check.interaction({
+                            state: 'manage_change_emis',
+                            reply:
+                                "Please enter your school's EMIS number. This should have 4-6 " +
+                                "digits e.g 4351.",
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code once and then a valid emis", function() {
+                it("should thank and instruct them to redial", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state_zonal_head
+                            '000A',  // manage_change_emis
+                            '1',  // manage_change_emis_retry_exit
+                            '2334'  // manage_change_emis
+                        )
+                        .check.interaction({
+                            state: 'manage_change_emis_validates',
+                            reply: [
+                                "Thanks for claiming this EMIS. Redial this number if you ever " +
+                                "change cellphone number to reclaim the EMIS and continue to " +
+                                "receive SMS updates.",
+                                "1. Continue"
+                            ].join("\n")
+                        })
+                        .run();
+                });
+            });
+
+            describe("if the user enters an invalid emis code twice", function() {
+                it("should instruct to send sms and exit", function() {
+                    return tester
+                        .setup.user.addr('097555')
+                        .inputs(
+                            'start',
+                            '4',  // initial_state_zonal_head
+                            '000A',  // manage_change_emis
+                            '1',  // manage_change_emis_retry_exit
+                            '000B'  // manage_change_emis
+                        )
+                        .check.interaction({
+                            state: 'reg_exit_emis',
+                            reply: "We don't recognise your EMIS number. Please send a SMS with" +
+                                    " the words EMIS ERROR to 739 and your DEST will contact you" +
+                                    " to resolve the problem."
+                        })
+                        .check.reply.ends_session()
+                        .run();
+                });
+            });
+
+        });
+
+    });
+
+
+    // UPDATE SCHOOL DATA
+    // ------------------
+
+    describe.skip("when user chooses to update their school data", function() {
+        it("should give instruction, ask to continue", function() {
+            return tester
+                .setup.user.addr('097555')
+                .inputs(
+                    'start',
+                    '5'  // initial_state_zonal_head
+                )
+                .check.interaction({
+                    state: 'manage_update_school_data',
+                    reply: [
+                        "You'll now be asked to re-enter key school details to ensure the " +
+                        "records are accurate. Enter 1 to continue.",
+                        "1. Continue"
+                    ].join("\n")
+                })
+                .run();
+        });
+
+        describe("if they choose to continue after reading message", function() {
+            it("should ask them for number of boys at the school", function() {
+                return tester
+                    .setup.user.addr('097555')
+                    .inputs(
+                        'start',
+                        '5',  // initial_state_zonal_head
+                        '1'  // manage_update_school_data
+                    )
+                    .check.interaction({
+                        state: 'reg_school_boys',
+                        reply: "How many boys do you have in your school?"
+                    })
+                    .run();
+            });
+        });
+
+        describe("if the user completes school update process", function() {
+            it("should save data", function() {
+                return tester
+                    .setup.user.addr('097555')
+                    .inputs(
+                        'start',
+                        '5',  // initial_state_zonal_head
+                        '1',  // manage_update_school_data
+                        '33',  // reg_school_boys
+                        '51',  // reg_school_girls
+                        '5',  // reg_school_classrooms
+                        '5',  // reg_school_teachers
+                        '2',  // reg_school_teachers_g1
+                        '2',  // reg_school_teachers_g2
+                        '10',  // reg_school_students_g2_boys
+                        '11',  // reg_school_students_g2_girls
+                        '1'  // reg_zonal_head
+                    )
+                    .check(function(api) {
+                        var contact = api.contacts.store[1];
+                        assert.equal(contact.extra.rts_id, '555');
+                        assert.equal(contact.extra.rts_emis, '45');
+                        assert.equal(contact.extra.registration_origin, '');
+                        assert.equal(contact.name, 'Regina');
+                        assert.equal(contact.surname, 'Spektor');
+                    })
+                    .run();
+            });
+        });
+
+
+        describe("if they choose to continue after reading message", function() {
+            it("should ask them for number of boys at the school", function() {
+                return tester
+                    .setup.user.addr('097555')
+                    .inputs(
+                        'start',
+                        '5',  // initial_state_zonal_head
+                        '1'  // manage_update_school_data
+                    )
+                    .check.interaction({
+                        state: 'reg_school_boys',
+                        reply: "How many boys do you have in your school?"
+                    })
+                    .run();
+            });
         });
 
     });
