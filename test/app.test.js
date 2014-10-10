@@ -83,7 +83,7 @@ describe("app", function() {
 
 // uu = unregistered user
 
-describe.skip("when an unregistered user logs on", function() {
+describe("when an unregistered user logs on", function() {
 
     describe("when uu starts a session", function() {
         it("should ask them want they want to do", function() {
@@ -1528,7 +1528,7 @@ describe("when a registered user logs on", function() {
     // TEACHER PERFORMANCE MONITORING
     // ------------------------------
 
-    describe.skip("when the user chooses to report on teacher performance", function() {
+    describe("when the user chooses to report on teacher performance", function() {
         describe("if the user is a district official", function() {
             it("should ask for an emis code", function() {
                 return tester
@@ -2612,7 +2612,7 @@ describe("when a registered user logs on", function() {
     // LEARNER PERFORMANCE MONITORING
     // ------------------------------
 
-    describe.skip("when the user chooses to report on learner performance", function() {
+    describe("when the user chooses to report on learner performance", function() {
 
         describe("if the user is a district official", function() {
             it("should ask for an emis code", function() {
@@ -3947,7 +3947,7 @@ describe("when a registered user logs on", function() {
     // SCHOOL MONITORING
     // -----------------
 
-    describe.only("when the user chooses to report on school monitoring", function() {
+    describe("when the user chooses to report on school monitoring", function() {
         describe("if the user is a zonal head", function() {
             it("should ask for emis number", function() {
                 return tester
@@ -4789,7 +4789,7 @@ describe("when a registered user logs on", function() {
     // CHANGE SCHOOL
     // -------------
 
-    describe.skip("when user chooses to change their school", function() {
+    describe("when user chooses to change their school", function() {
         it("should ask them for their school's EMIS number", function() {
             return tester
                 .setup.user.addr('097555')
@@ -4996,7 +4996,7 @@ describe("when a registered user logs on", function() {
     // UPDATE SCHOOL DATA
     // ------------------
 
-    describe.skip("when user chooses to update their school data", function() {
+    describe("when user chooses to update their school data", function() {
         it("should give instruction, ask to continue", function() {
             return tester
                 .setup.user.addr('097555')
