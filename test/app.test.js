@@ -4005,7 +4005,7 @@ describe("when a registered user logs on", function() {
             });
 
             describe("if the emis validates", function() {
-                it("should ask if they saw the School LPIP", function() {
+                it("should prompt about completing the visit, ask to continue or exit", function() {
                     return tester
                         .setup.user.addr('097555')  // zonal head
                         .inputs(
@@ -4014,14 +4014,12 @@ describe("when a registered user logs on", function() {
                             '4342'  // add_emis_school_monitoring
                         )
                         .check.interaction({
-                            state: 'monitor_school_see_lpip',
+                            state: 'monitor_school_visit_complete',
                             reply: [
                                 "Please complete the following questions after the visit is " +
-                                "complete. Did you see the School Learner Performance " +
-                                "Improvement Plan for this year?",
-                                "1. YES - completed",
-                                "2. YES - in progress",
-                                "3. NO"
+                                "complete.",
+                                "1. Continue",
+                                "2. Exit"
                             ].join('\n')
                         })
                         .run();
@@ -4044,6 +4042,30 @@ describe("when a registered user logs on", function() {
             });
         });
 
+        describe("if they choose 1. Continue after complete visit prompt", function() {
+            it("should ask if they saw the School LPIP", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3',  // initial_state_zonal_head
+                        '4342',  // add_emis_school_monitoring
+                        '1'  // monitor_school_visit_complete
+                    )
+                    .check.interaction({
+                        state: 'monitor_school_see_lpip',
+                        reply: [
+                            "Did you see the School Learner Performance Improvement Plan for " +
+                            "this year?",
+                            "1. YES - completed",
+                            "2. YES - in progress",
+                            "3. NO"
+                        ].join('\n')
+                    })
+                    .run();
+            });
+        });
+
         describe("if they answer YES to seeing the School LPIP", function() {
             it("should ask about activity for improving teaching", function() {
                 return tester
@@ -4052,6 +4074,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '1'  // monitor_school_see_lpip
                     )
                     .check.interaction({
@@ -4076,6 +4099,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '3'  // monitor_school_see_lpip
                     )
                     .check.interaction({
@@ -4100,6 +4124,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '1',  // monitor_school_see_lpip
                         '3'  // monitor_school_teaching
                     )
@@ -4124,6 +4149,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '1',  // monitor_school_see_lpip
                         '3',  // monitor_school_teaching
                         '2'  // monitor_school_learner_assessment
@@ -4150,6 +4176,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '1',  // monitor_school_see_lpip
                         '3',  // monitor_school_teaching
                         '2',  // monitor_school_learner_assessment
@@ -4176,6 +4203,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '1',  // monitor_school_see_lpip
                         '3',  // monitor_school_teaching
                         '2',  // monitor_school_learner_assessment
@@ -4204,6 +4232,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '1',  // monitor_school_see_lpip
                         '3',  // monitor_school_teaching
                         '2',  // monitor_school_learner_assessment
@@ -4233,6 +4262,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '1',  // monitor_school_see_lpip
                         '3',  // monitor_school_teaching
                         '2',  // monitor_school_learner_assessment
@@ -4263,6 +4293,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '1',  // monitor_school_see_lpip
                         '3',  // monitor_school_teaching
                         '2',  // monitor_school_learner_assessment
@@ -4293,6 +4324,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '3',  // monitor_school_see_lpip
                         '3'  // monitor_school_g2_observation_results
                     )
@@ -4318,6 +4350,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '1',  // monitor_school_see_lpip
                         '3',  // monitor_school_teaching
                         '2',  // monitor_school_learner_assessment
@@ -4350,6 +4383,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '1',  // monitor_school_see_lpip
                         '3',  // monitor_school_teaching
                         '2',  // monitor_school_learner_assessment
@@ -4383,6 +4417,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '1',  // monitor_school_see_lpip
                         '3',  // monitor_school_teaching q01
                         '2',  // monitor_school_learner_assessment q02
@@ -4415,6 +4450,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '3',  // monitor_school_see_lpip
                         '3',  // monitor_school_g2_observation_results
                         '3'  // monitor_school_gala_sheets
@@ -4442,6 +4478,7 @@ describe("when a registered user logs on", function() {
                             'start',
                             '3',  // initial_state_zonal_head
                             '4342',  // add_emis_school_monitoring
+                            '1',  // monitor_school_visit_complete
                             '3',  // monitor_school_see_lpip
                             '3',  // monitor_school_g2_observation_results
                             '3',  // monitor_school_gala_sheets
@@ -4470,6 +4507,7 @@ describe("when a registered user logs on", function() {
                             'start',
                             '3',  // initial_state_zonal_head
                             '4342',  // add_emis_school_monitoring
+                            '1',  // monitor_school_visit_complete
                             '3',  // monitor_school_see_lpip
                             '3',  // monitor_school_g2_observation_results
                             '3',  // monitor_school_gala_sheets
@@ -4492,6 +4530,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '1',  // monitor_school_see_lpip
                         '3',  // monitor_school_teaching q01
                         '2',  // monitor_school_learner_assessment q02
@@ -4526,6 +4565,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '1',  // monitor_school_see_lpip
                         '3',  // monitor_school_teaching q01
                         '2',  // monitor_school_learner_assessment q02
@@ -4561,6 +4601,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '1',  // monitor_school_see_lpip
                         '3',  // monitor_school_teaching q01
                         '2',  // monitor_school_learner_assessment q02
@@ -4597,6 +4638,7 @@ describe("when a registered user logs on", function() {
                         'start',
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
+                        '1',  // monitor_school_visit_complete
                         '1',  // monitor_school_see_lpip
                         '3',  // monitor_school_teaching q01
                         '2',  // monitor_school_learner_assessment q02
@@ -4636,6 +4678,7 @@ describe("when a registered user logs on", function() {
                             'start',
                             '3',  // initial_state_zonal_head
                             '4342',  // add_emis_school_monitoring
+                            '1',  // monitor_school_visit_complete
                             '1',  // monitor_school_see_lpip
                             '3',  // monitor_school_teaching q01
                             '2',  // monitor_school_learner_assessment q02
@@ -4671,6 +4714,7 @@ describe("when a registered user logs on", function() {
                             'start',
                             '3',  // initial_state_zonal_head
                             '4342',  // add_emis_school_monitoring
+                            '1',  // monitor_school_visit_complete
                             '1',  // monitor_school_see_lpip
                             '3',  // monitor_school_teaching q01
                             '2',  // monitor_school_learner_assessment q02
@@ -4711,6 +4755,7 @@ describe("when a registered user logs on", function() {
                             'start',
                             '3',  // initial_state_zonal_head
                             '4342',  // add_emis_school_monitoring
+                            '1',  // monitor_school_visit_complete
                             '1',  // monitor_school_see_lpip
                             '3',  // monitor_school_teaching q01
                             '2',  // monitor_school_learner_assessment q02
