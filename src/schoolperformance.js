@@ -29,18 +29,33 @@ go.sp = function() {
                     return im.contacts
                         .save(contact)
                         .then(function() {
-                            return "monitor_school_see_lpip";
+                            return "monitor_school_visit_complete";
                         });
                 }
 
             });
         },
 
+        monitor_school_visit_complete: function(name, $) {
+            return new ChoiceState(name, {
+                question:
+                    $("Please complete the following questions after the visit is complete."),
+
+                choices: [
+                    new Choice('monitor_school_see_lpip', $("Continue")),
+                    new Choice('end_state', $("Exit"))
+                ],
+
+                next: function(choice) {
+                    return choice.value;
+                }
+            });
+        },
+
         monitor_school_see_lpip: function(name, $) {
             return new ChoiceState(name, {
                 question:
-                    $("Please complete the following questions after the visit is complete. " +
-                    "Did you see the School Learner Performance Improvement Plan for this year?"),
+                    $("Did you see the School Learner Performance Improvement Plan for this year?"),
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
@@ -230,7 +245,7 @@ go.sp = function() {
                         var emis = contact.extra.school_monitoring_emis;
                         var school_monitoring_data = go.utils.school_monitoring_data_collect(emis, im);
                         return go.utils
-                            .cms_post("school_monitoring/", school_monitoring_data, im)
+                            .cms_post("data/school_monitoring/", school_monitoring_data, im)
                             .then(function(result) {
                                 contact.extra.school_monitoring_emis = "";
                                 return im.contacts
@@ -309,13 +324,13 @@ go.sp = function() {
                     var emis = contact.extra.school_monitoring_emis;
                     var school_monitoring_data = go.utils.school_monitoring_data_collect(emis, im);
                     return go.utils
-                        .cms_post("school_monitoring/", school_monitoring_data, im)
+                        .cms_post("data/school_monitoring/", school_monitoring_data, im)
                         .then(function(result) {
                             contact.extra.school_monitoring_emis = "";
                             return im.contacts
                                 .save(contact)
                                 .then(function() {
-                                    return 'monitor_school_falling_behind';
+                                    return 'monitor_school_completed';
                                 });
                         });
                 }

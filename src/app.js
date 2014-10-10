@@ -830,6 +830,10 @@ go.app = function() {
                                                         self.im);
         });
 
+        self.states.add('monitor_school_visit_complete', function(name) {
+            return go.sp.monitor_school_visit_complete(name, $);
+        });
+
         self.states.add('monitor_school_see_lpip', function(name) {
             return go.sp.monitor_school_see_lpip(name, $);
         });
