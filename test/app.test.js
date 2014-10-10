@@ -3724,20 +3724,40 @@ describe("when a registered user logs on", function() {
     // -----------------
 
     describe.only("when the user chooses to report on school monitoring", function() {
-        it("should ask for emis number", function() {
-            return tester
-                .setup.user.addr('097555')  // zonal head
-                .inputs(
-                    'start',
-                    '3'  // initial_state_zonal_head
-                )
-                .check.interaction({
-                    state: 'add_emis_school_monitoring',
-                    reply:
-                        "Please enter the school's EMIS number that you would " +
-                        "like to report on. This should have 4-6 digits e.g 4351."
-                })
-                .run();
+        describe("if the user is a zonal head", function() {
+            it("should ask for emis number", function() {
+                return tester
+                    .setup.user.addr('097555')  // zonal head
+                    .inputs(
+                        'start',
+                        '3'  // initial_state_zonal_head
+                    )
+                    .check.interaction({
+                        state: 'add_emis_school_monitoring',
+                        reply:
+                            "Please enter the school's EMIS number that you would " +
+                            "like to report on. This should have 4-6 digits e.g 4351."
+                    })
+                    .run();
+            });
+        });
+
+        describe("if the user is a district official", function() {
+            it("should ask for emis number", function() {
+                return tester
+                    .setup.user.addr('097444')  // zonal head
+                    .inputs(
+                        'start',
+                        '3'  // initial_state_district_official
+                    )
+                    .check.interaction({
+                        state: 'add_emis_school_monitoring',
+                        reply:
+                            "Please enter the school's EMIS number that you would " +
+                            "like to report on. This should have 4-6 digits e.g 4351."
+                    })
+                    .run();
+            });
         });
 
         describe("after entering an emis number", function() {
@@ -3813,8 +3833,8 @@ describe("when a registered user logs on", function() {
                     .check.interaction({
                         state: 'monitor_school_teaching',
                         reply: [
-                            "Please indicate the status of key LPIP activities: Is there an " +
-                            "activity for improving the teaching of early grade reading?",
+                            "Please indicate the following: Is there an activity in the LPIP for " +
+                            "improving the teaching of early grade reading?",
                             "1. YES - completed",
                             "2. YES - in progress",
                             "3. NO"
@@ -4218,7 +4238,7 @@ describe("when a registered user logs on", function() {
                 });
             });
 
-            describe("if the chooses to exit", function() {
+            describe("if the user chooses to exit", function() {
                 it("should thank them and exit", function() {
                     return tester
                         .setup.user.addr('097555')  // zonal head
@@ -4239,7 +4259,6 @@ describe("when a registered user logs on", function() {
                 });
             });
         });
-
 
         describe("after answering summary worksheet", function() {
             it("should ask about receiving feedback on literacy assessment", function() {
