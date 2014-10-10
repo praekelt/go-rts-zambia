@@ -42,6 +42,7 @@ go.utils = {
 
     cms_update_school_and_contact: function(result, im, contact) {
         var headteacher_id = result.data.id;
+        var headteacher_is_zonal_head = result.data.is_zonal_head;
         var emis = result.data.emis.emis;
         var school_data = go.utils.registration_data_school_collect(im);
         school_data.created_by = "/api/v1/data/headteacher/" + headteacher_id + "/";
@@ -51,13 +52,13 @@ go.utils = {
             .then(function(result) {
                 contact.extra.rts_id = headteacher_id.toString();
                 contact.extra.rts_emis = emis.toString();
+                contact.extra.is_zonal_head = headteacher_is_zonal_head.toString();
                 contact.extra.registration_origin = "";
                 if (contact.name === null || _.isUndefined(contact.name)) {
-                    // only applicable if name has not been saved before
+                    // only applicable if name has not been saved before i.e. during registration
                     contact.name = im.user.answers.reg_first_name;
                     contact.surname = im.user.answers.reg_surname;
                 }
-
                 return im.contacts.save(contact);
             });
     },
@@ -299,6 +300,27 @@ go.utils = {
         };
 
         return data;
+    },
+
+    school_monitoring_data_collect: function(emis, im) {
+        var fields = ["see_lpip", "teaching", "learner_assessment", "learning_materials",
+                        "learner_attendance", "reading_time", "struggling_learners",
+                        "g2_observation_results", "ht_feedback", "submitted_classroom",
+                        "gala_sheets", "summary_worksheet", "feedback_literacy",
+                        "submitted_gala", "talking_wall"];
+        var data = {};
+
+        for (var field in fields) {
+            var field_name = fields[field];
+            var state_name = "monitor_school_" + field_name;
+            if (!_.isUndefined(im.user.answers[state_name])) {
+                data[field_name] = im.user.answers[state_name];
+            }
+        }
+
+        data.emis = "/api/v1/school/emis/" + emis + "/";
+
+        return data;
     }
 
 };
@@ -333,6 +355,10 @@ go.app = function() {
             if (_.isUndefined(self.contact.extra.rts_id)) {
                 // user is unregistered if doesn't have rts_id
                 return self.states.create('initial_state_unregistered');
+            } else if (_.isUndefined(self.contact.extra.rts_official_district_id)
+                        && (self.contact.extra.is_zonal_head === 'true')) {
+                // is a head teacher and a zonal head
+                return self.states.create('initial_state_zonal_head');
             } else if (_.isUndefined(self.contact.extra.rts_official_district_id)) {
                 // registered user is head teacher if doesn't have district_id
                 return self.states.create('initial_state_head_teacher');
@@ -374,10 +400,38 @@ go.app = function() {
                 choices: [
                     new Choice("add_emis_perf_teacher_ts_number", $("Report on teacher performance.")),
                     new Choice("add_emis_perf_learner_boys_total", $("Report on learner performance.")),
+                    new Choice("add_emis_school_monitoring", $("Report on a school monitoring visit."))
                 ],
 
                 next: function(choice) {
                     return choice.value;
+                }
+            });
+        });
+
+        self.states.add('initial_state_zonal_head', function(name) {
+            return new ChoiceState(name, {
+                question: $('Welcome to Zambia School Gateway!'),
+
+                choices: [
+                    new Choice("perf_teacher_ts_number", $("Report on teachers")),
+                    new Choice("perf_learner_boys_total", $("Report on learners")),
+                    new Choice("add_emis_school_monitoring", $("Report on school monitoring visit")),
+                    new Choice("manage_change_emis", $("Change my school")),
+                    new Choice("manage_update_school_data", $("Update my school data"))
+                ],
+
+                next: function(choice) {
+                    if (choice.value === "manage_change_emis") {
+                        return {
+                            name: choice.value,
+                            creator_opts: {
+                                retry: false
+                            }
+                        };
+                    } else {
+                        return choice.value;
+                    }
                 }
             });
         });
@@ -768,21 +822,85 @@ go.app = function() {
 
 
 
-        // SCHOOL PERFORMANCE STATES
+        // SCHOOL MONITORING STATES
         // --------------------------
 
-        self.states.add('state_sp_start', function(name) {
-            return go.sp.state_sp_start(name);
+        self.states.add('add_emis_school_monitoring', function(name) {
+            return go.sp.add_emis_school_monitoring(name, $, self.array_emis, self.contact,
+                                                        self.im);
         });
 
-        self.states.add('state_sp_next', function(name) {
-            return go.sp.state_sp_next(name);
+        self.states.add('monitor_school_visit_complete', function(name) {
+            return go.sp.monitor_school_visit_complete(name, $);
         });
 
-        self.states.add('state_sp_exit', function(name) {
-            return go.sp.state_sp_exit(name);
+        self.states.add('monitor_school_see_lpip', function(name) {
+            return go.sp.monitor_school_see_lpip(name, $);
         });
 
+        self.states.add('monitor_school_teaching', function(name) {
+            return go.sp.monitor_school_teaching(name, $);
+        });
+
+        self.states.add('monitor_school_learner_assessment', function(name) {
+            return go.sp.monitor_school_learner_assessment(name, $);
+        });
+
+        self.states.add('monitor_school_learning_materials', function(name) {
+            return go.sp.monitor_school_learning_materials(name, $);
+        });
+
+        self.states.add('monitor_school_learner_attendance', function(name) {
+            return go.sp.monitor_school_learner_attendance(name, $);
+        });
+
+        self.states.add('monitor_school_reading_time', function(name) {
+            return go.sp.monitor_school_reading_time(name, $);
+        });
+
+        self.states.add('monitor_school_struggling_learners', function(name) {
+            return go.sp.monitor_school_struggling_learners(name, $);
+        });
+
+        self.states.add('monitor_school_g2_observation_results', function(name) {
+            return go.sp.monitor_school_g2_observation_results(name, $);
+        });
+
+        self.states.add('monitor_school_ht_feedback', function(name) {
+            return go.sp.monitor_school_ht_feedback(name, $);
+        });
+
+        self.states.add('monitor_school_submitted_classroom', function(name) {
+            return go.sp.monitor_school_submitted_classroom(name, $);
+        });
+
+        self.states.add('monitor_school_gala_sheets', function(name) {
+            return go.sp.monitor_school_gala_sheets(name, $, self.im, self.contact);
+        });
+
+        self.states.add('monitor_school_summary_worksheet', function(name) {
+            return go.sp.monitor_school_summary_worksheet(name, $);
+        });
+
+        self.states.add('monitor_school_ht_feedback_literacy', function(name) {
+            return go.sp.monitor_school_ht_feedback_literacy(name, $);
+        });
+
+        self.states.add('monitor_school_submitted_gala', function(name) {
+            return go.sp.monitor_school_submitted_gala(name, $);
+        });
+
+        self.states.add('monitor_school_talking_wall', function(name) {
+            return go.sp.monitor_school_talking_wall(name, $, self.im, self.contact);
+        });
+
+        self.states.add('monitor_school_completed', function(name) {
+            return go.sp.monitor_school_completed(name, $);
+        });
+
+        self.states.add('monitor_school_falling_behind', function(name) {
+            return go.sp.monitor_school_falling_behind(name, $);
+        });
 
     });
 
