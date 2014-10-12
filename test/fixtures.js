@@ -955,6 +955,7 @@ module.exports = function() {
                 "see_lpip":"no",
                 "g2_observation_results":"no",
                 "gala_sheets":"no",
+                "created_by": "/api/v1/data/headteacher/555/",
                 "emis":"/api/v1/school/emis/4342/"
             }
         },
@@ -976,18 +977,19 @@ module.exports = function() {
             "data": {
                 "see_lpip":"yes",
                 "teaching":"no",
-                "learner_assessment":"yes_incomplete",
+                "learner_assessment":"yes_in_progress",
                 "learning_materials":"yes",
                 "learner_attendance":"no",
-                "reading_time":"yes_incomplete",
+                "reading_time":"yes_in_progress",
                 "struggling_learners":"yes",
-                "g2_observation_results":"yes_incomplete",
+                "g2_observation_results":"yes_in_progress",
                 "ht_feedback":"yes",
                 "submitted_classroom":"yes_paper",
                 "gala_sheets":"yes",
                 "summary_worksheet":"no",
                 "submitted_gala":"no",
-                "talking_wall":"yes_incomplete",
+                "talking_wall":"yes_not_updated",
+                "created_by": "/api/v1/data/headteacher/555/",
                 "emis":"/api/v1/school/emis/4342/"
             }
         },
