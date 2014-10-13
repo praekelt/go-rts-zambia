@@ -1677,6 +1677,7 @@ go.tp = function() {
 
 go.sp = function() {
     var vumigo = require('vumigo_v02');
+    var _ = require('lodash');
     var ChoiceState = vumigo.states.ChoiceState;
     var FreeText = vumigo.states.FreeText;
     var Choice = vumigo.states.Choice;
@@ -1736,7 +1737,7 @@ go.sp = function() {
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
-                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('yes_in_progress', $("YES - in progress")),
                     new Choice('no', $("NO"))
                 ],
 
@@ -1759,7 +1760,7 @@ go.sp = function() {
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
-                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('yes_in_progress', $("YES - in progress")),
                     new Choice('no', $("NO"))
                 ],
 
@@ -1775,7 +1776,7 @@ go.sp = function() {
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
-                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('yes_in_progress', $("YES - in progress")),
                     new Choice('no', $("NO"))
                 ],
 
@@ -1791,7 +1792,7 @@ go.sp = function() {
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
-                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('yes_in_progress', $("YES - in progress")),
                     new Choice('no', $("NO"))
                 ],
 
@@ -1807,7 +1808,7 @@ go.sp = function() {
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
-                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('yes_in_progress', $("YES - in progress")),
                     new Choice('no', $("NO"))
                 ],
 
@@ -1824,7 +1825,7 @@ go.sp = function() {
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
-                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('yes_in_progress', $("YES - in progress")),
                     new Choice('no', $("NO"))
                 ],
 
@@ -1841,7 +1842,7 @@ go.sp = function() {
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
-                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('yes_in_progress', $("YES - in progress")),
                     new Choice('no', $("NO"))
                 ],
 
@@ -1858,7 +1859,7 @@ go.sp = function() {
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
-                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('yes_in_progress', $("YES - in progress")),
                     new Choice('no', $("NO"))
                 ],
 
@@ -1913,14 +1914,24 @@ go.sp = function() {
 
                 choices: [
                     new Choice('yes', $("YES - completed")),
-                    new Choice('yes_incomplete', $("YES - in progress")),
+                    new Choice('yes_in_progress', $("YES - in progress")),
                     new Choice('no', $("NO"))
                 ],
 
                 next: function(choice) {
                     if(choice.value === 'no') {
                         var emis = contact.extra.school_monitoring_emis;
+                        var id = contact.extra.rts_id;
                         var school_monitoring_data = go.utils.school_monitoring_data_collect(emis, im);
+
+                        if (_.isUndefined(contact.extra.rts_official_district_id)) {
+                            // is head teacher
+                            school_monitoring_data.created_by = "/api/v1/data/headteacher/" + id + "/";
+                        } else {
+                            // is district admin
+                            school_monitoring_data.created_by_da = "/api/v1/district_admin/" + id + "/";
+                        }
+
                         return go.utils
                             .cms_post("data/school_monitoring/", school_monitoring_data, im)
                             .then(function(result) {
@@ -1993,13 +2004,23 @@ go.sp = function() {
 
                 choices: [
                     new Choice('yes', $("YES")),
-                    new Choice('yes_incomplete', $("YES but not updated")),
+                    new Choice('yes_not_updated', $("YES but not updated")),
                     new Choice('no', $("NO"))
                 ],
 
                 next: function(choice) {
                     var emis = contact.extra.school_monitoring_emis;
+                    var id = contact.extra.rts_id;
                     var school_monitoring_data = go.utils.school_monitoring_data_collect(emis, im);
+
+                    if (_.isUndefined(contact.extra.rts_official_district_id)) {
+                        // is head teacher
+                        school_monitoring_data.created_by = "/api/v1/data/headteacher/" + id + "/";
+                    } else {
+                        // is district admin
+                        school_monitoring_data.created_by_da = "/api/v1/district_admin/" + id + "/";
+                    }
+
                     return go.utils
                         .cms_post("data/school_monitoring/", school_monitoring_data, im)
                         .then(function(result) {
