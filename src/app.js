@@ -399,6 +399,23 @@ go.app = function() {
                         'sum.learner_performance_reports.total'
                     )
 
+                // Teacher performance reports
+                    // Total teacher performance reports added via USSD
+                    .add.total_state_actions(
+                        {
+                            state: 'perf_teacher_reading_total',
+                            action: 'exit'
+                        },
+                        'sum.teacher_performance_reports.ussd'
+                    )
+                    // Total teacher performance reports added (USSD + Django)
+                    .add.total_state_actions(
+                        {
+                            state: 'perf_teacher_reading_total',
+                            action: 'exit'
+                        },
+                        'sum.teacher_performance_reports.total'
+                    )
             ;
 
             self.env = self.im.config.env;
