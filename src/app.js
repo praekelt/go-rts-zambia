@@ -1,6 +1,7 @@
 var vumigo = require('vumigo_v02');
 var moment = require('moment');
 var _ = require('lodash');
+var MetricsHelper = require('go-jsbox-metrics-helper');
 var ChoiceState = vumigo.states.ChoiceState;
 var EndState = vumigo.states.EndState;
 var Choice = vumigo.states.Choice;
@@ -336,6 +337,32 @@ go.app = function() {
         var $ = self.$;
 
         self.init = function() {
+
+            // Use the metrics helper to add the required metrics
+            mh = new MetricsHelper(self.im);
+            mh
+                // Total unique users
+                .add.total_unique_users('sum.unique_users')
+                // Total and weekly USSD sessions
+                .add.total_sessions('sum.ussd_sessions')
+                // Total learner performance reports added via USSD
+                .add.total_state_actions(
+                    {
+                        state: 'perf_learner_girls_writing',
+                        action: 'exit'
+                    },
+                    'sum.learner_performance_reports.ussd'
+                )
+                // Total learner performance reports added (USSD + Django)
+                .add.total_state_actions(
+                    {
+                        state: 'perf_learner_girls_writing',
+                        action: 'exit'
+                    },
+                    'sum.learner_performance_reports.total'
+                )
+            ;
+
             self.env = self.im.config.env;
             self.districts = go.utils.cms_district_load(self.im);
             self.array_emis = go.utils.cms_emis_load(self.im);
