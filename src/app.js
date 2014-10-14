@@ -28,19 +28,6 @@ go.utils = {
             });
     },
 
-    // cms_emis_load: function(im) {
-    //     return go.utils
-    //         .cms_get("hierarchy/", im)
-    //         .then(function(result) {
-    //             console.log(result.data.objects);
-    //             var array_emis = [];
-    //             for (var i=0; i<result.data.objects.length; i++) {
-    //                 array_emis.push(result.data.objects[i].emis);
-    //             }
-    //             return array_emis;
-    //         });
-    // },
-
     cms_update_school_and_contact: function(result, im, contact) {
         var headteacher_id = result.data.id;
         var headteacher_is_zonal_head = result.data.is_zonal_head;
@@ -172,24 +159,20 @@ go.utils = {
 
     check_valid_emis: function(user_emis, im) {
         // returns false if fails to find
-        var numbers_only = new RegExp('^\\d+$');
-        if (numbers_only.test(user_emis)) {
-            return go.utils
-                .cms_get("hierarchy/", im)
-                .then(function(result) {
-                    // console.log(result.data.objects);
+         return go.utils
+            .cms_get("hierarchy/", im)
+            .then(function(result) {
+                var numbers_only = new RegExp('^\\d+$');
+                if (numbers_only.test(user_emis)) {
                     var array_of_emis = [];
                     for (var i=0; i<result.data.objects.length; i++) {
                         array_of_emis.push(result.data.objects[i].emis);
                     }
-                    // console.log(array_of_emis);
-                    // console.log(parseInt(user_emis, 10));
-                    // console.log(array_of_emis.indexOf(parseInt(user_emis, 10)) !== -1);
                     return array_of_emis.indexOf(parseInt(user_emis, 10)) !== -1;
-                });
-        } else {
-            return false;
-        }
+                } else {
+                    return false;
+                }
+            });
     },
 
     update_calculated_totals: function(opts, content) {
@@ -351,7 +334,6 @@ go.app = function() {
         self.init = function() {
             self.env = self.im.config.env;
             self.districts = go.utils.cms_district_load(self.im);
-            // self.array_emis = go.utils.cms_emis_load(self.im);
 
             return self.im.contacts
                 .for_user()

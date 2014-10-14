@@ -1549,11 +1549,11 @@ describe("when a registered user logs on", function() {
             describe("when the district official user enters an emis", function() {
 
                 describe("if the emis does not validate", function() {
-                    it.only("should ask for the emis again", function() {
+                    it("should ask for the emis again", function() {
                         return tester
                             .setup.user.addr('097444')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_district_official
                                 '5555555'  // add_emis_perf_teacher_ts_number
                             )
@@ -2634,7 +2634,7 @@ describe("when a registered user logs on", function() {
             describe("when the district official user enters an emis", function() {
 
                 describe("if the emis does not validate", function() {
-                    it.only("should ask for the emis again", function() {
+                    it("should ask for the emis again", function() {
                         return tester
                             .setup.user.addr('097444')
                             .inputs(

@@ -23,13 +23,25 @@ go.rht = function() {
                     "This should have 4-6 digits e.g. 4351."),
 
                 next: function(content) {
-                    if (go.utils.check_valid_emis(content, im)) {
-                        return "reg_emis_validates";
-                    } else if (opts.retry === false) {
-                        return "reg_emis_retry_exit";
-                    } else if (opts.retry === true) {
-                        return "reg_exit_emis";
-                    }
+                    return go.utils
+                        .check_valid_emis(content, im)
+                        .then(function(result) {
+                            if (result === true) {
+                                return "reg_emis_validates";
+                            } else if (opts.retry === false) {
+                                return "reg_emis_retry_exit";
+                            } else if (opts.retry === true) {
+                                return "reg_exit_emis";
+                            }
+                        });
+
+                    // if (go.utils.check_valid_emis(content, im)) {
+                    //     return "reg_emis_validates";
+                    // } else if (opts.retry === false) {
+                    //     return "reg_emis_retry_exit";
+                    // } else if (opts.retry === true) {
+                    //     return "reg_exit_emis";
+                    // }
                 }
             });
         },
@@ -500,27 +512,32 @@ go.cm = function() {
                             "registered with. This should have 4-6 digits e.g 4351."),
 
                 next: function(content) {
-                    if (go.utils.check_valid_emis(content, im)) {
-                        var emis = parseInt(content, 10);
-                        return go.utils
-                            .cms_get("data/headteacher/?emis__emis=" + emis, im)
-                            .then(function(result) {
-                                var parsed_result = JSON.parse(result.body);
-                                var headteacher_id = parsed_result.id;
-                                var data = {
-                                    msisdn: im.user.addr
-                                };
+                    return go.utils
+                        .check_valid_emis(content, im)
+                        .then(function(result) {
+                            if (result === true) {
+                                var emis = parseInt(content, 10);
                                 return go.utils
-                                    .cms_put("data/headteacher/" + headteacher_id + "/", data, im)
-                                    .then(function() {
-                                        return 'manage_change_msisdn_emis_validates';
+                                    .cms_get("data/headteacher/?emis__emis=" + emis, im)
+                                    .then(function(result) {
+                                        var parsed_result = JSON.parse(result.body);
+                                        var headteacher_id = parsed_result.id;
+                                        var data = {
+                                            msisdn: im.user.addr
+                                        };
+                                        return go.utils
+                                            .cms_put("data/headteacher/" + headteacher_id + "/", data, im)
+                                            .then(function() {
+                                                return 'manage_change_msisdn_emis_validates';
+                                            });
                                     });
-                            });
-                    } else if (opts.retry === false) {
-                        return "manage_change_msisdn_emis_retry_exit";
-                    } else if (opts.retry === true) {
-                        return "reg_exit_emis";
-                    }
+                            } else if (opts.retry === false) {
+                                return "manage_change_msisdn_emis_retry_exit";
+                            } else if (opts.retry === true) {
+                                return "reg_exit_emis";
+                            }
+                        });
+
                 }
             });
         },
@@ -567,18 +584,22 @@ go.cm = function() {
                             "digits e.g 4351."),
 
                 next: function(content) {
-                    if (go.utils.check_valid_emis(content, im)) {
-                        contact.extra.registration_origin = name;
-                        return im.contacts
-                            .save(contact)
-                            .then(function() {
-                                return "manage_change_emis_validates";
-                            });
-                    } else if (opts.retry === false) {
-                        return "manage_change_emis_retry_exit";
-                    } else if (opts.retry === true) {
-                        return "reg_exit_emis";
-                    }
+                    return go.utils
+                        .check_valid_emis(content, im)
+                        .then(function(result) {
+                            if (result === true) {
+                                contact.extra.registration_origin = name;
+                                return im.contacts
+                                    .save(contact)
+                                    .then(function() {
+                                        return "manage_change_emis_validates";
+                                    });
+                            } else if (opts.retry === false) {
+                                return "manage_change_emis_retry_exit";
+                            } else if (opts.retry === true) {
+                                return "reg_exit_emis";
+                            }
+                        });
                 }
             });
         },
@@ -675,9 +696,13 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if (go.utils.check_valid_emis(content, im) === false) {
-                        return error;
-                    }
+                    return go.utils
+                        .check_valid_emis(content, im)
+                        .then(function(result) {
+                            if (result === false) {
+                                return error;
+                            }
+                        });
                 },
 
                 next: function(content) {
@@ -1288,9 +1313,13 @@ go.tp = function() {
                 question: question,
 
                 check: function(content) {
-                    if (go.utils.check_valid_emis(content, im) === false) {
-                        return error;
-                    }
+                    return go.utils
+                        .check_valid_emis(content, im)
+                        .then(function(result) {
+                            if (result === false) {
+                                return error;
+                            }
+                        });
                 },
 
                 next: function(content) {
@@ -1697,9 +1726,13 @@ go.sp = function() {
                 question: question,
 
                 check: function(content) {
-                    if (go.utils.check_valid_emis(content, im) === false) {
-                        return error;
-                    }
+                    return go.utils
+                        .check_valid_emis(content, im)
+                        .then(function(result) {
+                            if (result === false) {
+                                return error;
+                            }
+                        });
                 },
 
                 next: function(content) {
@@ -2109,19 +2142,6 @@ go.utils = {
             });
     },
 
-    // cms_emis_load: function(im) {
-    //     return go.utils
-    //         .cms_get("hierarchy/", im)
-    //         .then(function(result) {
-    //             console.log(result.data.objects);
-    //             var array_emis = [];
-    //             for (var i=0; i<result.data.objects.length; i++) {
-    //                 array_emis.push(result.data.objects[i].emis);
-    //             }
-    //             return array_emis;
-    //         });
-    // },
-
     cms_update_school_and_contact: function(result, im, contact) {
         var headteacher_id = result.data.id;
         var headteacher_is_zonal_head = result.data.is_zonal_head;
@@ -2253,24 +2273,20 @@ go.utils = {
 
     check_valid_emis: function(user_emis, im) {
         // returns false if fails to find
-        var numbers_only = new RegExp('^\\d+$');
-        if (numbers_only.test(user_emis)) {
-            return go.utils
-                .cms_get("hierarchy/", im)
-                .then(function(result) {
-                    // console.log(result.data.objects);
+         return go.utils
+            .cms_get("hierarchy/", im)
+            .then(function(result) {
+                var numbers_only = new RegExp('^\\d+$');
+                if (numbers_only.test(user_emis)) {
                     var array_of_emis = [];
                     for (var i=0; i<result.data.objects.length; i++) {
                         array_of_emis.push(result.data.objects[i].emis);
                     }
-                    // console.log(array_of_emis);
-                    // console.log(parseInt(user_emis, 10));
-                    // console.log(array_of_emis.indexOf(parseInt(user_emis, 10)) !== -1);
                     return array_of_emis.indexOf(parseInt(user_emis, 10)) !== -1;
-                });
-        } else {
-            return false;
-        }
+                } else {
+                    return false;
+                }
+            });
     },
 
     update_calculated_totals: function(opts, content) {
@@ -2432,7 +2448,6 @@ go.app = function() {
         self.init = function() {
             self.env = self.im.config.env;
             self.districts = go.utils.cms_district_load(self.im);
-            // self.array_emis = go.utils.cms_emis_load(self.im);
 
             return self.im.contacts
                 .for_user()

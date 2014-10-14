@@ -33,27 +33,32 @@ go.cm = function() {
                             "registered with. This should have 4-6 digits e.g 4351."),
 
                 next: function(content) {
-                    if (go.utils.check_valid_emis(content, im)) {
-                        var emis = parseInt(content, 10);
-                        return go.utils
-                            .cms_get("data/headteacher/?emis__emis=" + emis, im)
-                            .then(function(result) {
-                                var parsed_result = JSON.parse(result.body);
-                                var headteacher_id = parsed_result.id;
-                                var data = {
-                                    msisdn: im.user.addr
-                                };
+                    return go.utils
+                        .check_valid_emis(content, im)
+                        .then(function(result) {
+                            if (result === true) {
+                                var emis = parseInt(content, 10);
                                 return go.utils
-                                    .cms_put("data/headteacher/" + headteacher_id + "/", data, im)
-                                    .then(function() {
-                                        return 'manage_change_msisdn_emis_validates';
+                                    .cms_get("data/headteacher/?emis__emis=" + emis, im)
+                                    .then(function(result) {
+                                        var parsed_result = JSON.parse(result.body);
+                                        var headteacher_id = parsed_result.id;
+                                        var data = {
+                                            msisdn: im.user.addr
+                                        };
+                                        return go.utils
+                                            .cms_put("data/headteacher/" + headteacher_id + "/", data, im)
+                                            .then(function() {
+                                                return 'manage_change_msisdn_emis_validates';
+                                            });
                                     });
-                            });
-                    } else if (opts.retry === false) {
-                        return "manage_change_msisdn_emis_retry_exit";
-                    } else if (opts.retry === true) {
-                        return "reg_exit_emis";
-                    }
+                            } else if (opts.retry === false) {
+                                return "manage_change_msisdn_emis_retry_exit";
+                            } else if (opts.retry === true) {
+                                return "reg_exit_emis";
+                            }
+                        });
+
                 }
             });
         },
@@ -100,18 +105,22 @@ go.cm = function() {
                             "digits e.g 4351."),
 
                 next: function(content) {
-                    if (go.utils.check_valid_emis(content, im)) {
-                        contact.extra.registration_origin = name;
-                        return im.contacts
-                            .save(contact)
-                            .then(function() {
-                                return "manage_change_emis_validates";
-                            });
-                    } else if (opts.retry === false) {
-                        return "manage_change_emis_retry_exit";
-                    } else if (opts.retry === true) {
-                        return "reg_exit_emis";
-                    }
+                    return go.utils
+                        .check_valid_emis(content, im)
+                        .then(function(result) {
+                            if (result === true) {
+                                contact.extra.registration_origin = name;
+                                return im.contacts
+                                    .save(contact)
+                                    .then(function() {
+                                        return "manage_change_emis_validates";
+                                    });
+                            } else if (opts.retry === false) {
+                                return "manage_change_emis_retry_exit";
+                            } else if (opts.retry === true) {
+                                return "reg_exit_emis";
+                            }
+                        });
                 }
             });
         },

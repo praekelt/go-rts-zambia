@@ -21,9 +21,13 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if (go.utils.check_valid_emis(content, im) === false) {
-                        return error;
-                    }
+                    return go.utils
+                        .check_valid_emis(content, im)
+                        .then(function(result) {
+                            if (result === false) {
+                                return error;
+                            }
+                        });
                 },
 
                 next: function(content) {

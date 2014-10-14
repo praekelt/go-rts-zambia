@@ -16,13 +16,17 @@ go.rht = function() {
                     "This should have 4-6 digits e.g. 4351."),
 
                 next: function(content) {
-                    if (go.utils.check_valid_emis(content, im)) {
-                        return "reg_emis_validates";
-                    } else if (opts.retry === false) {
-                        return "reg_emis_retry_exit";
-                    } else if (opts.retry === true) {
-                        return "reg_exit_emis";
-                    }
+                    return go.utils
+                        .check_valid_emis(content, im)
+                        .then(function(result) {
+                            if (result === true) {
+                                return "reg_emis_validates";
+                            } else if (opts.retry === false) {
+                                return "reg_emis_retry_exit";
+                            } else if (opts.retry === true) {
+                                return "reg_exit_emis";
+                            }
+                        });
                 }
             });
         },
