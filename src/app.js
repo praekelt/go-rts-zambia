@@ -14,19 +14,19 @@ go.utils = {
     // CMS INTERACTIONS
     // ----------------
 
-    cms_district_load: function(im) {
-        return go.utils
-            .cms_get("district/", im)
-            .then(function(result) {
-                var districts = result.data.objects;
-                districts.sort(
-                    function(a, b) {
-                        return ((a.name < b.name) ? -1 : ((a.name > b.name) ? 1 : 0));
-                    }
-                );
-                return districts;
-            });
-    },
+    // cms_district_load: function(im) {
+    //     return go.utils
+    //         .cms_get("district/", im)
+    //         .then(function(result) {
+    //             var districts = result.data.objects;
+    //             districts.sort(
+    //                 function(a, b) {
+    //                     return ((a.name < b.name) ? -1 : ((a.name > b.name) ? 1 : 0));
+    //                 }
+    //             );
+    //             return districts;
+    //         });
+    // },
 
     cms_update_school_and_contact: function(result, im, contact) {
         var headteacher_id = result.data.id;
@@ -333,7 +333,7 @@ go.app = function() {
 
         self.init = function() {
             self.env = self.im.config.env;
-            self.districts = go.utils.cms_district_load(self.im);
+            // self.districts = go.utils.cms_district_load(self.im);
 
             return self.im.contacts
                 .for_user()
@@ -603,7 +603,7 @@ go.app = function() {
         // ---------------------------------
 
         self.states.add('reg_district_official', function(name) {
-            return go.rdo.reg_district_official(name, $, self.districts);
+            return go.rdo.reg_district_official(name, $, self.im);
         });
 
         self.states.add('reg_district_official_first_name', function(name) {

@@ -34,14 +34,6 @@ go.rht = function() {
                                 return "reg_exit_emis";
                             }
                         });
-
-                    // if (go.utils.check_valid_emis(content, im)) {
-                    //     return "reg_emis_validates";
-                    // } else if (opts.retry === false) {
-                    //     return "reg_emis_retry_exit";
-                    // } else if (opts.retry === true) {
-                    //     return "reg_exit_emis";
-                    // }
                 }
             });
         },
@@ -378,24 +370,34 @@ go.rdo = function() {
     var rdo = {
         // Registration of District Official States
 
-        reg_district_official: function(name, $, districts) {
+        reg_district_official: function(name, $, im) {
             var choices = [];
 
-            for (var i=0; i<districts.inspect().value.length; i++) {
-                var district = districts.inspect().value[i];
-                choices[i] = new Choice(district.id, district.name);
-            }
+            return go.utils
+                .cms_get("district/", im)
+                .then(function(result) {
+                    var districts = result.data.objects;
+                    districts.sort(
+                        function(a, b) {
+                            return ((a.name < b.name) ? -1 : ((a.name > b.name) ? 1 : 0));
+                        }
+                    );
+                    for (var i=0; i<districts.length; i++) {
+                        var district = districts[i];
+                        choices[i] = new Choice(district.id, district.name);
+                    }
 
-            return new PaginatedChoiceState(name, {
-                question: $("Please enter your district name."),
+                    return new PaginatedChoiceState(name, {
+                        question: $("Please enter your district name."),
 
-                choices: choices,
+                        choices: choices,
 
-                options_per_page: 8,
+                        options_per_page: 8,
 
-                next: 'reg_district_official_first_name'
-            });
+                        next: 'reg_district_official_first_name'
+                    });
 
+                });
         },
 
         reg_district_official_first_name: function(name, $) {
@@ -2128,20 +2130,6 @@ go.utils = {
     // CMS INTERACTIONS
     // ----------------
 
-    cms_district_load: function(im) {
-        return go.utils
-            .cms_get("district/", im)
-            .then(function(result) {
-                var districts = result.data.objects;
-                districts.sort(
-                    function(a, b) {
-                        return ((a.name < b.name) ? -1 : ((a.name > b.name) ? 1 : 0));
-                    }
-                );
-                return districts;
-            });
-    },
-
     cms_update_school_and_contact: function(result, im, contact) {
         var headteacher_id = result.data.id;
         var headteacher_is_zonal_head = result.data.is_zonal_head;
@@ -2447,7 +2435,6 @@ go.app = function() {
 
         self.init = function() {
             self.env = self.im.config.env;
-            self.districts = go.utils.cms_district_load(self.im);
 
             return self.im.contacts
                 .for_user()
@@ -2717,7 +2704,7 @@ go.app = function() {
         // ---------------------------------
 
         self.states.add('reg_district_official', function(name) {
-            return go.rdo.reg_district_official(name, $, self.districts);
+            return go.rdo.reg_district_official(name, $, self.im);
         });
 
         self.states.add('reg_district_official_first_name', function(name) {
