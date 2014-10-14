@@ -9,7 +9,7 @@ go.tp = function() {
     var tp = {
         // TeacherPerformance States
 
-        add_emis_perf_teacher_ts_number: function(name, $, array_emis, contact, im) {
+        add_emis_perf_teacher_ts_number: function(name, $, contact, im) {
             var error = $("The emis does not exist, please try again. " +
                         "This should have 4-6 digits e.g 4351.");
 
@@ -20,9 +20,13 @@ go.tp = function() {
                 question: question,
 
                 check: function(content) {
-                    if (go.utils.check_valid_emis(content, array_emis) === false) {
-                        return error;
-                    }
+                    return go.utils
+                        .check_valid_emis(content, im)
+                        .then(function(result) {
+                            if (result === false) {
+                                return error;
+                            }
+                        });
                 },
 
                 next: function(content) {

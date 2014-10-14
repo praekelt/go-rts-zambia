@@ -14,32 +14,6 @@ go.utils = {
     // CMS INTERACTIONS
     // ----------------
 
-    cms_district_load: function(im) {
-        return go.utils
-            .cms_get("district/", im)
-            .then(function(result) {
-                var districts = result.data.objects;
-                districts.sort(
-                    function(a, b) {
-                        return ((a.name < b.name) ? -1 : ((a.name > b.name) ? 1 : 0));
-                    }
-                );
-                return districts;
-            });
-    },
-
-    cms_emis_load: function(im) {
-        return go.utils
-            .cms_get("hierarchy/", im)
-            .then(function(result) {
-                var array_emis = [];
-                for (var i=0; i<result.data.objects.length; i++) {
-                    array_emis.push(result.data.objects[i].emis);
-                }
-                return array_emis;
-            });
-    },
-
     cms_update_school_and_contact: function(result, im, contact) {
         var headteacher_id = result.data.id;
         var headteacher_is_zonal_head = result.data.is_zonal_head;
@@ -169,14 +143,22 @@ go.utils = {
         }
     },
 
-    check_valid_emis: function(user_emis, array_emis) {
+    check_valid_emis: function(user_emis, im) {
         // returns false if fails to find
-        var numbers_only = new RegExp('^\\d+$');
-        if (numbers_only.test(user_emis)) {
-            return array_emis.inspect().value.indexOf(parseInt(user_emis, 10)) != -1;
-        } else {
-            return false;
-        }
+         return go.utils
+            .cms_get("hierarchy/", im)
+            .then(function(result) {
+                var numbers_only = new RegExp('^\\d+$');
+                if (numbers_only.test(user_emis)) {
+                    var array_of_emis = [];
+                    for (var i=0; i<result.data.objects.length; i++) {
+                        array_of_emis.push(result.data.objects[i].emis);
+                    }
+                    return array_of_emis.indexOf(parseInt(user_emis, 10)) !== -1;
+                } else {
+                    return false;
+                }
+            });
     },
 
     update_calculated_totals: function(opts, content) {
@@ -337,8 +319,6 @@ go.app = function() {
 
         self.init = function() {
             self.env = self.im.config.env;
-            self.districts = go.utils.cms_district_load(self.im);
-            self.array_emis = go.utils.cms_emis_load(self.im);
 
             return self.im.contacts
                 .for_user()
@@ -490,7 +470,7 @@ go.app = function() {
         });
 
         self.states.add('manage_change_msisdn_emis', function(name, opts) {
-            return go.cm.manage_change_msisdn_emis(name, $, self.array_emis, opts, self.im);
+            return go.cm.manage_change_msisdn_emis(name, $, opts, self.im);
         });
 
         self.states.add('manage_change_msisdn_emis_validates', function(name) {
@@ -502,7 +482,7 @@ go.app = function() {
         });
 
         self.states.add('manage_change_emis', function(name, opts) {
-            return go.cm.manage_change_emis(name, $, self.array_emis, opts, self.contact, self.im);
+            return go.cm.manage_change_emis(name, $, opts, self.contact, self.im);
         });
 
         self.states.add('manage_change_emis_validates', function(name) {
@@ -523,7 +503,7 @@ go.app = function() {
         // ----------------------------
 
         self.states.add('reg_emis', function(name, opts) {
-            return go.rht.reg_emis(name, $, self.array_emis, opts);
+            return go.rht.reg_emis(name, $, self.im, opts);
         });
 
         self.states.add('reg_emis_validates', function(name) {
@@ -608,7 +588,7 @@ go.app = function() {
         // ---------------------------------
 
         self.states.add('reg_district_official', function(name) {
-            return go.rdo.reg_district_official(name, $, self.districts);
+            return go.rdo.reg_district_official(name, $, self.im);
         });
 
         self.states.add('reg_district_official_first_name', function(name) {
@@ -637,8 +617,7 @@ go.app = function() {
         // --------------------------
 
         self.states.add('add_emis_perf_learner_boys_total', function(name) {
-            return go.lp.add_emis_perf_learner_boys_total(name, $, self.array_emis, self.contact,
-                                                            self.im);
+            return go.lp.add_emis_perf_learner_boys_total(name, $, self.contact, self.im);
         });
 
 
@@ -744,8 +723,7 @@ go.app = function() {
         // --------------------------
 
         self.states.add('add_emis_perf_teacher_ts_number', function(name) {
-            return go.tp.add_emis_perf_teacher_ts_number(name, $, self.array_emis, self.contact,
-                                                        self.im);
+            return go.tp.add_emis_perf_teacher_ts_number(name, $, self.contact, self.im);
         });
 
         self.states.add('perf_teacher_ts_number', function(name) {
@@ -826,7 +804,7 @@ go.app = function() {
         // --------------------------
 
         self.states.add('add_emis_school_monitoring', function(name) {
-            return go.sp.add_emis_school_monitoring(name, $, self.array_emis, self.contact,
+            return go.sp.add_emis_school_monitoring(name, $, self.contact,
                                                         self.im);
         });
 

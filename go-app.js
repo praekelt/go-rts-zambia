@@ -16,20 +16,24 @@ go.rht = function() {
     var rht = {
         // Registration of Head Teacher States
 
-        reg_emis: function(name, $, array_emis, opts) {
+        reg_emis: function(name, $, im, opts) {
             return new FreeText(name, {
                 question:
                     $("Please enter your school's EMIS number. " +
                     "This should have 4-6 digits e.g. 4351."),
 
                 next: function(content) {
-                    if (go.utils.check_valid_emis(content, array_emis)) {
-                        return "reg_emis_validates";
-                    } else if (opts.retry === false) {
-                        return "reg_emis_retry_exit";
-                    } else if (opts.retry === true) {
-                        return "reg_exit_emis";
-                    }
+                    return go.utils
+                        .check_valid_emis(content, im)
+                        .then(function(result) {
+                            if (result === true) {
+                                return "reg_emis_validates";
+                            } else if (opts.retry === false) {
+                                return "reg_emis_retry_exit";
+                            } else if (opts.retry === true) {
+                                return "reg_exit_emis";
+                            }
+                        });
                 }
             });
         },
@@ -366,24 +370,34 @@ go.rdo = function() {
     var rdo = {
         // Registration of District Official States
 
-        reg_district_official: function(name, $, districts) {
+        reg_district_official: function(name, $, im) {
             var choices = [];
 
-            for (var i=0; i<districts.inspect().value.length; i++) {
-                var district = districts.inspect().value[i];
-                choices[i] = new Choice(district.id, district.name);
-            }
+            return go.utils
+                .cms_get("district/", im)
+                .then(function(result) {
+                    var districts = result.data.objects;
+                    districts.sort(
+                        function(a, b) {
+                            return ((a.name < b.name) ? -1 : ((a.name > b.name) ? 1 : 0));
+                        }
+                    );
+                    for (var i=0; i<districts.length; i++) {
+                        var district = districts[i];
+                        choices[i] = new Choice(district.id, district.name);
+                    }
 
-            return new PaginatedChoiceState(name, {
-                question: $("Please enter your district name."),
+                    return new PaginatedChoiceState(name, {
+                        question: $("Please enter your district name."),
 
-                choices: choices,
+                        choices: choices,
 
-                options_per_page: 8,
+                        options_per_page: 8,
 
-                next: 'reg_district_official_first_name'
-            });
+                        next: 'reg_district_official_first_name'
+                    });
 
+                });
         },
 
         reg_district_official_first_name: function(name, $) {
@@ -494,33 +508,38 @@ go.cm = function() {
 
 
 
-        manage_change_msisdn_emis: function(name, $, array_emis, opts, im) {
+        manage_change_msisdn_emis: function(name, $, opts, im) {
             return new FreeText(name, {
                 question: $("Please enter the school's EMIS number that you are currently " +
                             "registered with. This should have 4-6 digits e.g 4351."),
 
                 next: function(content) {
-                    if (go.utils.check_valid_emis(content, array_emis)) {
-                        var emis = parseInt(content, 10);
-                        return go.utils
-                            .cms_get("data/headteacher/?emis__emis=" + emis, im)
-                            .then(function(result) {
-                                var parsed_result = JSON.parse(result.body);
-                                var headteacher_id = parsed_result.id;
-                                var data = {
-                                    msisdn: im.user.addr
-                                };
+                    return go.utils
+                        .check_valid_emis(content, im)
+                        .then(function(result) {
+                            if (result === true) {
+                                var emis = parseInt(content, 10);
                                 return go.utils
-                                    .cms_put("data/headteacher/" + headteacher_id + "/", data, im)
-                                    .then(function() {
-                                        return 'manage_change_msisdn_emis_validates';
+                                    .cms_get("data/headteacher/?emis__emis=" + emis, im)
+                                    .then(function(result) {
+                                        var parsed_result = JSON.parse(result.body);
+                                        var headteacher_id = parsed_result.id;
+                                        var data = {
+                                            msisdn: im.user.addr
+                                        };
+                                        return go.utils
+                                            .cms_put("data/headteacher/" + headteacher_id + "/", data, im)
+                                            .then(function() {
+                                                return 'manage_change_msisdn_emis_validates';
+                                            });
                                     });
-                            });
-                    } else if (opts.retry === false) {
-                        return "manage_change_msisdn_emis_retry_exit";
-                    } else if (opts.retry === true) {
-                        return "reg_exit_emis";
-                    }
+                            } else if (opts.retry === false) {
+                                return "manage_change_msisdn_emis_retry_exit";
+                            } else if (opts.retry === true) {
+                                return "reg_exit_emis";
+                            }
+                        });
+
                 }
             });
         },
@@ -561,24 +580,28 @@ go.cm = function() {
 
 
 
-        manage_change_emis: function(name, $, array_emis, opts, contact, im) {
+        manage_change_emis: function(name, $, opts, contact, im) {
             return new FreeText(name, {
                 question: $("Please enter your school's EMIS number. This should have 4-6 " +
                             "digits e.g 4351."),
 
                 next: function(content) {
-                    if (go.utils.check_valid_emis(content, array_emis)) {
-                        contact.extra.registration_origin = name;
-                        return im.contacts
-                            .save(contact)
-                            .then(function() {
-                                return "manage_change_emis_validates";
-                            });
-                    } else if (opts.retry === false) {
-                        return "manage_change_emis_retry_exit";
-                    } else if (opts.retry === true) {
-                        return "reg_exit_emis";
-                    }
+                    return go.utils
+                        .check_valid_emis(content, im)
+                        .then(function(result) {
+                            if (result === true) {
+                                contact.extra.registration_origin = name;
+                                return im.contacts
+                                    .save(contact)
+                                    .then(function() {
+                                        return "manage_change_emis_validates";
+                                    });
+                            } else if (opts.retry === false) {
+                                return "manage_change_emis_retry_exit";
+                            } else if (opts.retry === true) {
+                                return "reg_exit_emis";
+                            }
+                        });
                 }
             });
         },
@@ -664,7 +687,7 @@ go.lp = function() {
     var lp = {
         // LearnerPerformance States
 
-        add_emis_perf_learner_boys_total: function(name, $, array_emis, contact, im) {
+        add_emis_perf_learner_boys_total: function(name, $, contact, im) {
             var error = $("The emis does not exist, please try again. " +
                         "This should have 4-6 digits e.g 4351.");
 
@@ -675,9 +698,13 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if (go.utils.check_valid_emis(content, array_emis) === false) {
-                        return error;
-                    }
+                    return go.utils
+                        .check_valid_emis(content, im)
+                        .then(function(result) {
+                            if (result === false) {
+                                return error;
+                            }
+                        });
                 },
 
                 next: function(content) {
@@ -721,7 +748,7 @@ go.lp = function() {
 
         perf_learner_boys_calc_error: function(name, $, opts) {
             return new ChoiceState(name, {
-                question: 
+                question:
                     $("You've entered results for {{ current_sum }} boys ({{ sum_as_string }}), " +
                         "but you initially indicated {{ target_sum }} boys participants. Please " +
                         "try again.")
@@ -773,7 +800,7 @@ go.lp = function() {
         },
 
         perf_learner_boys_desirable: function(name, $, opts) {
-            var error = $("Please provide a valid number value for total boys achieving " + 
+            var error = $("Please provide a valid number value for total boys achieving " +
                         "between 12 and 15 out of 20.");
 
             var question = $("In total, how many boys achieved between 12 and 15 out of 20?");
@@ -806,7 +833,7 @@ go.lp = function() {
         },
 
         perf_learner_boys_minimum: function(name, $, opts) {
-            var error = $("Please provide a valid number value for total boys achieving " + 
+            var error = $("Please provide a valid number value for total boys achieving " +
                         "between 8 and 11 out of 20.");
 
             var question = $("In total, how many boys achieved between 8 and 11 out of 20?");
@@ -839,7 +866,7 @@ go.lp = function() {
         },
 
         perf_learner_boys_below_minimum: function(name, $, opts) {
-            var error = $("Please provide a valid number value for total boys achieving " + 
+            var error = $("Please provide a valid number value for total boys achieving " +
                         "between 0 and 7 out of 20.");
 
             var question = $("In total, how many boys achieved between 0 and 7 out of 20?");
@@ -900,7 +927,7 @@ go.lp = function() {
 
         perf_learner_girls_calc_error: function(name, $, opts) {
             return new ChoiceState(name, {
-                question: 
+                question:
                     $("You've entered results for {{ current_sum }} girls ({{ sum_as_string }}), " +
                         "but you initially indicated {{ target_sum }} girls participants. Please " +
                         "try again.")
@@ -952,7 +979,7 @@ go.lp = function() {
         },
 
         perf_learner_girls_desirable: function(name, $, opts) {
-            var error = $("Please provide a valid number value for total girls achieving " + 
+            var error = $("Please provide a valid number value for total girls achieving " +
                         "between 12 and 15 out of 20.");
 
             var question = $("In total, how many girls achieved between 12 and 15 out of 20?");
@@ -985,7 +1012,7 @@ go.lp = function() {
         },
 
         perf_learner_girls_minimum: function(name, $, opts) {
-            var error = $("Please provide a valid number value for total girls achieving " + 
+            var error = $("Please provide a valid number value for total girls achieving " +
                         "between 8 and 11 out of 20.");
 
             var question = $("In total, how many girls achieved between 8 and 11 out of 20?");
@@ -1018,7 +1045,7 @@ go.lp = function() {
         },
 
         perf_learner_girls_below_minimum: function(name, $, opts) {
-            var error = $("Please provide a valid number value for total girls achieving " + 
+            var error = $("Please provide a valid number value for total girls achieving " +
                         "between 0 and 7 out of 20.");
 
             var question = $("In total, how many girls achieved between 0 and 7 out of 20?");
@@ -1061,7 +1088,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || 
+                    if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(boys_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
@@ -1082,7 +1109,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || 
+                    if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(girls_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
@@ -1103,7 +1130,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || 
+                    if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(boys_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
@@ -1124,7 +1151,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || 
+                    if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(girls_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
@@ -1145,7 +1172,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || 
+                    if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(boys_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
@@ -1166,7 +1193,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || 
+                    if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(girls_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
@@ -1187,7 +1214,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || 
+                    if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(boys_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
@@ -1208,7 +1235,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || 
+                    if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(girls_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
@@ -1277,7 +1304,7 @@ go.tp = function() {
     var tp = {
         // TeacherPerformance States
 
-        add_emis_perf_teacher_ts_number: function(name, $, array_emis, contact, im) {
+        add_emis_perf_teacher_ts_number: function(name, $, contact, im) {
             var error = $("The emis does not exist, please try again. " +
                         "This should have 4-6 digits e.g 4351.");
 
@@ -1288,9 +1315,13 @@ go.tp = function() {
                 question: question,
 
                 check: function(content) {
-                    if (go.utils.check_valid_emis(content, array_emis) === false) {
-                        return error;
-                    }
+                    return go.utils
+                        .check_valid_emis(content, im)
+                        .then(function(result) {
+                            if (result === false) {
+                                return error;
+                            }
+                        });
                 },
 
                 next: function(content) {
@@ -1686,7 +1717,7 @@ go.sp = function() {
     var sp = {
         // School Monitoring States
 
-        add_emis_school_monitoring: function(name, $, array_emis, contact, im) {
+        add_emis_school_monitoring: function(name, $, contact, im) {
             var error = $("The emis does not exist, please try again. " +
                         "This should have 4-6 digits e.g 4351.");
 
@@ -1697,9 +1728,13 @@ go.sp = function() {
                 question: question,
 
                 check: function(content) {
-                    if (go.utils.check_valid_emis(content, array_emis) === false) {
-                        return error;
-                    }
+                    return go.utils
+                        .check_valid_emis(content, im)
+                        .then(function(result) {
+                            if (result === false) {
+                                return error;
+                            }
+                        });
                 },
 
                 next: function(content) {
@@ -2095,32 +2130,6 @@ go.utils = {
     // CMS INTERACTIONS
     // ----------------
 
-    cms_district_load: function(im) {
-        return go.utils
-            .cms_get("district/", im)
-            .then(function(result) {
-                var districts = result.data.objects;
-                districts.sort(
-                    function(a, b) {
-                        return ((a.name < b.name) ? -1 : ((a.name > b.name) ? 1 : 0));
-                    }
-                );
-                return districts;
-            });
-    },
-
-    cms_emis_load: function(im) {
-        return go.utils
-            .cms_get("hierarchy/", im)
-            .then(function(result) {
-                var array_emis = [];
-                for (var i=0; i<result.data.objects.length; i++) {
-                    array_emis.push(result.data.objects[i].emis);
-                }
-                return array_emis;
-            });
-    },
-
     cms_update_school_and_contact: function(result, im, contact) {
         var headteacher_id = result.data.id;
         var headteacher_is_zonal_head = result.data.is_zonal_head;
@@ -2250,14 +2259,22 @@ go.utils = {
         }
     },
 
-    check_valid_emis: function(user_emis, array_emis) {
+    check_valid_emis: function(user_emis, im) {
         // returns false if fails to find
-        var numbers_only = new RegExp('^\\d+$');
-        if (numbers_only.test(user_emis)) {
-            return array_emis.inspect().value.indexOf(parseInt(user_emis, 10)) != -1;
-        } else {
-            return false;
-        }
+         return go.utils
+            .cms_get("hierarchy/", im)
+            .then(function(result) {
+                var numbers_only = new RegExp('^\\d+$');
+                if (numbers_only.test(user_emis)) {
+                    var array_of_emis = [];
+                    for (var i=0; i<result.data.objects.length; i++) {
+                        array_of_emis.push(result.data.objects[i].emis);
+                    }
+                    return array_of_emis.indexOf(parseInt(user_emis, 10)) !== -1;
+                } else {
+                    return false;
+                }
+            });
     },
 
     update_calculated_totals: function(opts, content) {
@@ -2418,8 +2435,6 @@ go.app = function() {
 
         self.init = function() {
             self.env = self.im.config.env;
-            self.districts = go.utils.cms_district_load(self.im);
-            self.array_emis = go.utils.cms_emis_load(self.im);
 
             return self.im.contacts
                 .for_user()
@@ -2571,7 +2586,7 @@ go.app = function() {
         });
 
         self.states.add('manage_change_msisdn_emis', function(name, opts) {
-            return go.cm.manage_change_msisdn_emis(name, $, self.array_emis, opts, self.im);
+            return go.cm.manage_change_msisdn_emis(name, $, opts, self.im);
         });
 
         self.states.add('manage_change_msisdn_emis_validates', function(name) {
@@ -2583,7 +2598,7 @@ go.app = function() {
         });
 
         self.states.add('manage_change_emis', function(name, opts) {
-            return go.cm.manage_change_emis(name, $, self.array_emis, opts, self.contact, self.im);
+            return go.cm.manage_change_emis(name, $, opts, self.contact, self.im);
         });
 
         self.states.add('manage_change_emis_validates', function(name) {
@@ -2604,7 +2619,7 @@ go.app = function() {
         // ----------------------------
 
         self.states.add('reg_emis', function(name, opts) {
-            return go.rht.reg_emis(name, $, self.array_emis, opts);
+            return go.rht.reg_emis(name, $, self.im, opts);
         });
 
         self.states.add('reg_emis_validates', function(name) {
@@ -2689,7 +2704,7 @@ go.app = function() {
         // ---------------------------------
 
         self.states.add('reg_district_official', function(name) {
-            return go.rdo.reg_district_official(name, $, self.districts);
+            return go.rdo.reg_district_official(name, $, self.im);
         });
 
         self.states.add('reg_district_official_first_name', function(name) {
@@ -2718,8 +2733,7 @@ go.app = function() {
         // --------------------------
 
         self.states.add('add_emis_perf_learner_boys_total', function(name) {
-            return go.lp.add_emis_perf_learner_boys_total(name, $, self.array_emis, self.contact,
-                                                            self.im);
+            return go.lp.add_emis_perf_learner_boys_total(name, $, self.contact, self.im);
         });
 
 
@@ -2825,8 +2839,7 @@ go.app = function() {
         // --------------------------
 
         self.states.add('add_emis_perf_teacher_ts_number', function(name) {
-            return go.tp.add_emis_perf_teacher_ts_number(name, $, self.array_emis, self.contact,
-                                                        self.im);
+            return go.tp.add_emis_perf_teacher_ts_number(name, $, self.contact, self.im);
         });
 
         self.states.add('perf_teacher_ts_number', function(name) {
@@ -2907,7 +2920,7 @@ go.app = function() {
         // --------------------------
 
         self.states.add('add_emis_school_monitoring', function(name) {
-            return go.sp.add_emis_school_monitoring(name, $, self.array_emis, self.contact,
+            return go.sp.add_emis_school_monitoring(name, $, self.contact,
                                                         self.im);
         });
 

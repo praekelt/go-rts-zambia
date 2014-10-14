@@ -11,24 +11,34 @@ go.rdo = function() {
     var rdo = {
         // Registration of District Official States
 
-        reg_district_official: function(name, $, districts) {
+        reg_district_official: function(name, $, im) {
             var choices = [];
 
-            for (var i=0; i<districts.inspect().value.length; i++) {
-                var district = districts.inspect().value[i];
-                choices[i] = new Choice(district.id, district.name);
-            }
+            return go.utils
+                .cms_get("district/", im)
+                .then(function(result) {
+                    var districts = result.data.objects;
+                    districts.sort(
+                        function(a, b) {
+                            return ((a.name < b.name) ? -1 : ((a.name > b.name) ? 1 : 0));
+                        }
+                    );
+                    for (var i=0; i<districts.length; i++) {
+                        var district = districts[i];
+                        choices[i] = new Choice(district.id, district.name);
+                    }
 
-            return new PaginatedChoiceState(name, {
-                question: $("Please enter your district name."),
+                    return new PaginatedChoiceState(name, {
+                        question: $("Please enter your district name."),
 
-                choices: choices,
+                        choices: choices,
 
-                options_per_page: 8,
+                        options_per_page: 8,
 
-                next: 'reg_district_official_first_name'
-            });
+                        next: 'reg_district_official_first_name'
+                    });
 
+                });
         },
 
         reg_district_official_first_name: function(name, $) {

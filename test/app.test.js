@@ -1553,7 +1553,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097444')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_district_official
                                 '5555555'  // add_emis_perf_teacher_ts_number
                             )
