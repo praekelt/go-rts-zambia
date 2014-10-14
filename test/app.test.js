@@ -5221,6 +5221,60 @@ describe("test metric firing in various places", function() {
         });
     });
 
+    describe("when a district official finishes reporting on school monitoring", function() {
+        it.skip("should fire total school monitoring reports metrics for complete lpip", function() {
+            return tester
+                .setup.user.addr('097555')  // zonal head
+                .inputs(
+                    'start',
+                    '3',  // initial_state_zonal_head
+                    '4342',  // add_emis_school_monitoring
+                    '1',  // monitor_school_visit_complete
+                    '1',  // monitor_school_see_lpip
+                    '3',  // monitor_school_teaching q01
+                    '2',  // monitor_school_learner_assessment q02
+                    '1',  // monitor_school_learning_materials q03
+                    '3',  // monitor_school_learner_attendance q04
+                    '2',  // monitor_school_reading_time q05
+                    '1',  // monitor_school_struggling_learners q06
+                    '2',  // monitor_school_g2_observation_results q07
+                    '1',  // monitor_school_ht_feedback q08
+                    '2',  // monitor_school_submitted_classroom q09
+                    '1',  // monitor_school_gala_sheets q10
+                    '2',  // monitor_school_summary_worksheet q11
+                    '1',  // monitor_school_ht_feedback_literacy q12
+                    '3',  // monitor_school_submitted_gala q13
+                    '2'  // monitor_school_talking_wall q14
+                )
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['sum.school_monitoring_reports.ussd'].values, [1]);
+                    assert.deepEqual(metrics['sum.school_monitoring_reports.total'].values, [1]);
+                })
+                .run();
+        });
+
+        it.skip("should fire total school monitoring reports metrics for incomplete lpip", function() {
+            return tester
+                .setup.user.addr('097555')  // zonal head
+                .inputs(
+                    'start',
+                    '3',  // initial_state_zonal_head
+                    '4342',  // add_emis_school_monitoring
+                    '1',  // monitor_school_visit_complete
+                    '3',  // monitor_school_see_lpip
+                    '3',  // monitor_school_g2_observation_results
+                    '3'  // monitor_school_gala_sheets
+                )
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['sum.school_monitoring_reports.ussd'].values, [1]);
+                    assert.deepEqual(metrics['sum.school_monitoring_reports.total'].values, [1]);
+                })
+                .run();
+        });
+    });
+
 });
 
 

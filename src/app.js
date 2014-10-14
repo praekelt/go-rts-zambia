@@ -416,6 +416,41 @@ go.app = function() {
                         },
                         'sum.teacher_performance_reports.total'
                     )
+
+                // // School monitoring reports
+                //     // Total school monitoring reports added via USSD - good lpip
+                //     .add.total_state_actions(
+                //         {
+                //             state: 'monitor_school_talking_wall',
+                //             action: 'exit'
+                //         },
+                //         'sum.school_monitoring_reports.ussd'
+                //     )
+                //     // Total school monitoring reports added via USSD - poor lpip
+                //     .add.total_state_actions(
+                //         {
+                //             state: 'monitor_school_falling_behind',
+                //             action: 'enter'
+                //         },
+                //         'sum.school_monitoring_reports.ussd'
+                //     )
+                //     // Total school monitoring reports added (USSD + Django) - good lpip
+                //     .add.total_state_actions(
+                //         {
+                //             state: 'monitor_school_talking_wall',
+                //             action: 'exit'
+                //         },
+                //         'sum.school_monitoring_reports.total'
+                //     )
+                //     // Total school monitoring reports added (USSD + Django) - poor lpip
+                //     .add.total_state_actions(
+                //         {
+                //             state: 'monitor_school_falling_behind',
+                //             action: 'enter'
+                //         },
+                //         'sum.school_monitoring_reports.total'
+                //     )
+
             ;
 
             self.env = self.im.config.env;
