@@ -21,6 +21,7 @@ describe("app", function() {
                 .setup.config.app({
                     name: 'test_app',
                     env: 'test',
+                    metric_store: 'test_metric_store',
                     cms_api_root: 'http://qa/api/v1/',
                 })
                 .setup(function(api) {
@@ -32,6 +33,9 @@ describe("app", function() {
                         d.repeatable = true;
                         api.http.fixtures.add(d);
                     });
+                })
+                .setup(function(api) {
+                    api.metrics.stores = {'test_metric_store': {}};
                 })
                 .setup(function(api) {
                     // registered district official
@@ -5083,6 +5087,75 @@ describe("when a registered user logs on", function() {
     });
 
 });
+
+
+// METRICS
+// -------
+
+describe("test metric firing in various places", function() {
+
+    describe("when a registered user logs on", function() {
+        it("should increase the number of sessions metrics", function() {
+            return tester
+                .setup.user.addr('097444') // district official
+                .start()
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['sum.ussd_sessions'].values, [1]);
+                })
+                .run();
+        });
+
+        it("should increase the number of unique users", function() {
+            return tester
+                .setup.user.addr('097444') // district official
+                .start()
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['sum.unique_users'].values, [1]);
+                })
+                .run();
+        });
+    });
+
+    describe("when a district official finishes reporting on learner performance", function() {
+        it("should fire total learner performance reports", function() {
+            return tester
+                .setup.user.addr('097444')
+                .inputs(
+                    'start',
+                    '2',  // initial_state_district_official
+                    '0001',  // add_emis_perf_learner_boys_total
+                    '52', // perf_learner_boys_total
+                    '10',  // perf_learner_boys_outstanding
+                    '15',  // perf_learner_boys_desirable
+                    '20',  // perf_learner_boys_minimum
+                    '7',  // perf_learner_boys_below_minimum
+                    '49',  // perf_learner_girls_total
+                    '10',  // perf_learner_girls_outstanding
+                    '15',  // perf_learner_girls_desirable
+                    '20',  // perf_learner_girls_minimum
+                    '4',  // perf_learner_girls_below_minimum
+                    '31',  // perf_learner_boys_phonics
+                    '32',  // perf_learner_girls_phonics
+                    '33',  // perf_learner_boys_vocab
+                    '34',  // perf_learner_girls_vocab
+                    '35',  // perf_learner_boys_comprehension
+                    '36',  // perf_learner_girls_comprehension
+                    '37',  // perf_learner_boys_writing
+                    '38'  // perf_learner_girls_writing
+                )
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['sum.learner_performance_reports.ussd'].values, [1]);
+                    assert.deepEqual(metrics['sum.learner_performance_reports.total'].values, [1]);
+                })
+                .run();
+        });
+    });
+});
+
+
 
 
 // end broken indentation to save whitespace
