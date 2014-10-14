@@ -27,13 +27,13 @@ go.cm = function() {
 
 
 
-        manage_change_msisdn_emis: function(name, $, array_emis, opts, im) {
+        manage_change_msisdn_emis: function(name, $, opts, im) {
             return new FreeText(name, {
                 question: $("Please enter the school's EMIS number that you are currently " +
                             "registered with. This should have 4-6 digits e.g 4351."),
 
                 next: function(content) {
-                    if (go.utils.check_valid_emis(content, array_emis)) {
+                    if (go.utils.check_valid_emis(content, im)) {
                         var emis = parseInt(content, 10);
                         return go.utils
                             .cms_get("data/headteacher/?emis__emis=" + emis, im)
@@ -94,13 +94,13 @@ go.cm = function() {
 
 
 
-        manage_change_emis: function(name, $, array_emis, opts, contact, im) {
+        manage_change_emis: function(name, $, opts, contact, im) {
             return new FreeText(name, {
                 question: $("Please enter your school's EMIS number. This should have 4-6 " +
                             "digits e.g 4351."),
 
                 next: function(content) {
-                    if (go.utils.check_valid_emis(content, array_emis)) {
+                    if (go.utils.check_valid_emis(content, im)) {
                         contact.extra.registration_origin = name;
                         return im.contacts
                             .save(contact)

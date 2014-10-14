@@ -10,7 +10,7 @@ go.lp = function() {
     var lp = {
         // LearnerPerformance States
 
-        add_emis_perf_learner_boys_total: function(name, $, array_emis, contact, im) {
+        add_emis_perf_learner_boys_total: function(name, $, contact, im) {
             var error = $("The emis does not exist, please try again. " +
                         "This should have 4-6 digits e.g 4351.");
 
@@ -21,7 +21,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if (go.utils.check_valid_emis(content, array_emis) === false) {
+                    if (go.utils.check_valid_emis(content, im) === false) {
                         return error;
                     }
                 },
@@ -67,7 +67,7 @@ go.lp = function() {
 
         perf_learner_boys_calc_error: function(name, $, opts) {
             return new ChoiceState(name, {
-                question: 
+                question:
                     $("You've entered results for {{ current_sum }} boys ({{ sum_as_string }}), " +
                         "but you initially indicated {{ target_sum }} boys participants. Please " +
                         "try again.")
@@ -119,7 +119,7 @@ go.lp = function() {
         },
 
         perf_learner_boys_desirable: function(name, $, opts) {
-            var error = $("Please provide a valid number value for total boys achieving " + 
+            var error = $("Please provide a valid number value for total boys achieving " +
                         "between 12 and 15 out of 20.");
 
             var question = $("In total, how many boys achieved between 12 and 15 out of 20?");
@@ -152,7 +152,7 @@ go.lp = function() {
         },
 
         perf_learner_boys_minimum: function(name, $, opts) {
-            var error = $("Please provide a valid number value for total boys achieving " + 
+            var error = $("Please provide a valid number value for total boys achieving " +
                         "between 8 and 11 out of 20.");
 
             var question = $("In total, how many boys achieved between 8 and 11 out of 20?");
@@ -185,7 +185,7 @@ go.lp = function() {
         },
 
         perf_learner_boys_below_minimum: function(name, $, opts) {
-            var error = $("Please provide a valid number value for total boys achieving " + 
+            var error = $("Please provide a valid number value for total boys achieving " +
                         "between 0 and 7 out of 20.");
 
             var question = $("In total, how many boys achieved between 0 and 7 out of 20?");
@@ -246,7 +246,7 @@ go.lp = function() {
 
         perf_learner_girls_calc_error: function(name, $, opts) {
             return new ChoiceState(name, {
-                question: 
+                question:
                     $("You've entered results for {{ current_sum }} girls ({{ sum_as_string }}), " +
                         "but you initially indicated {{ target_sum }} girls participants. Please " +
                         "try again.")
@@ -298,7 +298,7 @@ go.lp = function() {
         },
 
         perf_learner_girls_desirable: function(name, $, opts) {
-            var error = $("Please provide a valid number value for total girls achieving " + 
+            var error = $("Please provide a valid number value for total girls achieving " +
                         "between 12 and 15 out of 20.");
 
             var question = $("In total, how many girls achieved between 12 and 15 out of 20?");
@@ -331,7 +331,7 @@ go.lp = function() {
         },
 
         perf_learner_girls_minimum: function(name, $, opts) {
-            var error = $("Please provide a valid number value for total girls achieving " + 
+            var error = $("Please provide a valid number value for total girls achieving " +
                         "between 8 and 11 out of 20.");
 
             var question = $("In total, how many girls achieved between 8 and 11 out of 20?");
@@ -364,7 +364,7 @@ go.lp = function() {
         },
 
         perf_learner_girls_below_minimum: function(name, $, opts) {
-            var error = $("Please provide a valid number value for total girls achieving " + 
+            var error = $("Please provide a valid number value for total girls achieving " +
                         "between 0 and 7 out of 20.");
 
             var question = $("In total, how many girls achieved between 0 and 7 out of 20?");
@@ -407,7 +407,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || 
+                    if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(boys_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
@@ -428,7 +428,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || 
+                    if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(girls_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
@@ -449,7 +449,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || 
+                    if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(boys_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
@@ -470,7 +470,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || 
+                    if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(girls_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
@@ -491,7 +491,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || 
+                    if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(boys_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
@@ -512,7 +512,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || 
+                    if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(girls_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
@@ -533,7 +533,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || 
+                    if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(boys_total, 10) < parseInt(content, 10))) {
                         return error;
                     }
@@ -554,7 +554,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
-                    if ((go.utils.check_valid_number(content) === false) || 
+                    if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(girls_total, 10) < parseInt(content, 10))) {
                         return error;
                     }

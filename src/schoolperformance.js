@@ -9,7 +9,7 @@ go.sp = function() {
     var sp = {
         // School Monitoring States
 
-        add_emis_school_monitoring: function(name, $, array_emis, contact, im) {
+        add_emis_school_monitoring: function(name, $, contact, im) {
             var error = $("The emis does not exist, please try again. " +
                         "This should have 4-6 digits e.g 4351.");
 
@@ -20,7 +20,7 @@ go.sp = function() {
                 question: question,
 
                 check: function(content) {
-                    if (go.utils.check_valid_emis(content, array_emis) === false) {
+                    if (go.utils.check_valid_emis(content, im) === false) {
                         return error;
                     }
                 },

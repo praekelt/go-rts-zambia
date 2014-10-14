@@ -9,14 +9,14 @@ go.rht = function() {
     var rht = {
         // Registration of Head Teacher States
 
-        reg_emis: function(name, $, array_emis, opts) {
+        reg_emis: function(name, $, im, opts) {
             return new FreeText(name, {
                 question:
                     $("Please enter your school's EMIS number. " +
                     "This should have 4-6 digits e.g. 4351."),
 
                 next: function(content) {
-                    if (go.utils.check_valid_emis(content, array_emis)) {
+                    if (go.utils.check_valid_emis(content, im)) {
                         return "reg_emis_validates";
                     } else if (opts.retry === false) {
                         return "reg_emis_retry_exit";
