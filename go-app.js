@@ -2424,24 +2424,62 @@ go.app = function() {
             mh
                 // Total unique users
                 .add.total_unique_users('sum.unique_users')
+
                 // Total and weekly USSD sessions
                 .add.total_sessions('sum.ussd_sessions')
-                // Total learner performance reports added via USSD
-                .add.total_state_actions(
-                    {
-                        state: 'perf_learner_girls_writing',
-                        action: 'exit'
-                    },
-                    'sum.learner_performance_reports.ussd'
-                )
-                // Total learner performance reports added (USSD + Django)
-                .add.total_state_actions(
-                    {
-                        state: 'perf_learner_girls_writing',
-                        action: 'exit'
-                    },
-                    'sum.learner_performance_reports.total'
-                )
+
+                // Head teacher registrations
+                    // Total head teachers added via USSD - zonal heads
+                    .add.total_state_actions(
+                        {
+                            state: 'reg_zonal_head',
+                            action: 'exit'
+                        },
+                        'sum.head_teacher_registrations.ussd'
+                    )
+                    // Total head teachers added via USSD - non zonal heads
+                    .add.total_state_actions(
+                        {
+                            state: 'reg_zonal_head_name',
+                            action: 'exit'
+                        },
+                        'sum.head_teacher_registrations.ussd'
+                    )
+                    // Total head teachers added (USSD + Django) - zonal heads
+                    .add.total_state_actions(
+                        {
+                            state: 'reg_zonal_head',
+                            action: 'exit'
+                        },
+                        'sum.head_teacher_registrations.total'
+                    )
+                    // Total head teachers added (USSD + Django) - non zonal heads
+                    .add.total_state_actions(
+                        {
+                            state: 'reg_zonal_head_name',
+                            action: 'exit'
+                        },
+                        'sum.head_teacher_registrations.total'
+                    )
+
+                // Learner performance reports
+                    // Total learner performance reports added via USSD
+                    .add.total_state_actions(
+                        {
+                            state: 'perf_learner_girls_writing',
+                            action: 'exit'
+                        },
+                        'sum.learner_performance_reports.ussd'
+                    )
+                    // Total learner performance reports added (USSD + Django)
+                    .add.total_state_actions(
+                        {
+                            state: 'perf_learner_girls_writing',
+                            action: 'exit'
+                        },
+                        'sum.learner_performance_reports.total'
+                    )
+
             ;
 
             self.env = self.im.config.env;

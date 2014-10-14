@@ -5119,7 +5119,7 @@ describe("test metric firing in various places", function() {
     });
 
     describe("when a district official finishes reporting on learner performance", function() {
-        it("should fire total learner performance reports", function() {
+        it("should fire total learner performance reports metrics", function() {
             return tester
                 .setup.user.addr('097444')
                 .inputs(
@@ -5153,6 +5153,40 @@ describe("test metric firing in various places", function() {
                 .run();
         });
     });
+
+    describe("when a user registers as a head teacher", function() {
+        it("should fire total head teacher registration metrics", function() {
+            return tester
+                .setup.user.addr('097123')
+                .inputs(
+                    'start',
+                    '1',  // initial_state
+                    '0001',  // reg_emis
+                    '1',  // reg_emis_validates
+                    'School One',  //reg_school_name
+                    'Jack',  // reg_first_name
+                    'Black',  // reg_surname
+                    '11091980',  // reg_date_of_birth
+                    '2',  // reg_gender
+                    '50',  // reg_school_boys
+                    '51',  // reg_school_girls
+                    '5',  // reg_school_classrooms
+                    '5',  // reg_school_teachers
+                    '2',  // reg_school_teachers_g1
+                    '2',  // reg_school_teachers_g2
+                    '10',  // reg_school_students_g2_boys
+                    '11',  // reg_school_students_g2_girls
+                    '1'  // reg_zonal_head
+                )
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['sum.head_teacher_registrations.ussd'].values, [1]);
+                    assert.deepEqual(metrics['sum.head_teacher_registrations.total'].values, [1]);
+                })
+                .run();
+        });
+    });
+
 });
 
 
