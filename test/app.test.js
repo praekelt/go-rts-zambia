@@ -5275,6 +5275,28 @@ describe("test metric firing in various places", function() {
         });
     });
 
+    describe("when a user navigates via ussd", function() {
+        it("should record progress via on:exit metrics", function() {
+            return tester
+                .setup.user.addr('097123')
+                .inputs(
+                    'start',
+                    '1',  // initial_state
+                    '0001',  // reg_emis
+                    '1',  // reg_emis_validates
+                    {session_event: 'new'},
+                    'Bob'
+                )
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['sum.initial_state_unregistered.exits'].values, [1]);
+                    assert.deepEqual(metrics['sum.reg_emis.exits'].values, [1]);
+                    assert.deepEqual(metrics['sum.reg_emis_validates.exits'].values, [1]);
+                    assert.deepEqual(metrics['sum.reg_school_name.exits'].values, [1]);
+                })
+                .run();
+        });
+    });
 });
 
 

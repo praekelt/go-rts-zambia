@@ -453,6 +453,11 @@ go.app = function() {
 
             ;
 
+            // Navigation tracking to measure drop-offs
+            self.im.on('state:exit', function(e) {
+                return self.im.metrics.fire.inc(['sum', e.state.name, 'exits'].join('.'), 1);
+            });
+
             self.env = self.im.config.env;
             self.districts = go.utils.cms_district_load(self.im);
             self.array_emis = go.utils.cms_emis_load(self.im);
