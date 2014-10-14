@@ -2117,6 +2117,7 @@ go.sp = function() {
 var vumigo = require('vumigo_v02');
 var moment = require('moment');
 var _ = require('lodash');
+var MetricsHelper = require('go-jsbox-metrics-helper');
 var ChoiceState = vumigo.states.ChoiceState;
 var EndState = vumigo.states.EndState;
 var Choice = vumigo.states.Choice;
@@ -2434,6 +2435,127 @@ go.app = function() {
         var $ = self.$;
 
         self.init = function() {
+
+            // Use the metrics helper to add the required metrics
+            mh = new MetricsHelper(self.im);
+            mh
+                // Total unique users
+                .add.total_unique_users('sum.unique_users')
+
+                // Total and weekly USSD sessions
+                .add.total_sessions('sum.ussd_sessions')
+
+                // Head teacher registrations
+                    // Total head teachers added via USSD - zonal heads
+                    .add.total_state_actions(
+                        {
+                            state: 'reg_zonal_head',
+                            action: 'exit'
+                        },
+                        'sum.head_teacher_registrations.ussd'
+                    )
+                    // Total head teachers added via USSD - non zonal heads
+                    .add.total_state_actions(
+                        {
+                            state: 'reg_zonal_head_name',
+                            action: 'exit'
+                        },
+                        'sum.head_teacher_registrations.ussd'
+                    )
+                    // Total head teachers added (USSD + Django) - zonal heads
+                    .add.total_state_actions(
+                        {
+                            state: 'reg_zonal_head',
+                            action: 'exit'
+                        },
+                        'sum.head_teacher_registrations.total'
+                    )
+                    // Total head teachers added (USSD + Django) - non zonal heads
+                    .add.total_state_actions(
+                        {
+                            state: 'reg_zonal_head_name',
+                            action: 'exit'
+                        },
+                        'sum.head_teacher_registrations.total'
+                    )
+
+                // Learner performance reports
+                    // Total learner performance reports added via USSD
+                    .add.total_state_actions(
+                        {
+                            state: 'perf_learner_girls_writing',
+                            action: 'exit'
+                        },
+                        'sum.learner_performance_reports.ussd'
+                    )
+                    // Total learner performance reports added (USSD + Django)
+                    .add.total_state_actions(
+                        {
+                            state: 'perf_learner_girls_writing',
+                            action: 'exit'
+                        },
+                        'sum.learner_performance_reports.total'
+                    )
+
+                // Teacher performance reports
+                    // Total teacher performance reports added via USSD
+                    .add.total_state_actions(
+                        {
+                            state: 'perf_teacher_reading_total',
+                            action: 'exit'
+                        },
+                        'sum.teacher_performance_reports.ussd'
+                    )
+                    // Total teacher performance reports added (USSD + Django)
+                    .add.total_state_actions(
+                        {
+                            state: 'perf_teacher_reading_total',
+                            action: 'exit'
+                        },
+                        'sum.teacher_performance_reports.total'
+                    )
+
+                // // School monitoring reports
+                //     // Total school monitoring reports added via USSD - good lpip
+                //     .add.total_state_actions(
+                //         {
+                //             state: 'monitor_school_talking_wall',
+                //             action: 'exit'
+                //         },
+                //         'sum.school_monitoring_reports.ussd'
+                //     )
+                //     // Total school monitoring reports added via USSD - poor lpip
+                //     .add.total_state_actions(
+                //         {
+                //             state: 'monitor_school_falling_behind',
+                //             action: 'enter'
+                //         },
+                //         'sum.school_monitoring_reports.ussd'
+                //     )
+                //     // Total school monitoring reports added (USSD + Django) - good lpip
+                //     .add.total_state_actions(
+                //         {
+                //             state: 'monitor_school_talking_wall',
+                //             action: 'exit'
+                //         },
+                //         'sum.school_monitoring_reports.total'
+                //     )
+                //     // Total school monitoring reports added (USSD + Django) - poor lpip
+                //     .add.total_state_actions(
+                //         {
+                //             state: 'monitor_school_falling_behind',
+                //             action: 'enter'
+                //         },
+                //         'sum.school_monitoring_reports.total'
+                //     )
+
+            ;
+
+            // Navigation tracking to measure drop-offs
+            self.im.on('state:exit', function(e) {
+                return self.im.metrics.fire.inc(['sum', e.state.name, 'exits'].join('.'), 1);
+            });
+
             self.env = self.im.config.env;
 
             return self.im.contacts
