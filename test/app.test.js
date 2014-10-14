@@ -1549,7 +1549,7 @@ describe("when a registered user logs on", function() {
             describe("when the district official user enters an emis", function() {
 
                 describe("if the emis does not validate", function() {
-                    it("should ask for the emis again", function() {
+                    it.only("should ask for the emis again", function() {
                         return tester
                             .setup.user.addr('097444')
                             .inputs(
@@ -2634,7 +2634,7 @@ describe("when a registered user logs on", function() {
             describe("when the district official user enters an emis", function() {
 
                 describe("if the emis does not validate", function() {
-                    it("should ask for the emis again", function() {
+                    it.only("should ask for the emis again", function() {
                         return tester
                             .setup.user.addr('097444')
                             .inputs(
