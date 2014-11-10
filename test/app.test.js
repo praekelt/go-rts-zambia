@@ -5378,6 +5378,7 @@ describe.only("test metric firing in various places", function() {
                     assert.deepEqual(metrics['sum.reg_emis.exits'].values, [1]);
                     assert.deepEqual(metrics['sum.reg_emis_validates.exits'].values, [1]);
                     assert.deepEqual(metrics['sum.reg_school_name.exits'].values, [1]);
+                    assert.equal(metrics['sum.reg_first_name.exits'], undefined);
                 })
                 .run();
         });
