@@ -5222,7 +5222,7 @@ describe("test metric firing in various places", function() {
     });
 
     describe("when a district official finishes reporting on school monitoring", function() {
-        it.skip("should fire total school monitoring reports metrics for complete lpip", function() {
+        it("should fire total school monitoring reports metrics for complete lpip", function() {
             return tester
                 .setup.user.addr('097555')  // zonal head
                 .inputs(
@@ -5254,7 +5254,7 @@ describe("test metric firing in various places", function() {
                 .run();
         });
 
-        it.skip("should fire total school monitoring reports metrics for incomplete lpip", function() {
+        it("should fire total school monitoring reports metrics for incomplete lpip", function() {
             return tester
                 .setup.user.addr('097555')  // zonal head
                 .inputs(
