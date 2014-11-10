@@ -2437,7 +2437,6 @@ go.app = function() {
         self.init = function() {
 
             // Use the metrics helper to add the required metrics
-            self.im.setMaxListeners(15);  // increase listener limit
             mh = new MetricsHelper(self.im);
             mh
                 // Total unique users
