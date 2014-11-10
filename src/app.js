@@ -321,7 +321,7 @@ go.app = function() {
         self.init = function() {
 
             // Use the metrics helper to add the required metrics
-            self.im.setMaxListeners(11);  // increase listener limit
+            self.im.setMaxListeners(13);  // increase listener limit
             mh = new MetricsHelper(self.im);
             mh
                 // Total unique users
@@ -373,7 +373,25 @@ go.app = function() {
                         },
                         'sum.learner_performance_reports.ussd'
                     )
+                    // The above metric is duplicated to align with the django
+                    // code, where girls = 1 report, boys = 1 report - 2 total
+                    .add.total_state_actions(
+                        {
+                            state: 'perf_learner_girls_writing',
+                            action: 'exit'
+                        },
+                        'sum.learner_performance_reports.ussd'
+                    )
                     // Total learner performance reports added (USSD + Django)
+                    .add.total_state_actions(
+                        {
+                            state: 'perf_learner_girls_writing',
+                            action: 'exit'
+                        },
+                        'sum.learner_performance_reports.total'
+                    )
+                    // The above metric is duplicated to align with the django
+                    // code, where girls = 1 report, boys = 1 report - 2 total
                     .add.total_state_actions(
                         {
                             state: 'perf_learner_girls_writing',

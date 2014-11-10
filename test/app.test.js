@@ -5180,8 +5180,8 @@ describe("test metric firing in various places", function() {
                 )
                 .check(function(api) {
                     var metrics = api.metrics.stores.test_metric_store;
-                    assert.deepEqual(metrics['sum.learner_performance_reports.ussd'].values, [1]);
-                    assert.deepEqual(metrics['sum.learner_performance_reports.total'].values, [1]);
+                    assert.deepEqual(metrics['sum.learner_performance_reports.ussd'].values, [1, 2]);
+                    assert.deepEqual(metrics['sum.learner_performance_reports.total'].values, [1, 2]);
                 })
                 .run();
         });
