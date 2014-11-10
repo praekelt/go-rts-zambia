@@ -5092,7 +5092,7 @@ describe("when a registered user logs on", function() {
 // METRICS
 // -------
 
-describe("test metric firing in various places", function() {
+describe.only("test metric firing in various places", function() {
 
     describe("when a registered user logs on", function() {
         it("should increase the number of sessions metrics", function() {
@@ -5146,6 +5146,91 @@ describe("test metric firing in various places", function() {
                     var metrics = api.metrics.stores.test_metric_store;
                     assert.deepEqual(metrics['sum.head_teacher_registrations.ussd'].values, [1]);
                     assert.deepEqual(metrics['sum.head_teacher_registrations.total'].values, [1]);
+                })
+                .run();
+        });
+
+        it("should fire average sessions to register metrics", function() {
+            return tester
+                .setup.user.addr('097123')
+                .inputs(
+                    'start',
+                    '1',  // initial_state
+                    '0001',  // reg_emis
+                    '1',  // reg_emis_validates
+                    'School One',  //reg_school_name
+                    'Jack',  // reg_first_name
+                    'Black',  // reg_surname
+                    '11091980',  // reg_date_of_birth
+                    '2',  // reg_gender
+                    '50',  // reg_school_boys
+                    '51',  // reg_school_girls
+                    '5',  // reg_school_classrooms
+                    '5',  // reg_school_teachers
+                    '2',  // reg_school_teachers_g1
+                    '2',  // reg_school_teachers_g2
+                    '10',  // reg_school_students_g2_boys
+                    '11',  // reg_school_students_g2_girls
+                    '2',  // reg_zonal_head
+                    'Jim Carey'  // reg_zonal_head_name
+                )
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['avg.sessions_reg_headteacher'].values, [1]);
+                })
+                .run();
+        });
+
+        it("should fire average sessions to register metrics", function() {
+            return tester
+                .setup.user.addr('097123')
+                .inputs(
+                    'start',
+                    '1',  // initial_state
+                    '0001',  // reg_emis
+                    '1',  // reg_emis_validates
+                    'School One',  //reg_school_name
+                    'Jack',  // reg_first_name
+                    'Black',  // reg_surname
+                    '11091980',  // reg_date_of_birth
+                    {session_event: 'new'},
+                    '2',  // reg_gender
+                    '50',  // reg_school_boys
+                    '51',  // reg_school_girls
+                    '5',  // reg_school_classrooms
+                    '5',  // reg_school_teachers
+                    '2',  // reg_school_teachers_g1
+                    '2',  // reg_school_teachers_g2
+                    '10',  // reg_school_students_g2_boys
+                    '11',  // reg_school_students_g2_girls
+                    '1'  // reg_zonal_head
+                )
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['avg.sessions_reg_ht_zonal_head'].values, [2]);
+                })
+                .run();
+        });
+    });
+
+    describe("when a user registers as a district official", function() {
+        it("should fire average sessions to register metrics", function() {
+            return tester
+                .setup.user.addr('097123')
+                .inputs(
+                    'start',
+                    '2',
+                    {session_event: 'new'},
+                    '9',
+                    '2',
+                    'Michael',
+                    {session_event: 'new'},
+                    'Sherwin',
+                    '123454321',
+                    '27111980')
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['avg.sessions_reg_district_admin'].values, [3]);
                 })
                 .run();
         });

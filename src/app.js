@@ -321,7 +321,7 @@ go.app = function() {
         self.init = function() {
 
             // Use the metrics helper to add the required metrics
-            self.im.setMaxListeners(13);  // increase listener limit
+            self.im.setMaxListeners(15);  // increase listener limit
             mh = new MetricsHelper(self.im);
             mh
                 // Total unique users
@@ -451,6 +451,40 @@ go.app = function() {
                         },
                         'sum.school_monitoring_reports.total'
                     )
+
+                // Average sessions to register
+                    // Head teacher (if they register as zonal head)
+                    .add.tracker({
+                        action: 'enter',
+                        state: 'reg_emis'
+                    }, {
+                        action: 'enter',
+                        state: 'reg_thanks_zonal_head'
+                    }, {
+                        sessions_between_states: 'avg.sessions_reg_ht_zonal_head'
+                    })
+
+                    // Head teacher (if they are NOT a zonal head)
+                    .add.tracker({
+                        action: 'enter',
+                        state: 'reg_emis'
+                    }, {
+                        action: 'enter',
+                        state: 'reg_thanks_head_teacher'
+                    }, {
+                        sessions_between_states: 'avg.sessions_reg_headteacher'
+                    })
+
+                    // District official
+                    .add.tracker({
+                        action: 'enter',
+                        state: 'reg_district_official'
+                    }, {
+                        action: 'enter',
+                        state: 'reg_district_official_thanks'
+                    }, {
+                        sessions_between_states: 'avg.sessions_reg_district_admin'
+                    })
 
             ;
 
