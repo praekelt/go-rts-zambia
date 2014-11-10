@@ -5092,7 +5092,7 @@ describe("when a registered user logs on", function() {
 // METRICS
 // -------
 
-describe.only("test metric firing in various places", function() {
+describe("test metric firing in various places", function() {
 
     describe("when a registered user logs on", function() {
         it("should increase the number of sessions metrics", function() {
@@ -5145,7 +5145,6 @@ describe.only("test metric firing in various places", function() {
                 .check(function(api) {
                     var metrics = api.metrics.stores.test_metric_store;
                     assert.deepEqual(metrics['sum.head_teacher_registrations.ussd'].values, [1]);
-                    assert.deepEqual(metrics['sum.head_teacher_registrations.total'].values, [1]);
                 })
                 .run();
         });
@@ -5266,7 +5265,6 @@ describe.only("test metric firing in various places", function() {
                 .check(function(api) {
                     var metrics = api.metrics.stores.test_metric_store;
                     assert.deepEqual(metrics['sum.learner_performance_reports.ussd'].values, [1, 2]);
-                    assert.deepEqual(metrics['sum.learner_performance_reports.total'].values, [1, 2]);
                 })
                 .run();
         });
@@ -5300,7 +5298,6 @@ describe.only("test metric firing in various places", function() {
                 .check(function(api) {
                     var metrics = api.metrics.stores.test_metric_store;
                     assert.deepEqual(metrics['sum.teacher_performance_reports.ussd'].values, [1]);
-                    assert.deepEqual(metrics['sum.teacher_performance_reports.total'].values, [1]);
                 })
                 .run();
         });
@@ -5334,7 +5331,6 @@ describe.only("test metric firing in various places", function() {
                 .check(function(api) {
                     var metrics = api.metrics.stores.test_metric_store;
                     assert.deepEqual(metrics['sum.school_monitoring_reports.ussd'].values, [1]);
-                    assert.deepEqual(metrics['sum.school_monitoring_reports.total'].values, [1]);
                 })
                 .run();
         });
@@ -5354,7 +5350,6 @@ describe.only("test metric firing in various places", function() {
                 .check(function(api) {
                     var metrics = api.metrics.stores.test_metric_store;
                     assert.deepEqual(metrics['sum.school_monitoring_reports.ussd'].values, [1]);
-                    assert.deepEqual(metrics['sum.school_monitoring_reports.total'].values, [1]);
                 })
                 .run();
         });

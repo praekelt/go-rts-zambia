@@ -347,22 +347,6 @@ go.app = function() {
                         },
                         'sum.head_teacher_registrations.ussd'
                     )
-                    // Total head teachers added (USSD + Django) - zonal heads
-                    .add.total_state_actions(
-                        {
-                            state: 'reg_zonal_head',
-                            action: 'exit'
-                        },
-                        'sum.head_teacher_registrations.total'
-                    )
-                    // Total head teachers added (USSD + Django) - non zonal heads
-                    .add.total_state_actions(
-                        {
-                            state: 'reg_zonal_head_name',
-                            action: 'exit'
-                        },
-                        'sum.head_teacher_registrations.total'
-                    )
 
                 // Learner performance reports
                     // Total learner performance reports added via USSD
@@ -382,23 +366,6 @@ go.app = function() {
                         },
                         'sum.learner_performance_reports.ussd'
                     )
-                    // Total learner performance reports added (USSD + Django)
-                    .add.total_state_actions(
-                        {
-                            state: 'perf_learner_girls_writing',
-                            action: 'exit'
-                        },
-                        'sum.learner_performance_reports.total'
-                    )
-                    // The above metric is duplicated to align with the django
-                    // code, where girls = 1 report, boys = 1 report - 2 total
-                    .add.total_state_actions(
-                        {
-                            state: 'perf_learner_girls_writing',
-                            action: 'exit'
-                        },
-                        'sum.learner_performance_reports.total'
-                    )
 
                 // Teacher performance reports
                     // Total teacher performance reports added via USSD
@@ -408,14 +375,6 @@ go.app = function() {
                             action: 'exit'
                         },
                         'sum.teacher_performance_reports.ussd'
-                    )
-                    // Total teacher performance reports added (USSD + Django)
-                    .add.total_state_actions(
-                        {
-                            state: 'perf_teacher_reading_total',
-                            action: 'exit'
-                        },
-                        'sum.teacher_performance_reports.total'
                     )
 
                 // School monitoring reports
@@ -434,22 +393,6 @@ go.app = function() {
                             action: 'enter'
                         },
                         'sum.school_monitoring_reports.ussd'
-                    )
-                    // Total school monitoring reports added (USSD + Django) - good lpip
-                    .add.total_state_actions(
-                        {
-                            state: 'monitor_school_talking_wall',
-                            action: 'exit'
-                        },
-                        'sum.school_monitoring_reports.total'
-                    )
-                    // Total school monitoring reports added (USSD + Django) - poor lpip
-                    .add.total_state_actions(
-                        {
-                            state: 'monitor_school_falling_behind',
-                            action: 'enter'
-                        },
-                        'sum.school_monitoring_reports.total'
                     )
 
                 // Average sessions to register
