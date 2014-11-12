@@ -72,7 +72,8 @@ describe("app", function() {
                         extra: {
                             rts_id: '888',
                             rts_emis: '777',
-                            is_zonal_head: 'false'
+                            is_zonal_head: 'false',
+                            province: 'Pro Vince'
                         }
                     });
                 });
@@ -5094,6 +5095,61 @@ describe("when a registered user logs on", function() {
 
 describe("test metric firing in various places", function() {
 
+    describe("when a user starts a new session", function() {
+
+        describe("if the user has their province stored as an extra", function() {
+            it("should increase their province's number of sessions metric", function() {
+                return tester
+                    .setup.user.addr('097888')  // contact.extra.province = "Pro Vince"
+                    .inputs(
+                        {session_event: 'new'}
+                    )
+                    .check(function(api) {
+                        var metrics = api.metrics.stores.test_metric_store;
+                        assert.deepEqual(metrics['sum.sessions.ProVince'].values, [1]);
+                    })
+                    .run();
+            });
+        });
+
+        describe("if the user does not have their province stored as an extra", function() {
+            it("should look up their province, save against contact, fire metric", function() {
+                return tester
+                    .setup.user.addr('097555')  // contact.extra.province undefined
+                    .inputs(
+                        {session_event: 'new'}
+                    )
+                    .check(function(api) {
+                        var metrics = api.metrics.stores.test_metric_store;
+                        assert.deepEqual(metrics['sum.sessions.test_province'].values, [1]);
+                    })
+                    .run();
+            });
+        });
+
+        describe("if the user does not have an emis code", function() {
+            it("should not fire a province sessions metric", function() {
+                return tester
+                    .setup.user.addr('097444')  // contact.extra.province undefined
+                    .inputs(
+                        {session_event: 'new'}
+                    )
+                    .check(function(api) {
+                        var metrics = api.metrics.stores.test_metric_store;
+                        var province_metric = false;
+                        for (var metric in metrics) {
+                            if (metric.slice(0, 13) === 'sum.sessions.') {
+                                province_metric = true;
+                            }
+                        }
+                        assert.equal(province_metric, false);
+                        assert.equal(metrics['sum.sessions.test_province'], undefined);
+                    })
+                    .run();
+            });
+        });
+    });
+
     describe("when a registered user logs on", function() {
         it("should increase the number of sessions metrics", function() {
             return tester
@@ -5123,7 +5179,7 @@ describe("test metric firing in various places", function() {
             return tester
                 .setup.user.addr('097123')
                 .inputs(
-                    'start',
+                    {session_event: 'new'},
                     '1',  // initial_state
                     '0001',  // reg_emis
                     '1',  // reg_emis_validates

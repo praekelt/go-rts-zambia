@@ -2117,6 +2117,7 @@ go.sp = function() {
 var vumigo = require('vumigo_v02');
 var moment = require('moment');
 var _ = require('lodash');
+var Q = require('q');
 var MetricsHelper = require('go-jsbox-metrics-helper');
 var ChoiceState = vumigo.states.ChoiceState;
 var EndState = vumigo.states.EndState;
@@ -2420,6 +2421,43 @@ go.utils = {
         data.emis = "/api/v1/school/emis/" + emis + "/";
 
         return data;
+    },
+
+    get_province: function(im, contact) {
+        path = "school?emis=" + contact.extra.rts_emis;
+        return go.utils
+            .cms_get(path, im)
+            .then(function(result) {
+                var contact_province = result.data.objects[0].zone.district.province.name;
+                return contact_province;
+            });
+    },
+
+    fire_province_metrics: function(im, contact) {
+        // if contact has no emis we cannot tell which province they're from
+        if (_.isUndefined(contact.extra.rts_emis)) {
+            return Q();
+
+        // else if province is saved against contact use contact extra
+        } else if (!_.isUndefined(contact.extra.province)) {
+            var contact_province = contact.extra.province;
+            // strip spaces from province name for metric
+            contact_province = contact_province.replace(/\s/g,'');
+            return im.metrics.fire.inc(['sum', 'sessions', contact_province].join('.'), 1);
+
+        // else look up the province, use that, and save province against their contact for future
+        } else {
+            return go.utils
+                .get_province(im, contact)
+                .then(function(contact_province) {
+                    contact.extra.province = contact_province;
+                    contact_province = contact_province.replace(/\s/g,'');
+                    return Q.all([
+                        im.contacts.save(contact),
+                        im.metrics.fire.inc(['sum', 'sessions', contact_province].join('.'), 1)
+                    ]);
+                });
+        }
     }
 
 };
@@ -2549,6 +2587,11 @@ go.app = function() {
             // Navigation tracking to measure drop-offs
             self.im.on('state:exit', function(e) {
                 return self.im.metrics.fire.inc(['sum', e.state.name, 'exits'].join('.'), 1);
+            });
+
+            // Measure sessions per province
+            self.im.on('session:new', function(e) {
+                return go.utils.fire_province_metrics(self.im, self.contact);
             });
 
             self.env = self.im.config.env;
