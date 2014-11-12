@@ -2947,6 +2947,27 @@ describe("when a registered user logs on", function() {
                     });
                 });
 
+                describe("if the number validates (equals)", function() {
+                    it.only("should ask for boys below minimum results", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '10', // perf_learner_boys_total
+                                '5',  // perf_learner_boys_outstanding
+                                '4',  // perf_learner_boys_desirable
+                                '1'  // perf_learner_boys_minimum
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_below_minimum',
+                                reply:
+                                    "In total, how many boys achieved between 0 and 7 out of 20?"
+                            })
+                            .run();
+                    });
+                });
+
                 // test for numeric value
                 describe("if the number does not validate", function() {
                     it("should ask for boys minimum results again", function() {
