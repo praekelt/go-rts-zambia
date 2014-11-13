@@ -147,5 +147,4 @@ describe("When using the SMS line as an recognised MSISDN", function() {
         p.then(done, done);
     });
 
-
 });
