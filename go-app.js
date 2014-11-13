@@ -2473,7 +2473,7 @@ go.app = function() {
         var $ = self.$;
 
         self.init = function() {
-
+            self.im.setMaxListeners(11);  // increase listener limit
             // Use the metrics helper to add the required metrics
             mh = new MetricsHelper(self.im);
             mh
@@ -2580,6 +2580,30 @@ go.app = function() {
                         state: 'reg_district_official_thanks'
                     }, {
                         sessions_between_states: 'avg.sessions_reg_district_admin'
+                    })
+
+                // Average sessions to complete learner performance reports
+                    // Does not include adding EMIS for District Admins
+                    .add.tracker({
+                        action: 'enter',
+                        state: 'perf_learner_boys_total'
+                    }, {
+                        action: 'enter',
+                        state: 'perf_learner_completed'
+                    }, {
+                        sessions_between_states: 'avg.sessions_perf_learner_report'
+                    })
+
+                // Average sessions to complete teacher performance reports
+                    // Does not include adding EMIS for District Admins
+                    .add.tracker({
+                        action: 'enter',
+                        state: 'perf_teacher_ts_number'
+                    }, {
+                        action: 'enter',
+                        state: 'perf_teacher_completed'
+                    }, {
+                        sessions_between_states: 'avg.sessions_perf_teacher_report'
                     })
 
             ;

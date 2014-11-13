@@ -2948,7 +2948,7 @@ describe("when a registered user logs on", function() {
                 });
 
                 describe("if the number validates (equals)", function() {
-                    it.only("should ask for boys below minimum results", function() {
+                    it("should ask for boys below minimum results", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
@@ -5307,6 +5307,100 @@ describe("test metric firing in various places", function() {
                 .check(function(api) {
                     var metrics = api.metrics.stores.test_metric_store;
                     assert.deepEqual(metrics['avg.sessions_reg_district_admin'].values, [3]);
+                })
+                .run();
+        });
+    });
+
+    describe("when the user completes a learner performance report", function() {
+        it("should fire average sessions to complete metric", function() {
+            return tester
+                .setup.user.addr('097555')
+                .inputs(
+                    {session_event: 'new'},
+                    '2',  // initial_state_head_teacher
+                    '52', // perf_learner_boys_total
+                    '10',  // perf_learner_boys_outstanding
+                    {session_event: 'new'},
+                    '15',  // perf_learner_boys_desirable
+                    '20',  // perf_learner_boys_minimum
+                    '7',  // perf_learner_boys_below_minimum
+                    '49',  // perf_learner_girls_total
+                    '10',  // perf_learner_girls_outstanding
+                    {session_event: 'new'},
+                    '15',  // perf_learner_girls_desirable
+                    '20',  // perf_learner_girls_minimum
+                    '4',  // perf_learner_girls_below_minimum
+                    '31',  // perf_learner_boys_phonics
+                    '32',  // perf_learner_girls_phonics
+                    '33',  // perf_learner_boys_vocab
+                    '34',  // perf_learner_girls_vocab
+                    '35',  // perf_learner_boys_comprehension
+                    '36',  // perf_learner_girls_comprehension
+                    '37',  // perf_learner_boys_writing
+                    '38'  // perf_learner_girls_writing
+                )
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['avg.sessions_perf_learner_report'].values, [3]);
+                })
+                .run();
+        });
+    });
+
+    describe("when the user completes a teacher performance report", function() {
+        it("should fire average sessions to complete metric", function() {
+            return tester
+                .setup.user.addr('097444')
+                .inputs(
+                    {session_event: 'new'},
+                    '1',  // initial_state_district_official
+                    '0001',  // add_emis_perf_teacher_ts_number
+                    '106',  // perf_teacher_ts_number
+                    '2',  // perf_teacher_gender
+                    '30',  // perf_teacher_age
+                    {session_event: 'new'},
+                    '3',  // perf_teacher_academic_level
+                    '1',  // perf_teacher_years_experience
+                    '40',  // perf_teacher_g2_pupils_present
+                    '50',  // perf_teacher_g2_pupils_registered
+                    '8',  // perf_teacher_classroom_environment_score
+                    '7',  // perf_teacher_t_l_materials
+                    '90',  // perf_teacher_pupils_books_number
+                    '6',  // perf_teacher_pupils_materials_score
+                    '14',  // perf_teacher_reading_lesson
+                    '17',  // perf_teacher_pupil_engagement_score
+                    '16',  // perf_teacher_attitudes_and_beliefs
+                    '3',  // perf_teacher_training_subtotal
+                    '10',  // perf_teacher_reading_assessment
+                    '9',  // perf_teacher_reading_total
+                    '1',  // perf_teacher_completed
+
+                    // another report
+                    '106',  // perf_teacher_ts_number
+                    '2',  // perf_teacher_gender
+                    '30',  // perf_teacher_age
+                    {session_event: 'new'},
+                    '3',  // perf_teacher_academic_level
+                    '1',  // perf_teacher_years_experience
+                    {session_event: 'new'},
+                    '40',  // perf_teacher_g2_pupils_present
+                    '50',  // perf_teacher_g2_pupils_registered
+                    '8',  // perf_teacher_classroom_environment_score
+                    {session_event: 'new'},
+                    '7',  // perf_teacher_t_l_materials
+                    '90',  // perf_teacher_pupils_books_number
+                    '6',  // perf_teacher_pupils_materials_score
+                    '14',  // perf_teacher_reading_lesson
+                    '17',  // perf_teacher_pupil_engagement_score
+                    '16',  // perf_teacher_attitudes_and_beliefs
+                    '3',  // perf_teacher_training_subtotal
+                    '10',  // perf_teacher_reading_assessment
+                    '9'  // perf_teacher_reading_total
+                )
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['avg.sessions_perf_teacher_report'].values, [2, 4]);
                 })
                 .run();
         });

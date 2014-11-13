@@ -1049,6 +1049,50 @@ module.exports = function() {
         }
     },
 
+    {
+        "request": {
+            "method": "GET",
+            "headers": {
+                'Content-Type': ['application/json']
+            },
+            "url": "http://qa/api/v1/school?emis=0001"
+        },
+        "response": {
+            "code": 200,
+            "data": {
+                "meta": {
+                    "limit": 1000,
+                    "next": null,
+                    "offset": 0,
+                    "previous": null,
+                     "total_count": 1
+                },
+                "objects": [
+                    {
+                        "emis": 1,
+                        "id": 1,
+                        "name": "test_school 1",
+                        "resource_uri": "/api/v1/school/1/",
+                        "zone": {
+                            "district": {
+                                "id": 1,
+                                "name": "test_district 1",
+                                "province": {
+                                    "id": 1,
+                                    "name": "test_province",
+                                    "resource_uri": "/api/v1/province/1/"
+                                },
+                                "resource_uri": "/api/v1/district/1/"
+                            },
+                            "id": 1,
+                            "name": "test_zone 1",
+                            "resource_uri": "/api/v1/zone/1/"
+                        }
+                    }
+                ]
+            }
+        }
+    },
 
 
 
