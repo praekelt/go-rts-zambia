@@ -18,6 +18,7 @@ describe("test_api", function() {
 });
 
 var test_fixtures_full = [
+ "test/fixtures/get_headteacher_filter_emis.json",
  "test/fixtures/get_headteacher_filter_emis_zonal.json",
  "test/fixtures/post_inbound_sms.json",
 ];
