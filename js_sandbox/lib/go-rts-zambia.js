@@ -380,6 +380,7 @@ function GoRtsZambia() {
     self.cms_registration = function(im) {
         var headteacher_data;
         var headteacher_id;
+        var emis;
 
         // get the contact
         var p_c = self.get_contact(im);
@@ -404,8 +405,14 @@ function GoRtsZambia() {
             }
             // Use the results
             p_ht.add_callback(function(result){
-                headteacher_id = result.id;
-                var emis = result.emis.emis;
+                if (result.objects) {
+                    headteacher_id = result.objects[0].id;
+                    emis = result.objects[0].emis.emis;
+                } else {
+                    headteacher_id = result.id;
+                    emis = result.emis.emis;
+                }
+
                 var school_data = self.registration_data_school_collect();
                 school_data["created_by"] = "/api/v1/data/headteacher/" + headteacher_id + "/";
                 school_data["emis"] = "/api/v1/school/emis/" + emis + "/";
@@ -490,7 +497,7 @@ function GoRtsZambia() {
         var emis = parseInt(im.get_user_answer('manage_change_msisdn_emis'),10);
         var p = self.cms_get("data/headteacher/?emis__emis=" + emis);
         p.add_callback(function(result){
-            var headteacher_id = result.id;
+            var headteacher_id = result.objects[0].id;
             var data = {
                 msisdn: im.user_addr
             };
@@ -731,7 +738,7 @@ function GoRtsZambia() {
         var choices = [];
 
         var districts = im.config.districts;
-        
+
         for (var i=0; i<districts.length; i++){
             var district = districts[i];
             choices[i] = new Choice(district.id, district.name);
