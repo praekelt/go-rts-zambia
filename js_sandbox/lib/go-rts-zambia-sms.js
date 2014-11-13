@@ -183,28 +183,51 @@ function GoRtsZambiaSms() {
                 {
                     on_enter: function(){
                         var p = self.get_contact(im);
+
+                        // first log the sms in django against the sender
                         p.add_callback(function(result) {
                             var url = "data/headteacher/" + '?' + self.url_encode({
-                                'emis__emis': result.contact["extras-rts_emis"],
-                                'is_zonal_head': 'true'
+                                'emis__emis': result.contact["extras-rts_emis"]
                             });
+                            // get the headteacher
                             return self.cms_get(url);
                         });
                         p.add_callback(function(result) {
-                            if (result.msisdn) {
-                                var to_addr = result.msisdn;
-                                var content = im.get_user_answer('initial_state');
+                            var headteacher = result.objects[0];
+                            if (headteacher) {
+                                var zone_id = headteacher.emis.zone.id;
                                 var data = {
                                     "message": im.get_user_answer('initial_state'),
-                                    "created_by": "/api/v1/data/headteacher/" + result.id.toString() + "/"
+                                    "created_by": "/api/v1/data/headteacher/" +
+                                        headteacher.id.toString() + "/"
                                 };
                                 var url = "data/sms/";
-                                var p_sms = self.send_sms(content, to_addr);
+                                // log the sms in django
+                                var p_sms = self.cms_post(url, data);
+
+                                // now send the sms to the zonal head
                                 p_sms.add_callback(function(result) {
-                                    return self.cms_post(url, data);
+                                    var url = "data/headteacher/" + '?' + self.url_encode({
+                                        'zone': zone_id,
+                                        'is_zonal_head': 'true'
+                                    });
+                                    // get the zonal head
+                                    return self.cms_get(url);
                                 });
+                                p_sms.add_callback(function(result) {
+                                    var zonalhead = result.objects[0];  // assumes only one zonal head
+                                    if (zonalhead) {
+                                        var to_addr = zonalhead.msisdn;
+                                        var message = im.get_user_answer('initial_state');
+                                        // send the sms
+                                        return self.send_sms(message, to_addr);
+                                    } else {
+                                        return im.log('failed to find Zonal Head for SMS forwarding');
+                                    }
+                                });
+                                return p_sms;
                             } else {
-                                return im.log('failed to find Zonal Head for SMS forwarding');
+                                return im.log('failed to find Head Teacher data for contact');
                             }
                         });
                         return p;
