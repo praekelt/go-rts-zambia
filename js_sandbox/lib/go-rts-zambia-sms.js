@@ -14,6 +14,7 @@ var FreeText = vumigo.states.FreeText;
 var EndState = vumigo.states.EndState;
 var InteractionMachine = vumigo.state_machine.InteractionMachine;
 var StateCreator = vumigo.state_machine.StateCreator;
+var JsonApi = vumigo.http_api.JsonApi;
 
 
 function GoRtsZambiaSmsError(msg) {
@@ -43,7 +44,7 @@ function SMSEndState(name, text, next, handlers) {
 function GoRtsZambiaSms() {
     var self = this;
 
-    self.post_headers = {
+    self.headers = {
         'Content-Type': ['application/json']
     };
 
@@ -194,7 +195,15 @@ function GoRtsZambiaSms() {
                             if (result.msisdn) {
                                 var to_addr = result.msisdn;
                                 var content = im.get_user_answer('initial_state');
-                                return self.send_sms(content, to_addr);
+                                var data = {
+                                    "message": im.get_user_answer('initial_state'),
+                                    "created_by": "/api/v1/data/headteacher/" + result.id.toString() + "/"
+                                };
+                                var url = "data/sms/";
+                                var p_sms = self.send_sms(content, to_addr);
+                                p_sms.add_callback(function(result) {
+                                    return self.cms_post(url, data);
+                                });
                             } else {
                                 return im.log('failed to find Zonal Head for SMS forwarding');
                             }
@@ -211,4 +220,4 @@ function GoRtsZambiaSms() {
 var states = new GoRtsZambiaSms();
 var im = new InteractionMachine(api, states);
 im.attach();
- 
+
