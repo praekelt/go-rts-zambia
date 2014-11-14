@@ -41,8 +41,7 @@ go.cm = function() {
                                 return go.utils
                                     .cms_get("data/headteacher/?emis__emis=" + emis, im)
                                     .then(function(result) {
-                                        var parsed_result = JSON.parse(result.body);
-                                        var headteacher_id = parsed_result.id;
+                                        var headteacher_id = result.data.objects[0].id;
                                         var data = {
                                             msisdn: im.user.addr
                                         };
