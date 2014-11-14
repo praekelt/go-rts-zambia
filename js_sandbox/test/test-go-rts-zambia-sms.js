@@ -18,7 +18,15 @@ describe("test_api", function() {
 });
 
 var test_fixtures_full = [
+ "test/fixtures/get_headteacher_filter_emis.json",
  "test/fixtures/get_headteacher_filter_emis_zonal.json",
+ "test/fixtures/post_inbound_sms.json",
+];
+
+var test_fixtures_no_zonal_head = [
+ "test/fixtures/get_headteacher_filter_emis_2.json",
+ "test/fixtures/get_headteacher_filter_emis_zonal_2.json",
+ "test/fixtures/post_inbound_sms.json",
 ];
 
 var tester;
@@ -84,11 +92,12 @@ describe("When using the SMS line as an unrecognised MSISDN", function() {
 
 });
 
-describe("When using the SMS line as an recognised MSISDN", function() {
+describe("When using the SMS line as a recognised MSISDN", function() {
 
     // These are used to mock API reponses
     // EXAMPLE: Response from google maps API
     var fixtures = test_fixtures_full;
+
     beforeEach(function() {
         tester = new vumigo.test_utils.ImTester(app.api, {
             custom_setup: function (api) {
@@ -146,5 +155,68 @@ describe("When using the SMS line as an recognised MSISDN", function() {
         p.then(done, done);
     });
 
- 
+});
+
+describe("When using the SMS line as a recognised MSISDN with zonal head missing", function() {
+
+    // These are used to mock API reponses
+    // EXAMPLE: Response from google maps API
+    var fixtures = test_fixtures_no_zonal_head;
+    beforeEach(function() {
+        tester = new vumigo.test_utils.ImTester(app.api, {
+            custom_setup: function (api) {
+                api.config_store.config = JSON.stringify({
+                    sms_tag: ['pool', 'addr'],
+                    ussd_line: "*120*888#",
+                    cms_api_root: 'http://qa/api/v1/',
+                    output: {
+                        not_registered: "Sorry, we don't recognise your number. This SMS line " +
+                            "is for Zambian Headteachers only. Headteachers, please register " +
+                            "your number first. Dial *120*888#",
+                        thanks: "Thanks! Bye!"
+                    }
+                });
+
+                var dummy_contact = {
+                    key: "f953710a2472447591bd59e906dc2c26",
+                    surname: "Trotter",
+                    user_account: "test-0-user",
+                    bbm_pin: null,
+                    msisdn: "+1234567",
+                    created_at: "2013-04-24 14:01:41.803693",
+                    gtalk_id: null,
+                    dob: null,
+                    groups: null,
+                    facebook_id: null,
+                    twitter_handle: null,
+                    email_address: null,
+                    name: "Rodney"
+                };
+
+                api.add_contact(dummy_contact);
+                api.update_contact_extras(dummy_contact, {
+                    "rts_id": 2,
+                    "rts_emis": 2,
+                    "rts_last_save_performance_teacher": "106"
+                });
+
+                fixtures.forEach(function (f) {
+                    api.load_http_fixture(f);
+                });
+            },
+            async: true
+        });
+    });
+
+    it("confirm with message", function (done) {
+        var p = tester.check_state({
+            user: null,
+            content: 'Hi everyone!',
+            next_state: "thanks",
+            response: "^Thanks\\! Bye\\!$",
+            continue_session: false
+        });
+        p.then(done, done);
+    });
+
 });
