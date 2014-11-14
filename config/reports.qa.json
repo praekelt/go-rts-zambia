@@ -2,18 +2,8 @@
     "layout": [
 
         // UNIQUE USERS AND TOTAL SESSIONS
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Total Unique Users",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.unique_users",  // js 1
-                    "aggregator": "last"
-                    }
-            },
 
+            // USSD sessions
             {
                 "type": "diamondash.widgets.lvalue.LValueWidget",
                 "time_range": "30d",
@@ -21,15 +11,49 @@
                 "target": {
                     "metric_type": "account",
                     "store": "rts_ussd_qa",
-                    "name": "sum.ussd_sessions",  // js 2
+                    "name": "sum.ussd_sessions",  // js 1
                     "aggregator": "last"
                     }
+            },
+
+            // Unique users
+            {
+                "type": "diamondash.widgets.lvalue.LValueWidget",
+                "time_range": "30d",
+                "name": "Total Unique Users",
+                "target": {
+                    "metric_type": "account",
+                    "store": "rts_ussd_qa",
+                    "name": "sum.unique_users",  // js 2
+                    "aggregator": "last"
+                    }
+            },
+
+            // 12 month graph - Unique users
+            {
+                "type": "diamondash.widgets.graph.GraphWidget",
+                "name": "12 month Unique Users",
+                "time_range": "12m",
+                "bucket_size": "1d",
+                "width": 6,
+                "metrics": [
+                    {
+                        "name": "Unique Users",
+                        "target": {
+                            "metric_type": "account",
+                            "store": "rts_ussd_qa",
+                            "name": "sum.unique_users",
+                            "aggregator": "last"
+                        }
+                    }
+                ]
             },
 
         "new_row",
 
         // HEAD TEACHER REGISTRATIONS
 
+            // USSD
             {
                 "type": "diamondash.widgets.lvalue.LValueWidget",
                 "time_range": "30d",
@@ -42,6 +66,7 @@
                     }
             },
 
+            // Total
             {
                 "type": "diamondash.widgets.lvalue.LValueWidget",
                 "time_range": "30d",
@@ -52,6 +77,37 @@
                     "name": "sum.head_teacher_registrations.total",  // dj 1
                     "aggregator": "last"
                     }
+            },
+
+            "new_row",
+
+            // 12 month graph - USSD & Total
+            {
+                "type": "diamondash.widgets.graph.GraphWidget",
+                "name": "12 month Head Teacher Registrations",
+                "time_range": "12m",
+                "bucket_size": "1d",
+                "width": 6,
+                "metrics": [
+                    {
+                        "name": "USSD",
+                        "target": {
+                            "metric_type": "account",
+                            "store": "rts_ussd_qa",
+                            "name": "sum.head_teacher_registrations.ussd",
+                            "aggregator": "last"
+                        }
+                    },
+                    {
+                        "name": "Total",
+                        "target": {
+                            "metric_type": "account",
+                            "store": "rts_ussd_qa",
+                            "name": "sum.head_teacher_registrations.total",
+                            "aggregator": "last"
+                        }
+                    }
+                ]
             },
 
         "new_row",
@@ -131,6 +187,46 @@
                     "name": "sum.school_monitoring_reports.total",  // dj 4
                     "aggregator": "last"
                     }
+            },
+
+            "new_row",
+
+            // 16 week graph - report completion
+            {
+                "type": "diamondash.widgets.graph.GraphWidget",
+                "name": "16 week USSD Reports Completed",
+                "time_range": "16w",
+                "bucket_size": "1w",
+                "width": 12,
+                "metrics": [
+                    {
+                        "name": "Learner Reports",
+                        "target": {
+                            "metric_type": "account",
+                            "store": "rts_ussd_qa",
+                            "name": "sum.learner_performance_reports.ussd",
+                            "aggregator": "last"
+                        }
+                    },
+                    {
+                        "name": "Teacher Reports",
+                        "target": {
+                            "metric_type": "account",
+                            "store": "rts_ussd_qa",
+                            "name": "sum.teacher_performance_reports.ussd",
+                            "aggregator": "last"
+                        }
+                    },
+                    {
+                        "name": "School Monitoring Reports",
+                        "target": {
+                            "metric_type": "account",
+                            "store": "rts_ussd_qa",
+                            "name": "sum.school_monitoring_reports.ussd",
+                            "aggregator": "last"
+                        }
+                    }
+                ]
             },
 
         "new_row",
@@ -286,6 +382,55 @@
                     "name": "sum.sessions.QAProvince",  // js 17
                     "aggregator": "sum"
                     }
+            },
+
+            "new_row",
+
+            // 12 month graph - Sessions per province
+            {
+                "type": "diamondash.widgets.graph.GraphWidget",
+                "name": "12 month Sessions per Province",
+                "time_range": "12m",
+                "bucket_size": "1d",
+                "width": 12,
+                "metrics": [
+                    {
+                        "name": "test_province",
+                        "target": {
+                            "metric_type": "account",
+                            "store": "rts_ussd_qa",
+                            "name": "sum.sessions.test_province",
+                            "aggregator": "sum"
+                        }
+                    },
+                    {
+                        "name": "Northern Province",
+                        "target": {
+                            "metric_type": "account",
+                            "store": "rts_ussd_qa",
+                            "name": "sum.sessions.NorthernProvince",
+                            "aggregator": "sum"
+                        }
+                    },
+                    {
+                        "name": "Northern",
+                        "target": {
+                            "metric_type": "account",
+                            "store": "rts_ussd_qa",
+                            "name": "sum.sessions.Northern",
+                            "aggregator": "sum"
+                        }
+                    },
+                    {
+                        "name": "QA Province",
+                        "target": {
+                            "metric_type": "account",
+                            "store": "rts_ussd_qa",
+                            "name": "sum.sessions.QAProvince",
+                            "aggregator": "sum"
+                        }
+                    }
+                ]
             },
 
         "new_row",
@@ -512,8 +657,6 @@
                     "name": "sum.reg_thanks_head_teacher.exits",  // js
                     "aggregator": "sum"
                     }
-            },
-
+            }
     ]
 }
-KB
