@@ -522,8 +522,7 @@ go.cm = function() {
                                 return go.utils
                                     .cms_get("data/headteacher/?emis__emis=" + emis, im)
                                     .then(function(result) {
-                                        var parsed_result = JSON.parse(result.body);
-                                        var headteacher_id = parsed_result.id;
+                                        var headteacher_id = result.data.objects[0].id;
                                         var data = {
                                             msisdn: im.user.addr
                                         };
@@ -2133,10 +2132,21 @@ go.utils = {
     // ----------------
 
     cms_update_school_and_contact: function(result, im, contact) {
-        var headteacher_id = result.data.id;
-        var headteacher_is_zonal_head = result.data.is_zonal_head;
-        var emis = result.data.emis.emis;
+        var headteacher_id;
+        var headteacher_is_zonal_head;
+        var emis;
+
         var school_data = go.utils.registration_data_school_collect(im);
+        if (result.data.objects) {  // if result comes from GET call
+            headteacher_id = result.data.objects[0].id;
+            headteacher_is_zonal_head = result.data.objects[0].is_zonal_head;
+            emis = result.data.objects[0].emis.emis;
+        } else {  // if result comes from POST/PUT call
+            headteacher_id = result.data.id;
+            headteacher_is_zonal_head = result.data.is_zonal_head;
+            emis = result.data.emis.emis;
+        }
+
         school_data.created_by = "/api/v1/data/headteacher/" + headteacher_id + "/";
         school_data.emis = "/api/v1/school/emis/" + emis + "/";
         return go.utils

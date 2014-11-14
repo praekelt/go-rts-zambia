@@ -494,37 +494,49 @@ module.exports = function() {
         "response": {
             "code": 200,
             "data": {
-                "created_at": "2013-08-14T19:57:50.232678",
-                "date_of_birth": "1980-09-11T00:00:00",
-                "emis": {
-                    "emis": 1,
-                    "id": 1,
-                    "name": "School One",
-                    "resource_uri": "/api/v1/school/1/",
-                    "zone": {
-                        "district": {
-                            "id": 1,
-                            "name": "District One",
-                            "province": {
-                                "id": 1,
-                                "name": "Province One",
-                                "resource_uri": "/api/v1/province/1/"
-                            },
-                            "resource_uri": "/api/v1/district/1/"
-                        },
-                        "id": 1,
-                        "name": "Zone One",
-                        "resource_uri": "/api/v1/zone/1/"
-                    }
+                "meta": {
+                    "limit": 1000,
+                    "next": null,
+                    "offset": 0,
+                    "previous": null,
+                    "total_count": 18
                 },
-                "first_name": "Jack",
-                "gender": "male",
-                "id": 2,
-                "is_zonal_head": false,
-                "last_name": "Black",
-                "msisdn": "097123",
-                "resource_uri": "/api/data/headteacher/2/",
-                "zonal_head_name": "Jim Carey"
+                "objects": [
+                    {
+                        "created_at": "2013-08-14T19:57:50.232678",
+                        "date_of_birth": "1980-09-11T00:00:00",
+                        "emis": {
+                            "emis": 1,
+                            "id": 1,
+                            "name": "School One",
+                            "resource_uri": "/api/v1/school/1/",
+                            "zone": {
+                                "district": {
+                                    "id": 1,
+                                    "name": "District One",
+                                    "province": {
+                                        "id": 1,
+                                        "name": "Province One",
+                                        "resource_uri": "/api/v1/province/1/"
+                                    },
+                                    "resource_uri": "/api/v1/district/1/"
+                                },
+                                "id": 1,
+                                "name": "Zone One",
+                                "resource_uri": "/api/v1/zone/1/"
+                            }
+                        },
+                        "first_name": "Jack",
+                        "gender": "male",
+                        "id": 2,
+                        "is_zonal_head": false,
+                        "last_name": "Black",
+                        "msisdn": "097123",
+                        "resource_uri": "/api/data/headteacher/2/",
+                        "zonal_head_name": "Jim Carey"
+                    }
+                ]
+
             }
         }
     },
@@ -676,37 +688,48 @@ module.exports = function() {
         "response": {
             "code": 200,
             "data": {
-                "created_at": "2013-08-14T19:57:50.232678",
-                "date_of_birth": "1980-09-11T00:00:00",
-                "emis": {
-                    "emis": 45,
-                    "id": 1,
-                    "name": "School One",
-                    "resource_uri": "/api/v1/school/1/",
-                    "zone": {
-                        "district": {
-                            "id": 1,
-                            "name": "District One",
-                            "province": {
-                                "id": 1,
-                                "name": "Province One",
-                                "resource_uri": "/api/v1/province/1/"
-                            },
-                            "resource_uri": "/api/v1/district/1/"
-                        },
-                        "id": 1,
-                        "name": "Zone One",
-                        "resource_uri": "/api/v1/zone/1/"
-                    }
+                "meta": {
+                    "limit": 1000,
+                    "next": null,
+                    "offset": 0,
+                    "previous": null,
+                    "total_count": 18
                 },
-                "first_name": "Regina",
-                "gender": "female",
-                "id": 555,
-                "is_zonal_head": true,
-                "last_name": "Spektor",
-                "msisdn": "097555",
-                "resource_uri": "/api/data/headteacher/555/",
-                "zonal_head_name": "self"
+                "objects": [
+                    {
+                        "created_at": "2013-08-14T19:57:50.232678",
+                        "date_of_birth": "1980-09-11T00:00:00",
+                        "emis": {
+                            "emis": 45,
+                            "id": 1,
+                            "name": "School One",
+                            "resource_uri": "/api/v1/school/1/",
+                            "zone": {
+                                "district": {
+                                    "id": 1,
+                                    "name": "District One",
+                                    "province": {
+                                        "id": 1,
+                                        "name": "Province One",
+                                        "resource_uri": "/api/v1/province/1/"
+                                    },
+                                    "resource_uri": "/api/v1/district/1/"
+                                },
+                                "id": 1,
+                                "name": "Zone One",
+                                "resource_uri": "/api/v1/zone/1/"
+                            }
+                        },
+                        "first_name": "Regina",
+                        "gender": "female",
+                        "id": 555,
+                        "is_zonal_head": true,
+                        "last_name": "Spektor",
+                        "msisdn": "097555",
+                        "resource_uri": "/api/data/headteacher/555/",
+                        "zonal_head_name": "self"
+                    }
+                ]
             }
         }
     },
