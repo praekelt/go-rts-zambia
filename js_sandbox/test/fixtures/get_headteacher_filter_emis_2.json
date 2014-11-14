@@ -1,5 +1,5 @@
 {
-    "url": "http://qa/api/v1/data/headteacher/?zone=1&is_zonal_head=true",
+    "url": "http://qa/api/v1/data/headteacher/?emis__emis=2",
     "method": "GET",
     "content_type": "application/json",
     "body": {
@@ -15,35 +15,36 @@
                 "created_at": "2013-08-14T19:57:50.232678",
                 "date_of_birth": "1980-09-11T00:00:00",
                 "emis": {
-                    "emis": 1,
-                    "id": 1,
+                    "emis": 2,
+                    "id": 2,
                     "name": "School One",
                     "resource_uri": "/api/v1/school/1/",
                     "zone": {
                         "district": {
-                            "id": 1,
-                            "name": "District One",
+                            "id": 2,
+                            "name": "District Two",
                             "province": {
-                                "id": 1,
-                                "name": "Province One",
-                                "resource_uri": "/api/v1/province/1/"
+                                "id": 2,
+                                "name": "Province Two",
+                                "resource_uri": "/api/v1/province/2/"
                             },
-                            "resource_uri": "/api/v1/district/1/"
+                            "resource_uri": "/api/v1/district/2/"
                         },
-                        "id": 1,
-                        "name": "Zone One",
-                        "resource_uri": "/api/v1/zone/1/"
+                        "id": 2,
+                        "name": "Zone Two",
+                        "resource_uri": "/api/v1/zone/2/"
                     }
                 },
                 "first_name": "Jack",
                 "gender": "male",
                 "id": 2,
-                "is_zonal_head": true,
+                "is_zonal_head": false,
                 "last_name": "Black",
                 "msisdn": "1234567",
                 "resource_uri": "/api/data/headteacher/2/",
                 "zonal_head_name": "Jim Carey"
             }
         ]
+
     }
 }

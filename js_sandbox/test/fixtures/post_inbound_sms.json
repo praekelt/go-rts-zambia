@@ -1,0 +1,10 @@
+{
+    "url": "http://qa/api/v1/data/sms/",
+    "method": "POST",
+    "content_type": "application/json",
+    "data": {
+        "message": "Hi everyone!",
+        "created_by": "/api/v1/data/headteacher/2/"
+    },
+    "body": {}
+}

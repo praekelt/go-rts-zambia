@@ -72,7 +72,8 @@ describe("app", function() {
                         extra: {
                             rts_id: '888',
                             rts_emis: '777',
-                            is_zonal_head: 'false'
+                            is_zonal_head: 'false',
+                            province: 'Pro Vince'
                         }
                     });
                 });
@@ -2946,6 +2947,27 @@ describe("when a registered user logs on", function() {
                     });
                 });
 
+                describe("if the number validates (equals)", function() {
+                    it("should ask for boys below minimum results", function() {
+                        return tester
+                            .setup.user.addr('097555')
+                            .inputs(
+                                'start',
+                                '2',  // initial_state_head_teacher
+                                '10', // perf_learner_boys_total
+                                '5',  // perf_learner_boys_outstanding
+                                '4',  // perf_learner_boys_desirable
+                                '1'  // perf_learner_boys_minimum
+                            )
+                            .check.interaction({
+                                state: 'perf_learner_boys_below_minimum',
+                                reply:
+                                    "In total, how many boys achieved between 0 and 7 out of 20?"
+                            })
+                            .run();
+                    });
+                });
+
                 // test for numeric value
                 describe("if the number does not validate", function() {
                     it("should ask for boys minimum results again", function() {
@@ -5094,6 +5116,61 @@ describe("when a registered user logs on", function() {
 
 describe("test metric firing in various places", function() {
 
+    describe("when a user starts a new session", function() {
+
+        describe("if the user has their province stored as an extra", function() {
+            it("should increase their province's number of sessions metric", function() {
+                return tester
+                    .setup.user.addr('097888')  // contact.extra.province = "Pro Vince"
+                    .inputs(
+                        {session_event: 'new'}
+                    )
+                    .check(function(api) {
+                        var metrics = api.metrics.stores.test_metric_store;
+                        assert.deepEqual(metrics['sum.sessions.ProVince'].values, [1]);
+                    })
+                    .run();
+            });
+        });
+
+        describe("if the user does not have their province stored as an extra", function() {
+            it("should look up their province, save against contact, fire metric", function() {
+                return tester
+                    .setup.user.addr('097555')  // contact.extra.province undefined
+                    .inputs(
+                        {session_event: 'new'}
+                    )
+                    .check(function(api) {
+                        var metrics = api.metrics.stores.test_metric_store;
+                        assert.deepEqual(metrics['sum.sessions.test_province'].values, [1]);
+                    })
+                    .run();
+            });
+        });
+
+        describe("if the user does not have an emis code", function() {
+            it("should not fire a province sessions metric", function() {
+                return tester
+                    .setup.user.addr('097444')  // contact.extra.province undefined
+                    .inputs(
+                        {session_event: 'new'}
+                    )
+                    .check(function(api) {
+                        var metrics = api.metrics.stores.test_metric_store;
+                        var province_metric = false;
+                        for (var metric in metrics) {
+                            if (metric.slice(0, 13) === 'sum.sessions.') {
+                                province_metric = true;
+                            }
+                        }
+                        assert.equal(province_metric, false);
+                        assert.equal(metrics['sum.sessions.test_province'], undefined);
+                    })
+                    .run();
+            });
+        });
+    });
+
     describe("when a registered user logs on", function() {
         it("should increase the number of sessions metrics", function() {
             return tester
@@ -5123,7 +5200,7 @@ describe("test metric firing in various places", function() {
             return tester
                 .setup.user.addr('097123')
                 .inputs(
-                    'start',
+                    {session_event: 'new'},
                     '1',  // initial_state
                     '0001',  // reg_emis
                     '1',  // reg_emis_validates
@@ -5145,7 +5222,240 @@ describe("test metric firing in various places", function() {
                 .check(function(api) {
                     var metrics = api.metrics.stores.test_metric_store;
                     assert.deepEqual(metrics['sum.head_teacher_registrations.ussd'].values, [1]);
-                    assert.deepEqual(metrics['sum.head_teacher_registrations.total'].values, [1]);
+                })
+                .run();
+        });
+
+        it("should fire average sessions to register metrics", function() {
+            return tester
+                .setup.user.addr('097123')
+                .inputs(
+                    'start',
+                    '1',  // initial_state
+                    '0001',  // reg_emis
+                    '1',  // reg_emis_validates
+                    'School One',  //reg_school_name
+                    'Jack',  // reg_first_name
+                    'Black',  // reg_surname
+                    '11091980',  // reg_date_of_birth
+                    '2',  // reg_gender
+                    '50',  // reg_school_boys
+                    '51',  // reg_school_girls
+                    '5',  // reg_school_classrooms
+                    '5',  // reg_school_teachers
+                    '2',  // reg_school_teachers_g1
+                    '2',  // reg_school_teachers_g2
+                    '10',  // reg_school_students_g2_boys
+                    '11',  // reg_school_students_g2_girls
+                    '2',  // reg_zonal_head
+                    'Jim Carey'  // reg_zonal_head_name
+                )
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['avg.sessions_reg_headteacher'].values, [1]);
+                })
+                .run();
+        });
+
+        it("should fire average sessions to register metrics", function() {
+            return tester
+                .setup.user.addr('097123')
+                .inputs(
+                    'start',
+                    '1',  // initial_state
+                    '0001',  // reg_emis
+                    '1',  // reg_emis_validates
+                    'School One',  //reg_school_name
+                    'Jack',  // reg_first_name
+                    'Black',  // reg_surname
+                    '11091980',  // reg_date_of_birth
+                    {session_event: 'new'},
+                    '2',  // reg_gender
+                    '50',  // reg_school_boys
+                    '51',  // reg_school_girls
+                    '5',  // reg_school_classrooms
+                    '5',  // reg_school_teachers
+                    '2',  // reg_school_teachers_g1
+                    '2',  // reg_school_teachers_g2
+                    '10',  // reg_school_students_g2_boys
+                    '11',  // reg_school_students_g2_girls
+                    '1'  // reg_zonal_head
+                )
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['avg.sessions_reg_ht_zonal_head'].values, [2]);
+                })
+                .run();
+        });
+    });
+
+    describe("when a user registers as a district official", function() {
+        it("should fire average sessions to register metrics", function() {
+            return tester
+                .setup.user.addr('097123')
+                .inputs(
+                    'start',
+                    '2',
+                    {session_event: 'new'},
+                    '9',
+                    '2',
+                    'Michael',
+                    {session_event: 'new'},
+                    'Sherwin',
+                    '123454321',
+                    '27111980')
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['avg.sessions_reg_district_admin'].values, [3]);
+                })
+                .run();
+        });
+    });
+
+    describe("when the user completes a learner performance report", function() {
+        it("should fire average sessions to complete metric", function() {
+            return tester
+                .setup.user.addr('097555')
+                .inputs(
+                    {session_event: 'new'},
+                    '2',  // initial_state_head_teacher
+                    '52', // perf_learner_boys_total
+                    '10',  // perf_learner_boys_outstanding
+                    {session_event: 'new'},
+                    '15',  // perf_learner_boys_desirable
+                    '20',  // perf_learner_boys_minimum
+                    '7',  // perf_learner_boys_below_minimum
+                    '49',  // perf_learner_girls_total
+                    '10',  // perf_learner_girls_outstanding
+                    {session_event: 'new'},
+                    '15',  // perf_learner_girls_desirable
+                    '20',  // perf_learner_girls_minimum
+                    '4',  // perf_learner_girls_below_minimum
+                    '31',  // perf_learner_boys_phonics
+                    '32',  // perf_learner_girls_phonics
+                    '33',  // perf_learner_boys_vocab
+                    '34',  // perf_learner_girls_vocab
+                    '35',  // perf_learner_boys_comprehension
+                    '36',  // perf_learner_girls_comprehension
+                    '37',  // perf_learner_boys_writing
+                    '38'  // perf_learner_girls_writing
+                )
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['avg.sessions_perf_learner_report'].values, [3]);
+                })
+                .run();
+        });
+    });
+
+    describe("when the user completes a teacher performance report", function() {
+        it("should fire average sessions to complete metric", function() {
+            return tester
+                .setup.user.addr('097444')
+                .inputs(
+                    {session_event: 'new'},
+                    '1',  // initial_state_district_official
+                    '0001',  // add_emis_perf_teacher_ts_number
+                    '106',  // perf_teacher_ts_number
+                    '2',  // perf_teacher_gender
+                    '30',  // perf_teacher_age
+                    {session_event: 'new'},
+                    '3',  // perf_teacher_academic_level
+                    '1',  // perf_teacher_years_experience
+                    '40',  // perf_teacher_g2_pupils_present
+                    '50',  // perf_teacher_g2_pupils_registered
+                    '8',  // perf_teacher_classroom_environment_score
+                    '7',  // perf_teacher_t_l_materials
+                    '90',  // perf_teacher_pupils_books_number
+                    '6',  // perf_teacher_pupils_materials_score
+                    '14',  // perf_teacher_reading_lesson
+                    '17',  // perf_teacher_pupil_engagement_score
+                    '16',  // perf_teacher_attitudes_and_beliefs
+                    '3',  // perf_teacher_training_subtotal
+                    '10',  // perf_teacher_reading_assessment
+                    '9',  // perf_teacher_reading_total
+                    '1',  // perf_teacher_completed
+
+                    // another report
+                    '106',  // perf_teacher_ts_number
+                    '2',  // perf_teacher_gender
+                    '30',  // perf_teacher_age
+                    {session_event: 'new'},
+                    '3',  // perf_teacher_academic_level
+                    '1',  // perf_teacher_years_experience
+                    {session_event: 'new'},
+                    '40',  // perf_teacher_g2_pupils_present
+                    '50',  // perf_teacher_g2_pupils_registered
+                    '8',  // perf_teacher_classroom_environment_score
+                    {session_event: 'new'},
+                    '7',  // perf_teacher_t_l_materials
+                    '90',  // perf_teacher_pupils_books_number
+                    '6',  // perf_teacher_pupils_materials_score
+                    '14',  // perf_teacher_reading_lesson
+                    '17',  // perf_teacher_pupil_engagement_score
+                    '16',  // perf_teacher_attitudes_and_beliefs
+                    '3',  // perf_teacher_training_subtotal
+                    '10',  // perf_teacher_reading_assessment
+                    '9'  // perf_teacher_reading_total
+                )
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['avg.sessions_perf_teacher_report'].values, [2, 4]);
+                })
+                .run();
+        });
+    });
+
+    describe("when the user completes a school monitoring report - school behind", function() {
+        it("should fire average sessions to complete metric", function() {
+            return tester
+                .setup.user.addr('097555')  // zonal head
+                .inputs(
+                    'start',
+                    '3',  // initial_state_zonal_head
+                    '4342',  // add_emis_school_monitoring
+                    '1',  // monitor_school_visit_complete
+                    '3',  // monitor_school_see_lpip
+                    '3',  // monitor_school_g2_observation_results
+                    '3',  // monitor_school_gala_sheets
+                    '1'  // monitor_school_falling_behind
+                )
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['avg.sessions_school_monitoring_behind'].values, [1]);
+                })
+                .run();
+        });
+    });
+
+    describe("when the user completes a school monitoring report - complete", function() {
+        it("should fire average sessions to complete metric", function() {
+            return tester
+                .setup.user.addr('097555')  // zonal head
+                .inputs(
+                    'start',
+                    '3',  // initial_state_zonal_head
+                    '4342',  // add_emis_school_monitoring
+                    '1',  // monitor_school_visit_complete
+                    '1',  // monitor_school_see_lpip
+                    '3',  // monitor_school_teaching q01
+                    '2',  // monitor_school_learner_assessment q02
+                    '1',  // monitor_school_learning_materials q03
+                    '3',  // monitor_school_learner_attendance q04
+                    '2',  // monitor_school_reading_time q05
+                    '1',  // monitor_school_struggling_learners q06
+                    '2',  // monitor_school_g2_observation_results q07
+                    '1',  // monitor_school_ht_feedback q08
+                    '2',  // monitor_school_submitted_classroom q09
+                    '1',  // monitor_school_gala_sheets q10
+                    '2',  // monitor_school_summary_worksheet q11
+                    '1',  // monitor_school_ht_feedback_literacy q12
+                    '3',  // monitor_school_submitted_gala q13
+                    '2'  // monitor_school_talking_wall q14
+                )
+                .check(function(api) {
+                    var metrics = api.metrics.stores.test_metric_store;
+                    assert.deepEqual(metrics['avg.sessions_school_monitoring_complete'].values, [1]);
                 })
                 .run();
         });
@@ -5180,8 +5490,7 @@ describe("test metric firing in various places", function() {
                 )
                 .check(function(api) {
                     var metrics = api.metrics.stores.test_metric_store;
-                    assert.deepEqual(metrics['sum.learner_performance_reports.ussd'].values, [1]);
-                    assert.deepEqual(metrics['sum.learner_performance_reports.total'].values, [1]);
+                    assert.deepEqual(metrics['sum.learner_performance_reports.ussd'].values, [1, 2]);
                 })
                 .run();
         });
@@ -5215,14 +5524,13 @@ describe("test metric firing in various places", function() {
                 .check(function(api) {
                     var metrics = api.metrics.stores.test_metric_store;
                     assert.deepEqual(metrics['sum.teacher_performance_reports.ussd'].values, [1]);
-                    assert.deepEqual(metrics['sum.teacher_performance_reports.total'].values, [1]);
                 })
                 .run();
         });
     });
 
     describe("when a district official finishes reporting on school monitoring", function() {
-        it.skip("should fire total school monitoring reports metrics for complete lpip", function() {
+        it("should fire total school monitoring reports metrics for complete lpip", function() {
             return tester
                 .setup.user.addr('097555')  // zonal head
                 .inputs(
@@ -5249,12 +5557,11 @@ describe("test metric firing in various places", function() {
                 .check(function(api) {
                     var metrics = api.metrics.stores.test_metric_store;
                     assert.deepEqual(metrics['sum.school_monitoring_reports.ussd'].values, [1]);
-                    assert.deepEqual(metrics['sum.school_monitoring_reports.total'].values, [1]);
                 })
                 .run();
         });
 
-        it.skip("should fire total school monitoring reports metrics for incomplete lpip", function() {
+        it("should fire total school monitoring reports metrics for incomplete lpip", function() {
             return tester
                 .setup.user.addr('097555')  // zonal head
                 .inputs(
@@ -5269,7 +5576,6 @@ describe("test metric firing in various places", function() {
                 .check(function(api) {
                     var metrics = api.metrics.stores.test_metric_store;
                     assert.deepEqual(metrics['sum.school_monitoring_reports.ussd'].values, [1]);
-                    assert.deepEqual(metrics['sum.school_monitoring_reports.total'].values, [1]);
                 })
                 .run();
         });
@@ -5293,6 +5599,7 @@ describe("test metric firing in various places", function() {
                     assert.deepEqual(metrics['sum.reg_emis.exits'].values, [1]);
                     assert.deepEqual(metrics['sum.reg_emis_validates.exits'].values, [1]);
                     assert.deepEqual(metrics['sum.reg_school_name.exits'].values, [1]);
+                    assert.equal(metrics['sum.reg_first_name.exits'], undefined);
                 })
                 .run();
         });

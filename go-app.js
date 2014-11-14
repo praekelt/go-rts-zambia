@@ -2116,6 +2116,7 @@ go.sp = function() {
 var vumigo = require('vumigo_v02');
 var moment = require('moment');
 var _ = require('lodash');
+var Q = require('q');
 var MetricsHelper = require('go-jsbox-metrics-helper');
 var ChoiceState = vumigo.states.ChoiceState;
 var EndState = vumigo.states.EndState;
@@ -2430,6 +2431,43 @@ go.utils = {
         data.emis = "/api/v1/school/emis/" + emis + "/";
 
         return data;
+    },
+
+    get_province: function(im, contact) {
+        path = "school?emis=" + contact.extra.rts_emis;
+        return go.utils
+            .cms_get(path, im)
+            .then(function(result) {
+                var contact_province = result.data.objects[0].zone.district.province.name;
+                return contact_province;
+            });
+    },
+
+    fire_province_metrics: function(im, contact) {
+        // if contact has no emis we cannot tell which province they're from
+        if (_.isUndefined(contact.extra.rts_emis)) {
+            return Q();
+
+        // else if province is saved against contact use contact extra
+        } else if (!_.isUndefined(contact.extra.province)) {
+            var contact_province = contact.extra.province;
+            // strip spaces from province name for metric
+            contact_province = contact_province.replace(/\s/g,'');
+            return im.metrics.fire.inc(['sum', 'sessions', contact_province].join('.'), 1);
+
+        // else look up the province, use that, and save province against their contact for future
+        } else {
+            return go.utils
+                .get_province(im, contact)
+                .then(function(contact_province) {
+                    contact.extra.province = contact_province;
+                    contact_province = contact_province.replace(/\s/g,'');
+                    return Q.all([
+                        im.contacts.save(contact),
+                        im.metrics.fire.inc(['sum', 'sessions', contact_province].join('.'), 1)
+                    ]);
+                });
+        }
     }
 
 };
@@ -2445,7 +2483,7 @@ go.app = function() {
         var $ = self.$;
 
         self.init = function() {
-
+            self.im.setMaxListeners(15);  // increase listener limit
             // Use the metrics helper to add the required metrics
             mh = new MetricsHelper(self.im);
             mh
@@ -2472,22 +2510,6 @@ go.app = function() {
                         },
                         'sum.head_teacher_registrations.ussd'
                     )
-                    // Total head teachers added (USSD + Django) - zonal heads
-                    .add.total_state_actions(
-                        {
-                            state: 'reg_zonal_head',
-                            action: 'exit'
-                        },
-                        'sum.head_teacher_registrations.total'
-                    )
-                    // Total head teachers added (USSD + Django) - non zonal heads
-                    .add.total_state_actions(
-                        {
-                            state: 'reg_zonal_head_name',
-                            action: 'exit'
-                        },
-                        'sum.head_teacher_registrations.total'
-                    )
 
                 // Learner performance reports
                     // Total learner performance reports added via USSD
@@ -2498,13 +2520,14 @@ go.app = function() {
                         },
                         'sum.learner_performance_reports.ussd'
                     )
-                    // Total learner performance reports added (USSD + Django)
+                    // The above metric is duplicated to align with the django
+                    // code, where girls = 1 report, boys = 1 report - 2 total
                     .add.total_state_actions(
                         {
                             state: 'perf_learner_girls_writing',
                             action: 'exit'
                         },
-                        'sum.learner_performance_reports.total'
+                        'sum.learner_performance_reports.ussd'
                     )
 
                 // Teacher performance reports
@@ -2516,54 +2539,117 @@ go.app = function() {
                         },
                         'sum.teacher_performance_reports.ussd'
                     )
-                    // Total teacher performance reports added (USSD + Django)
+
+                // School monitoring reports
+                    // Total school monitoring reports added via USSD - good lpip
                     .add.total_state_actions(
                         {
-                            state: 'perf_teacher_reading_total',
+                            state: 'monitor_school_talking_wall',
                             action: 'exit'
                         },
-                        'sum.teacher_performance_reports.total'
+                        'sum.school_monitoring_reports.ussd'
+                    )
+                    // Total school monitoring reports added via USSD - poor lpip
+                    .add.total_state_actions(
+                        {
+                            state: 'monitor_school_falling_behind',
+                            action: 'enter'
+                        },
+                        'sum.school_monitoring_reports.ussd'
                     )
 
-                // // School monitoring reports
-                //     // Total school monitoring reports added via USSD - good lpip
-                //     .add.total_state_actions(
-                //         {
-                //             state: 'monitor_school_talking_wall',
-                //             action: 'exit'
-                //         },
-                //         'sum.school_monitoring_reports.ussd'
-                //     )
-                //     // Total school monitoring reports added via USSD - poor lpip
-                //     .add.total_state_actions(
-                //         {
-                //             state: 'monitor_school_falling_behind',
-                //             action: 'enter'
-                //         },
-                //         'sum.school_monitoring_reports.ussd'
-                //     )
-                //     // Total school monitoring reports added (USSD + Django) - good lpip
-                //     .add.total_state_actions(
-                //         {
-                //             state: 'monitor_school_talking_wall',
-                //             action: 'exit'
-                //         },
-                //         'sum.school_monitoring_reports.total'
-                //     )
-                //     // Total school monitoring reports added (USSD + Django) - poor lpip
-                //     .add.total_state_actions(
-                //         {
-                //             state: 'monitor_school_falling_behind',
-                //             action: 'enter'
-                //         },
-                //         'sum.school_monitoring_reports.total'
-                //     )
+                // Average sessions to register
+                    // Head teacher (if they register as zonal head)
+                    .add.tracker({
+                        action: 'enter',
+                        state: 'reg_emis'
+                    }, {
+                        action: 'enter',
+                        state: 'reg_thanks_zonal_head'
+                    }, {
+                        sessions_between_states: 'avg.sessions_reg_ht_zonal_head'
+                    })
+
+                    // Head teacher (if they are NOT a zonal head)
+                    .add.tracker({
+                        action: 'enter',
+                        state: 'reg_emis'
+                    }, {
+                        action: 'enter',
+                        state: 'reg_thanks_head_teacher'
+                    }, {
+                        sessions_between_states: 'avg.sessions_reg_headteacher'
+                    })
+
+                    // District official
+                    .add.tracker({
+                        action: 'enter',
+                        state: 'reg_district_official'
+                    }, {
+                        action: 'enter',
+                        state: 'reg_district_official_thanks'
+                    }, {
+                        sessions_between_states: 'avg.sessions_reg_district_admin'
+                    })
+
+                // Average sessions to complete learner performance reports
+                    // Does not include adding EMIS for District Admins
+                    .add.tracker({
+                        action: 'enter',
+                        state: 'perf_learner_boys_total'
+                    }, {
+                        action: 'enter',
+                        state: 'perf_learner_completed'
+                    }, {
+                        sessions_between_states: 'avg.sessions_perf_learner_report'
+                    })
+
+                // Average sessions to complete teacher performance reports
+                    // Does not include adding EMIS for District Admins
+                    .add.tracker({
+                        action: 'enter',
+                        state: 'perf_teacher_ts_number'
+                    }, {
+                        action: 'enter',
+                        state: 'perf_teacher_completed'
+                    }, {
+                        sessions_between_states: 'avg.sessions_perf_teacher_report'
+                    })
+
+                // Average sessions to complete school monitoring report - school falling behind
+                    // Does not include adding EMIS for District Admins
+                    .add.tracker({
+                        action: 'enter',
+                        state: 'monitor_school_see_lpip'
+                    }, {
+                        action: 'enter',
+                        state: 'monitor_school_falling_behind'
+                    }, {
+                        sessions_between_states: 'avg.sessions_school_monitoring_behind'
+                    })
+
+                // Average sessions to complete school monitoring report - complete lpip
+                    // Does not include adding EMIS for District Admins
+                    .add.tracker({
+                        action: 'enter',
+                        state: 'monitor_school_see_lpip'
+                    }, {
+                        action: 'enter',
+                        state: 'monitor_school_completed'
+                    }, {
+                        sessions_between_states: 'avg.sessions_school_monitoring_complete'
+                    })
 
             ;
 
             // Navigation tracking to measure drop-offs
             self.im.on('state:exit', function(e) {
                 return self.im.metrics.fire.inc(['sum', e.state.name, 'exits'].join('.'), 1);
+            });
+
+            // Measure sessions per province
+            self.im.on('session:new', function(e) {
+                return go.utils.fire_province_metrics(self.im, self.contact);
             });
 
             self.env = self.im.config.env;
