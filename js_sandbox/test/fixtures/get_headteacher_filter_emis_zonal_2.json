@@ -1,0 +1,15 @@
+{
+    "url": "http://qa/api/v1/data/headteacher/?zone=2&is_zonal_head=true",
+    "method": "GET",
+    "content_type": "application/json",
+    "body": {
+        "meta": {
+            "limit": 1000,
+            "next": null,
+            "offset": 0,
+            "previous": null,
+            "total_count": 18
+        },
+        "objects": []
+    }
+}
