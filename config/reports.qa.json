@@ -1,662 +1,605 @@
 {
     "layout": [
-
-        // UNIQUE USERS AND TOTAL SESSIONS
-
-            // USSD sessions
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Total USSD Sessions",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.ussd_sessions",  // js 1
-                    "aggregator": "last"
-                    }
-            },
-
-            // Unique users
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Total Unique Users",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.unique_users",  // js 2
-                    "aggregator": "last"
-                    }
-            },
-
-            // 12 month graph - Unique users
-            {
-                "type": "diamondash.widgets.graph.GraphWidget",
-                "name": "12 month Unique Users",
-                "time_range": "12m",
-                "bucket_size": "1d",
-                "width": 6,
-                "metrics": [
-                    {
-                        "name": "Unique Users",
-                        "target": {
-                            "metric_type": "account",
-                            "store": "rts_ussd_qa",
-                            "name": "sum.unique_users",
-                            "aggregator": "last"
-                        }
-                    }
-                ]
-            },
-
-        "new_row",
-
-        // HEAD TEACHER REGISTRATIONS
-
-            // USSD
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Head Teacher Registrations - USSD",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.head_teacher_registrations.ussd",  // js 3
-                    "aggregator": "last"
-                    }
-            },
-
-            // Total
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Head Teacher Registrations - Total",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.head_teacher_registrations.total",  // dj 1
-                    "aggregator": "last"
-                    }
-            },
-
-            "new_row",
-
-            // 12 month graph - USSD & Total
-            {
-                "type": "diamondash.widgets.graph.GraphWidget",
-                "name": "12 month Head Teacher Registrations",
-                "time_range": "12m",
-                "bucket_size": "1d",
-                "width": 6,
-                "metrics": [
-                    {
-                        "name": "USSD",
-                        "target": {
-                            "metric_type": "account",
-                            "store": "rts_ussd_qa",
-                            "name": "sum.head_teacher_registrations.ussd",
-                            "aggregator": "last"
-                        }
-                    },
-                    {
-                        "name": "Total",
-                        "target": {
-                            "metric_type": "account",
-                            "store": "rts_ussd_qa",
-                            "name": "sum.head_teacher_registrations.total",
-                            "aggregator": "last"
-                        }
-                    }
-                ]
-            },
-
-        "new_row",
-
-        // NUMBER OF REPORTS METRICS
-
-            // Learner performance
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Learner Performance Reports - USSD",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.learner_performance_reports.ussd",  // js 4
-                    "aggregator": "last"
-                    }
-            },
-
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Learner Performance Reports - Total",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.learner_performance_reports.total",  // dj 2
-                    "aggregator": "last"
-                    }
-            },
-
-            // Teacher performance
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Teacher Performance Reports - USSD",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.teacher_performance_reports.ussd",  // js 5
-                    "aggregator": "last"
-                    }
-            },
-
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Teacher Performance Reports - Total",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.teacher_performance_reports.total",  // dj 3
-                    "aggregator": "last"
-                    }
-            },
-
-            // School monitoring
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "School Monitoring Reports - USSD",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.school_monitoring_reports.ussd",  // js 6
-                    "aggregator": "last"
-                    }
-            },
-
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "School Monitoring Reports - Total",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.school_monitoring_reports.total",  // dj 4
-                    "aggregator": "last"
-                    }
-            },
-
-            "new_row",
-
-            // 16 week graph - report completion
-            {
-                "type": "diamondash.widgets.graph.GraphWidget",
-                "name": "16 week USSD Reports Completed",
-                "time_range": "16w",
-                "bucket_size": "1w",
-                "width": 12,
-                "metrics": [
-                    {
-                        "name": "Learner Reports",
-                        "target": {
-                            "metric_type": "account",
-                            "store": "rts_ussd_qa",
-                            "name": "sum.learner_performance_reports.ussd",
-                            "aggregator": "last"
-                        }
-                    },
-                    {
-                        "name": "Teacher Reports",
-                        "target": {
-                            "metric_type": "account",
-                            "store": "rts_ussd_qa",
-                            "name": "sum.teacher_performance_reports.ussd",
-                            "aggregator": "last"
-                        }
-                    },
-                    {
-                        "name": "School Monitoring Reports",
-                        "target": {
-                            "metric_type": "account",
-                            "store": "rts_ussd_qa",
-                            "name": "sum.school_monitoring_reports.ussd",
-                            "aggregator": "last"
-                        }
-                    }
-                ]
-            },
-
-        "new_row",
-
-        // SESSIONS TO REGISTER METRICS
-
-            // Zonal head headteacher
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Average Sessions to Register Head Teacher - Zonal Head",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "avg.sessions_reg_ht_zonal_head",  // js 7
-                    "aggregator": "avg"
-                    }
-            },
-
-            // Normal headteacher
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Average Sessions to Register Head Teacher - non Zonal Head",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "avg.sessions_reg_headteacher",  // js 8
-                    "aggregator": "avg"
-                    }
-            },
-
-            // District official
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Average Sessions to Register District Official",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "avg.sessions_reg_district_admin",  // js 9
-                    "aggregator": "avg"
-                    }
-            },
-
-        "new_row",
-
-        // SESSIONS TO COMPLETE REPORTS
-
-            // Learner performance
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Average Sessions to complete Learner Performance Reports",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "avg.sessions_perf_learner_report",  // js 10
-                    "aggregator": "avg"
-                    }
-            },
-
-            // Teacher performance
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Average Sessions to complete Teacher Performance Reports",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "avg.sessions_perf_teacher_report",  // js 11
-                    "aggregator": "avg"
-                    }
-            },
-
-            // School monitoring - complete
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Average Sessions to complete School Monitoring Report - Complete",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "avg.sessions_school_monitoring_complete",  // js 12
-                    "aggregator": "avg"
-                    }
-            },
-
-            // School monitoring - school falling behind
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Average Sessions to complete School Monitoring Report - School Behind",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "avg.sessions_school_monitoring_behind",  // js 13
-                    "aggregator": "avg"
-                    }
-            },
-
-        "new_row",
-
-        // SESSIONS PER PROVINCE
-
-            // QA province 1 - test_province
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Sessions: test_province",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.sessions.test_province",  // js 14
-                    "aggregator": "sum"
-                    }
-            },
-
-            // QA province 2 - Northern Province
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Sessions: Northern Province",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.sessions.NorthernProvince",  // js 15
-                    "aggregator": "sum"
-                    }
-            },
-
-            // QA province 3 - Northern
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Sessions: Northern",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.sessions.Northern",  // js 16
-                    "aggregator": "sum"
-                    }
-            },
-
-            // QA province 4 - QA Province
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Sessions: QA Province",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.sessions.QAProvince",  // js 17
-                    "aggregator": "sum"
-                    }
-            },
-
-            "new_row",
-
-            // 12 month graph - Sessions per province
-            {
-                "type": "diamondash.widgets.graph.GraphWidget",
-                "name": "12 month Sessions per Province",
-                "time_range": "12m",
-                "bucket_size": "1d",
-                "width": 12,
-                "metrics": [
-                    {
-                        "name": "test_province",
-                        "target": {
-                            "metric_type": "account",
-                            "store": "rts_ussd_qa",
-                            "name": "sum.sessions.test_province",
-                            "aggregator": "sum"
-                        }
-                    },
-                    {
-                        "name": "Northern Province",
-                        "target": {
-                            "metric_type": "account",
-                            "store": "rts_ussd_qa",
-                            "name": "sum.sessions.NorthernProvince",
-                            "aggregator": "sum"
-                        }
-                    },
-                    {
-                        "name": "Northern",
-                        "target": {
-                            "metric_type": "account",
-                            "store": "rts_ussd_qa",
-                            "name": "sum.sessions.Northern",
-                            "aggregator": "sum"
-                        }
-                    },
-                    {
-                        "name": "QA Province",
-                        "target": {
-                            "metric_type": "account",
-                            "store": "rts_ussd_qa",
-                            "name": "sum.sessions.QAProvince",
-                            "aggregator": "sum"
-                        }
-                    }
-                ]
-            },
-
-        "new_row",
-
-        // STATE COMPLETIONS
-
-            // Register as head teacher
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_emis",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_emis.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_emis_validates",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_emis_validates.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_exit_emis",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_exit_emis.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_school_name",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_school_name.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_first_name",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_first_name.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_surname",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_surname.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_date_of_birth",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_date_of_birth.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_gender",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_gender.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_school_boys",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_school_boys.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_school_girls",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_school_girls.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_school_classrooms",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_school_classrooms.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_school_teachers",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_school_teachers.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_school_teachers_g1",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_school_teachers_g1.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_school_teachers_g2",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_school_teachers_g2.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_school_students_g2_boys",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_school_students_g2_boys.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_school_students_g2_girls",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_school_students_g2_girls.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_zonal_head",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_zonal_head.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_zonal_head_name",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_zonal_head_name.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_thanks_zonal_head",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_thanks_zonal_head.exits",  // js
-                    "aggregator": "sum"
-                    }
-            },
-            {
-                "type": "diamondash.widgets.lvalue.LValueWidget",
-                "time_range": "30d",
-                "name": "Completed States: Register Headteacher - reg_thanks_head_teacher",
-                "target": {
-                    "metric_type": "account",
-                    "store": "rts_ussd_qa",
-                    "name": "sum.reg_thanks_head_teacher.exits",  // js
-                    "aggregator": "sum"
-                    }
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Total USSD Sessions",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.ussd_sessions",
+                "aggregator": "last"
             }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Total Unique Users",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.unique_users",
+                "aggregator": "last"
+            }
+        },
+        {
+            "type": "diamondash.widgets.graph.GraphWidget",
+            "name": "12 month Unique Users",
+            "time_range": "12m",
+            "bucket_size": "1d",
+            "width": 6,
+            "metrics": [
+                {
+                    "name": "Unique Users",
+                    "target": {
+                        "metric_type": "account",
+                        "store": "rts_ussd_qa",
+                        "name": "sum.unique_users",
+                        "aggregator": "last"
+                    }
+                }
+            ]
+        },
+
+        "new_row",
+
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Head Teacher Registrations - USSD",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.head_teacher_registrations.ussd",
+                "aggregator": "last"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Head Teacher Registrations - Total",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.head_teacher_registrations.total",
+                "aggregator": "last"
+            }
+        },
+        {
+            "type": "diamondash.widgets.graph.GraphWidget",
+            "name": "12 month Head Teacher Registrations",
+            "time_range": "12m",
+            "bucket_size": "1d",
+            "width": 6,
+            "metrics": [
+                {
+                    "name": "USSD",
+                    "target": {
+                        "metric_type": "account",
+                        "store": "rts_ussd_qa",
+                        "name": "sum.head_teacher_registrations.ussd",
+                        "aggregator": "last"
+                    }
+                },
+                {
+                    "name": "Total",
+                    "target": {
+                        "metric_type": "account",
+                        "store": "rts_ussd_qa",
+                        "name": "sum.head_teacher_registrations.total",
+                        "aggregator": "last"
+                    }
+                }
+            ]
+        },
+
+        "new_row",
+
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Learner Performance Reports - USSD",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.learner_performance_reports.ussd",
+                "aggregator": "last"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Learner Performance Reports - Total",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.learner_performance_reports.total",
+                "aggregator": "last"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Teacher Performance Reports - USSD",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.teacher_performance_reports.ussd",
+                "aggregator": "last"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Teacher Performance Reports - Total",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.teacher_performance_reports.total",
+                "aggregator": "last"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "School Monitoring Reports - USSD",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.school_monitoring_reports.ussd",
+                "aggregator": "last"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "School Monitoring Reports - Total",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.school_monitoring_reports.total",
+                "aggregator": "last"
+            }
+        },
+
+        "new_row",
+
+        {
+            "type": "diamondash.widgets.graph.GraphWidget",
+            "name": "16 week USSD Reports Completed",
+            "time_range": "112d",
+            "bucket_size": "7d",
+            "width": 12,
+            "metrics": [
+                {
+                    "name": "Learner Reports",
+                    "target": {
+                        "metric_type": "account",
+                        "store": "rts_ussd_qa",
+                        "name": "sum.learner_performance_reports.ussd",
+                        "aggregator": "last"
+                    }
+                },
+                {
+                    "name": "Teacher Reports",
+                    "target": {
+                        "metric_type": "account",
+                        "store": "rts_ussd_qa",
+                        "name": "sum.teacher_performance_reports.ussd",
+                        "aggregator": "last"
+                    }
+                },
+                {
+                    "name": "School Monitoring Reports",
+                    "target": {
+                        "metric_type": "account",
+                        "store": "rts_ussd_qa",
+                        "name": "sum.school_monitoring_reports.ussd",
+                        "aggregator": "last"
+                    }
+                }
+            ]
+        },
+
+        "new_row",
+
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Average Sessions to Register Head Teacher - Zonal Head",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "avg.sessions_reg_ht_zonal_head",
+                "aggregator": "avg"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Average Sessions to Register Head Teacher - non Zonal Head",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "avg.sessions_reg_headteacher",
+                "aggregator": "avg"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Average Sessions to Register District Official",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "avg.sessions_reg_district_admin",
+                "aggregator": "avg"
+            }
+        },
+
+        "new_row",
+
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Average Sessions to complete Learner Performance Reports",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "avg.sessions_perf_learner_report",
+                "aggregator": "avg"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Average Sessions to complete Teacher Performance Reports",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "avg.sessions_perf_teacher_report",
+                "aggregator": "avg"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Average Sessions to complete School Monitoring Report - Complete",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "avg.sessions_school_monitoring_complete",
+                "aggregator": "avg"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Average Sessions to complete School Monitoring Report - School Behind",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "avg.sessions_school_monitoring_behind",
+                "aggregator": "avg"
+            }
+        },
+
+        "new_row",
+
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Sessions: test_province",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.sessions.test_province",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Sessions: Northern Province",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.sessions.NorthernProvince",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Sessions: Northern",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.sessions.Northern",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Sessions: QA Province",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.sessions.QAProvince",
+                "aggregator": "sum"
+            }
+        },
+
+        "new_row",
+
+        {
+            "type": "diamondash.widgets.graph.GraphWidget",
+            "name": "12 month Sessions per Province",
+            "time_range": "12m",
+            "bucket_size": "1d",
+            "width": 12,
+            "metrics": [
+                {
+                    "name": "test_province",
+                    "target": {
+                        "metric_type": "account",
+                        "store": "rts_ussd_qa",
+                        "name": "sum.sessions.test_province",
+                        "aggregator": "sum"
+                    }
+                },
+                {
+                    "name": "Northern Province",
+                    "target": {
+                        "metric_type": "account",
+                        "store": "rts_ussd_qa",
+                        "name": "sum.sessions.NorthernProvince",
+                        "aggregator": "sum"
+                    }
+                },
+                {
+                    "name": "Northern",
+                    "target": {
+                        "metric_type": "account",
+                        "store": "rts_ussd_qa",
+                        "name": "sum.sessions.Northern",
+                        "aggregator": "sum"
+                    }
+                },
+                {
+                    "name": "QA Province",
+                    "target": {
+                        "metric_type": "account",
+                        "store": "rts_ussd_qa",
+                        "name": "sum.sessions.QAProvince",
+                        "aggregator": "sum"
+                    }
+                }
+            ]
+        },
+
+        "new_row",
+
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_emis",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_emis.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_emis_validates",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_emis_validates.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_exit_emis",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_exit_emis.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_school_name",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_school_name.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_first_name",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_first_name.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_surname",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_surname.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_date_of_birth",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_date_of_birth.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_gender",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_gender.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_school_boys",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_school_boys.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_school_girls",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_school_girls.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_school_classrooms",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_school_classrooms.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_school_teachers",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_school_teachers.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_school_teachers_g1",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_school_teachers_g1.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_school_teachers_g2",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_school_teachers_g2.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_school_students_g2_boys",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_school_students_g2_boys.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_school_students_g2_girls",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_school_students_g2_girls.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_zonal_head",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_zonal_head.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_zonal_head_name",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_zonal_head_name.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_thanks_zonal_head",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_thanks_zonal_head.exits",
+                "aggregator": "sum"
+            }
+        },
+        {
+            "type": "diamondash.widgets.lvalue.LValueWidget",
+            "time_range": "30d",
+            "name": "Completed States: Register Headteacher - reg_thanks_head_teacher",
+            "target": {
+                "metric_type": "account",
+                "store": "rts_ussd_qa",
+                "name": "sum.reg_thanks_head_teacher.exits",
+                "aggregator": "sum"
+            }
+        }
     ]
 }
