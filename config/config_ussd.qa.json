@@ -1,0 +1,6 @@
+{
+    "name": "rts_ussd_qa",
+    "env": "qa",
+    "metric_store": "rts_ussd_qa",
+    "cms_api_root": "http://qa-rts.za.prk-host.net/api/v1/"
+}
