@@ -94,7 +94,7 @@ describe("when an unregistered user logs on", function() {
         it("should ask them want they want to do", function() {
             return tester
                 .setup.user.addr('097123')
-                .inputs('start')
+                .inputs({session_event: 'new'})
                 .check.interaction({
                     state: 'initial_state_unregistered',
                     reply: [
@@ -119,7 +119,7 @@ describe("when an unregistered user logs on", function() {
             return tester
                 .setup.user.addr('097123')
                 .inputs(
-                    'start',
+                    {session_event: 'new'},
                     '1'  // initial_state
                 )
                 .check.interaction({
@@ -138,7 +138,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001'  // reg_emis
                         )
@@ -160,7 +160,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '000A'  // reg_emis
                         )
@@ -181,7 +181,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '000A',  // reg_emis
                             '2'  // reg_emis_retry_exit
@@ -202,7 +202,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '000A',  // reg_emis
                             '1'  // reg_emis_retry_exit
@@ -221,7 +221,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '000A',  // reg_emis
                             '1',  // reg_emis_retry_exit
@@ -245,7 +245,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '000A',  // reg_emis
                             '1',  // reg_emis_retry_exit
@@ -269,7 +269,7 @@ describe("when an unregistered user logs on", function() {
                 return tester
                     .setup.user.addr('097123')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '1',  // initial_state
                         '0001',  // reg_emis
                         '1'  // reg_emis_validates
@@ -287,7 +287,7 @@ describe("when an unregistered user logs on", function() {
                 return tester
                     .setup.user.addr('097123')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '1',  // initial_state
                         '0001',  // reg_emis
                         '1',  // reg_emis_validates
@@ -306,7 +306,7 @@ describe("when an unregistered user logs on", function() {
                 return tester
                     .setup.user.addr('097123')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '1',  // initial_state
                         '0001',  // reg_emis
                         '1',  // reg_emis_validates
@@ -326,7 +326,7 @@ describe("when an unregistered user logs on", function() {
                 return tester
                     .setup.user.addr('097123')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '1',  // initial_state
                         '0001',  // reg_emis
                         '1',  // reg_emis_validates
@@ -351,7 +351,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -377,7 +377,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -400,7 +400,7 @@ describe("when an unregistered user logs on", function() {
                 return tester
                     .setup.user.addr('097123')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '1',  // initial_state
                         '0001',  // reg_emis
                         '1',  // reg_emis_validates
@@ -425,7 +425,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -449,7 +449,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -476,7 +476,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -501,7 +501,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -529,7 +529,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -557,7 +557,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -586,7 +586,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -613,7 +613,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -644,7 +644,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -672,7 +672,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -704,7 +704,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -733,7 +733,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -766,7 +766,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -796,7 +796,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -829,7 +829,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -864,7 +864,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097123')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state
                             '0001',  // reg_emis
                             '1',  // reg_emis_validates
@@ -896,7 +896,7 @@ describe("when an unregistered user logs on", function() {
                 return tester
                     .setup.user.addr('097123')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '1',  // initial_state
                         '0001',  // reg_emis
                         '1',  // reg_emis_validates
@@ -931,7 +931,7 @@ describe("when an unregistered user logs on", function() {
                 return tester
                     .setup.user.addr('097123')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '1',  // initial_state
                         '0001',  // reg_emis
                         '1',  // reg_emis_validates
@@ -966,7 +966,7 @@ describe("when an unregistered user logs on", function() {
                 return tester
                     .setup.user.addr('097123')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '1',  // initial_state
                         '0001',  // reg_emis
                         '1',  // reg_emis_validates
@@ -998,7 +998,7 @@ describe("when an unregistered user logs on", function() {
                 return tester
                     .setup.user.addr('097123')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '1',  // initial_state
                         '0001',  // reg_emis
                         '1',  // reg_emis_validates
@@ -1041,7 +1041,7 @@ describe("when an unregistered user logs on", function() {
         it("should ask for district name", function() {
             return tester
                 .setup.user.addr('097123')
-                .inputs('start', '2')
+                .inputs({session_event: 'new'}, '2')
                 .check.interaction({
                     state: 'reg_district_official',
                     reply: [
@@ -1066,7 +1066,7 @@ describe("when an unregistered user logs on", function() {
                 it("should ask for their first name", function() {
                     return tester
                         .setup.user.addr('097123')
-                        .inputs('start', '2', '1')
+                        .inputs({session_event: 'new'}, '2', '1')
                         .check.interaction({
                             state: 'reg_district_official_first_name',
                             reply: "Please enter your FIRST name."
@@ -1079,7 +1079,7 @@ describe("when an unregistered user logs on", function() {
                 it("should show the second page of districts", function() {
                     return tester
                         .setup.user.addr('097123')
-                        .inputs('start', '2', '9')
+                        .inputs({session_event: 'new'}, '2', '9')
                         .check.interaction({
                             state: 'reg_district_official',
                             reply: [
@@ -1104,7 +1104,7 @@ describe("when an unregistered user logs on", function() {
                 it("should show the third page of districts", function() {
                     return tester
                         .setup.user.addr('097123')
-                        .inputs('start', '2', '9', '9')
+                        .inputs({session_event: 'new'}, '2', '9', '9')
                         .check.interaction({
                             state: 'reg_district_official',
                             reply: [
@@ -1122,7 +1122,7 @@ describe("when an unregistered user logs on", function() {
                 it("should show the first page of districts again", function() {
                     return tester
                         .setup.user.addr('097123')
-                        .inputs('start', '2', '9', '10')
+                        .inputs({session_event: 'new'}, '2', '9', '10')
                         .check.interaction({
                             state: 'reg_district_official',
                             reply: [
@@ -1148,7 +1148,7 @@ describe("when an unregistered user logs on", function() {
             it("should ask for their surname", function() {
                 return tester
                     .setup.user.addr('097123')
-                    .inputs('start', '2', '9', '2', 'Michael')
+                    .inputs({session_event: 'new'}, '2', '9', '2', 'Michael')
                     .check.interaction({
                         state: 'reg_district_official_surname',
                         reply: "Please enter your SURNAME."
@@ -1161,7 +1161,7 @@ describe("when an unregistered user logs on", function() {
             it("should ask for their id number", function() {
                 return tester
                     .setup.user.addr('097123')
-                    .inputs('start', '2', '9', '2', 'Michael', 'Sherwin')
+                    .inputs({session_event: 'new'}, '2', '9', '2', 'Michael', 'Sherwin')
                     .check.interaction({
                         state: 'reg_district_official_id_number',
                         reply: "Please enter your ID number."
@@ -1174,7 +1174,7 @@ describe("when an unregistered user logs on", function() {
             it("should ask for their date of birth", function() {
                 return tester
                     .setup.user.addr('097123')
-                    .inputs('start', '2', '9', '2', 'Michael', 'Sherwin', '123454321')
+                    .inputs({session_event: 'new'}, '2', '9', '2', 'Michael', 'Sherwin', '123454321')
                     .check.interaction({
                         state: 'reg_district_official_dob',
                         reply:
@@ -1194,7 +1194,7 @@ describe("when an unregistered user logs on", function() {
                         .setup.user.answers({
                             'reg_district_official': '1'
                         })
-                        .inputs('start', '2', '9', '2', 'Michael', 'Sherwin', '123454321', '27111980')
+                        .inputs({session_event: 'new'}, '2', '9', '2', 'Michael', 'Sherwin', '123454321', '27111980')
                         .check.interaction({
                             state: 'reg_district_official_thanks',
                             reply:
@@ -1212,7 +1212,7 @@ describe("when an unregistered user logs on", function() {
                         .setup.user.answers({
                             'reg_district_official': '1'
                         })
-                        .inputs('start', '2', '9', '2', 'Michael', 'Sherwin', '123454321', '27111980')
+                        .inputs({session_event: 'new'}, '2', '9', '2', 'Michael', 'Sherwin', '123454321', '27111980')
                         .check(function(api) {
                             var contact = api.contacts.store[3];
                             assert.equal(contact.extra.rts_id, '2');
@@ -1229,7 +1229,7 @@ describe("when an unregistered user logs on", function() {
                 it("should ask them to re-enter dob", function() {
                     return tester
                         .setup.user.addr('097123')
-                        .inputs('start', '2', '9', '2', 'Michael', 'Sherwin', '123454321', '9999')
+                        .inputs({session_event: 'new'}, '2', '9', '2', 'Michael', 'Sherwin', '123454321', '9999')
                         .check.interaction({
                             state: 'reg_district_official_dob',
                             reply: "Please enter your date of birth formatted DDMMYYYY"
@@ -1251,7 +1251,7 @@ describe("when an unregistered user logs on", function() {
             return tester
                 .setup.user.addr('097123')
                 .inputs(
-                    'start',
+                    {session_event: 'new'},
                     '3'  // initial_state
                 )
                 .check.interaction({
@@ -1273,7 +1273,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                     .setup.user.addr('097123')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state
                         '1'  // manage_change_emis_error
                     )
@@ -1296,7 +1296,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                     .setup.user.addr('097123')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state
                         '2'  // manage_change_emis_error
                     )
@@ -1321,7 +1321,7 @@ describe("when an unregistered user logs on", function() {
             return tester
                 .setup.user.addr('097666')
                 .inputs(
-                    'start',
+                    {session_event: 'new'},
                     '4'  // initial_state
                 )
                 .check.interaction({
@@ -1340,7 +1340,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097666')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '4',  // initial_state
                             '1'  // manage_change_msisdn_emis
                         )
@@ -1360,7 +1360,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097666')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '4',  // initial_state
                             '000A'  // manage_change_msisdn_emis
                         )
@@ -1381,7 +1381,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097666')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '4',  // initial_state
                             '000A',  // manage_change_msisdn_emis
                             '2'  // manage_change_msisdn_emis_retry_exit
@@ -1402,7 +1402,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097666')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '4',  // initial_state
                             '000A',  // manage_change_msisdn_emis
                             '1'  // manage_change_msisdn_emis_retry_exit
@@ -1422,7 +1422,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097666')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '4',  // initial_state
                             '000A',  // manage_change_msisdn_emis
                             '1',  // manage_change_msisdn_emis_retry_exit
@@ -1443,7 +1443,7 @@ describe("when an unregistered user logs on", function() {
                     return tester
                         .setup.user.addr('097666')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '4',  // initial_state
                             '000A',  // manage_change_msisdn_emis
                             '1',  // manage_change_msisdn_emis_retry_exit
@@ -1476,7 +1476,7 @@ describe("when a registered user logs on", function() {
         it("should ask them what they want to do", function() {
             return tester
                 .setup.user.addr('097444')
-                .inputs('start')
+                .inputs({session_event: 'new'})
                 .check.interaction({
                     state: 'initial_state_district_official',
                     reply: [
@@ -1494,7 +1494,7 @@ describe("when a registered user logs on", function() {
         it("should ask them what they want to do", function() {
             return tester
                 .setup.user.addr('097555')
-                .inputs('start')
+                .inputs({session_event: 'new'})
                 .check.interaction({
                     state: 'initial_state_zonal_head',
                     reply: [
@@ -1514,7 +1514,7 @@ describe("when a registered user logs on", function() {
         it("should ask them what they want to do", function() {
             return tester
                 .setup.user.addr('097888')
-                .inputs('start')
+                .inputs({session_event: 'new'})
                 .check.interaction({
                     state: 'initial_state_head_teacher',
                     reply: [
@@ -1539,7 +1539,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097444')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '1'  // initial_state_district_official
                     )
                     .check.interaction({
@@ -1577,7 +1577,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097444')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_district_official
                                 '0001'  // add_emis_perf_teacher_ts_number
                             )
@@ -1593,7 +1593,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097444')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_district_official
                                 '0001'  // add_emis_perf_teacher_ts_number
                             )
@@ -1613,7 +1613,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097444')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state_district_official
                             '0001',  // add_emis_perf_teacher_ts_number
                             '106',  // perf_teacher_ts_number
@@ -1654,7 +1654,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '1'  // initial_state_head_teacher
                     )
                     .check.interaction({
@@ -1675,7 +1675,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106'  // perf_teacher_ts_number
                             )
@@ -1696,7 +1696,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 'hundreed'  // perf_teacher_ts_number
                             )
@@ -1717,7 +1717,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state_head_teacher
                             '106',  // perf_teacher_ts_number
                             '2'  // perf_teacher_gender
@@ -1739,7 +1739,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -1770,7 +1770,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -1790,7 +1790,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -1812,7 +1812,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state_head_teacher
                             '106',  // perf_teacher_ts_number
                             '2',  // perf_teacher_gender
@@ -1839,7 +1839,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state_head_teacher
                             '106',  // perf_teacher_ts_number
                             '2',  // perf_teacher_gender
@@ -1862,7 +1862,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state_head_teacher
                             '106',  // perf_teacher_ts_number
                             '2',  // perf_teacher_gender
@@ -1887,7 +1887,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state_head_teacher
                             '106',  // perf_teacher_ts_number
                             '2',  // perf_teacher_gender
@@ -1915,7 +1915,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -1941,7 +1941,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -1971,7 +1971,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -1999,7 +1999,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -2028,7 +2028,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state_head_teacher
                             '106',  // perf_teacher_ts_number
                             '2',  // perf_teacher_gender
@@ -2059,7 +2059,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -2089,7 +2089,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -2122,7 +2122,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -2152,7 +2152,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -2186,7 +2186,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -2217,7 +2217,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -2252,7 +2252,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -2284,7 +2284,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -2320,7 +2320,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -2353,7 +2353,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -2390,7 +2390,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -2425,7 +2425,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -2461,7 +2461,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '1',  // initial_state_head_teacher
                             '106',  // perf_teacher_ts_number
                             '2',  // perf_teacher_gender
@@ -2502,7 +2502,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -2537,7 +2537,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -2578,7 +2578,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '1',  // initial_state_head_teacher
                                 '106',  // perf_teacher_ts_number
                                 '2',  // perf_teacher_gender
@@ -2624,7 +2624,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097444')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '2'  // initial_state_district_official
                     )
                     .check.interaction({
@@ -2643,7 +2643,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097444')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_district_official
                                 '5555555'  // add_emis_perf_learner_boys_total
                             )
@@ -2662,7 +2662,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097444')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_district_official
                                 '0001'  // add_emis_perf_learner_boys_total
                             )
@@ -2678,7 +2678,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097444')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_district_official
                                 '0001'  // add_emis_perf_learner_boys_total
                             )
@@ -2698,7 +2698,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097444')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '2',  // initial_state_district_official
                             '0001',  // add_emis_perf_learner_boys_total
                             '52', // perf_learner_boys_total
@@ -2739,7 +2739,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '2'  // initial_state_head_teacher
                     )
                     .check.interaction({
@@ -2760,7 +2760,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52'  // perf_learner_boys_total
                             )
@@ -2779,7 +2779,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 'fifty-two'  // perf_learner_boys_total
                             )
@@ -2802,7 +2802,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10'  // perf_learner_boys_outstanding
@@ -2821,7 +2821,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '60'  // perf_learner_boys_outstanding
@@ -2841,7 +2841,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '60',  // perf_learner_boys_outstanding
@@ -2865,7 +2865,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -2885,7 +2885,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -2906,7 +2906,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -2931,7 +2931,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -2952,7 +2952,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '10', // perf_learner_boys_total
                                 '5',  // perf_learner_boys_outstanding
@@ -2974,7 +2974,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -2996,7 +2996,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3024,7 +3024,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3046,7 +3046,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3071,7 +3071,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3101,7 +3101,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3129,7 +3129,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3153,7 +3153,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3178,7 +3178,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3207,7 +3207,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3232,7 +3232,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3258,7 +3258,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3288,7 +3288,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3314,7 +3314,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3347,7 +3347,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3375,7 +3375,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3405,7 +3405,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '2',  // initial_state_head_teacher
                             '52', // perf_learner_boys_total
                             '10',  // perf_learner_boys_outstanding
@@ -3440,7 +3440,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3469,7 +3469,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3498,7 +3498,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3531,7 +3531,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3561,7 +3561,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3591,7 +3591,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3626,7 +3626,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3661,7 +3661,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3698,7 +3698,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3735,7 +3735,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3774,7 +3774,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3813,7 +3813,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3851,7 +3851,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '2',  // initial_state_head_teacher
                                 '52', // perf_learner_boys_total
                                 '10',  // perf_learner_boys_outstanding
@@ -3890,7 +3890,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '2',  // initial_state_head_teacher
                             '52', // perf_learner_boys_total
                             '10',  // perf_learner_boys_outstanding
@@ -3933,7 +3933,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '2',  // initial_state_head_teacher
                             '52', // perf_learner_boys_total
                             '10',  // perf_learner_boys_outstanding
@@ -3979,7 +3979,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3'  // initial_state_zonal_head
                     )
                     .check.interaction({
@@ -3997,7 +3997,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097444')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3'  // initial_state_district_official
                     )
                     .check.interaction({
@@ -4016,7 +4016,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')  // zonal head
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '3',  // initial_state_zonal_head
                             '000A'  // add_emis_school_monitoring
                         )
@@ -4035,7 +4035,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')  // zonal head
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '3',  // initial_state_zonal_head
                             '4342'  // add_emis_school_monitoring
                         )
@@ -4055,7 +4055,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')  // zonal head
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '3',  // initial_state_zonal_head
                             '4342'  // add_emis_school_monitoring
                         )
@@ -4073,7 +4073,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1'  // monitor_school_visit_complete
@@ -4097,7 +4097,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4122,7 +4122,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4147,7 +4147,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4172,7 +4172,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4199,7 +4199,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4226,7 +4226,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4255,7 +4255,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4285,7 +4285,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4316,7 +4316,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4347,7 +4347,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4373,7 +4373,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4406,7 +4406,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4440,7 +4440,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4473,7 +4473,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4501,7 +4501,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')  // zonal head
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '3',  // initial_state_zonal_head
                             '4342',  // add_emis_school_monitoring
                             '1',  // monitor_school_visit_complete
@@ -4530,7 +4530,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')  // zonal head
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '3',  // initial_state_zonal_head
                             '4342',  // add_emis_school_monitoring
                             '1',  // monitor_school_visit_complete
@@ -4553,7 +4553,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4588,7 +4588,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4624,7 +4624,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4661,7 +4661,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')  // zonal head
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '3',  // initial_state_zonal_head
                         '4342',  // add_emis_school_monitoring
                         '1',  // monitor_school_visit_complete
@@ -4701,7 +4701,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')  // zonal head
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '3',  // initial_state_zonal_head
                             '4342',  // add_emis_school_monitoring
                             '1',  // monitor_school_visit_complete
@@ -4737,7 +4737,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')  // zonal head
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '3',  // initial_state_zonal_head
                             '4342',  // add_emis_school_monitoring
                             '1',  // monitor_school_visit_complete
@@ -4778,7 +4778,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')  // zonal head
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '3',  // initial_state_zonal_head
                             '4342',  // add_emis_school_monitoring
                             '1',  // monitor_school_visit_complete
@@ -4820,7 +4820,7 @@ describe("when a registered user logs on", function() {
             return tester
                 .setup.user.addr('097555')
                 .inputs(
-                    'start',
+                    {session_event: 'new'},
                     '4'  // initial_state_zonal_head
                 )
                 .check.interaction({
@@ -4839,7 +4839,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '4',  // initial_state_zonal_head
                             '2334'  // manage_change_emis
                         )
@@ -4860,7 +4860,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '4',  // initial_state_zonal_head
                                 '2334',  // manage_change_emis
                                 '1'  // manage_change_emis_validates
@@ -4878,7 +4878,7 @@ describe("when a registered user logs on", function() {
                         return tester
                             .setup.user.addr('097555')
                             .inputs(
-                                'start',
+                                {session_event: 'new'},
                                 '4',  // initial_state_zonal_head
                                 '2334',  // manage_change_emis
                                 '1',  // manage_change_emis_validates
@@ -4911,7 +4911,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '4',  // initial_state_zonal_head
                             '000A'  // manage_change_emis
                         )
@@ -4932,7 +4932,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '4',  // initial_state_zonal_head
                             '000A',  // manage_change_emis
                             '2'  // manage_change_emis_retry_exit
@@ -4953,7 +4953,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '4',  // initial_state_zonal_head
                             '000A',  // manage_change_emis
                             '1'  // manage_change_emis_retry_exit
@@ -4973,7 +4973,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '4',  // initial_state_zonal_head
                             '000A',  // manage_change_emis
                             '1',  // manage_change_emis_retry_exit
@@ -4997,7 +4997,7 @@ describe("when a registered user logs on", function() {
                     return tester
                         .setup.user.addr('097555')
                         .inputs(
-                            'start',
+                            {session_event: 'new'},
                             '4',  // initial_state_zonal_head
                             '000A',  // manage_change_emis
                             '1',  // manage_change_emis_retry_exit
@@ -5027,7 +5027,7 @@ describe("when a registered user logs on", function() {
             return tester
                 .setup.user.addr('097555')
                 .inputs(
-                    'start',
+                    {session_event: 'new'},
                     '5'  // initial_state_zonal_head
                 )
                 .check.interaction({
@@ -5046,7 +5046,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '5',  // initial_state_zonal_head
                         '1'  // manage_update_school_data
                     )
@@ -5063,7 +5063,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '5',  // initial_state_zonal_head
                         '1',  // manage_update_school_data
                         '33',  // reg_school_boys
@@ -5094,7 +5094,7 @@ describe("when a registered user logs on", function() {
                 return tester
                     .setup.user.addr('097555')
                     .inputs(
-                        'start',
+                        {session_event: 'new'},
                         '5',  // initial_state_zonal_head
                         '1'  // manage_update_school_data
                     )
@@ -5230,7 +5230,7 @@ describe("test metric firing in various places", function() {
             return tester
                 .setup.user.addr('097123')
                 .inputs(
-                    'start',
+                    {session_event: 'new'},
                     '1',  // initial_state
                     '0001',  // reg_emis
                     '1',  // reg_emis_validates
@@ -5261,7 +5261,7 @@ describe("test metric firing in various places", function() {
             return tester
                 .setup.user.addr('097123')
                 .inputs(
-                    'start',
+                    {session_event: 'new'},
                     '1',  // initial_state
                     '0001',  // reg_emis
                     '1',  // reg_emis_validates
@@ -5294,7 +5294,7 @@ describe("test metric firing in various places", function() {
             return tester
                 .setup.user.addr('097123')
                 .inputs(
-                    'start',
+                    {session_event: 'new'},
                     '2',
                     {session_event: 'new'},
                     '9',
@@ -5411,7 +5411,7 @@ describe("test metric firing in various places", function() {
             return tester
                 .setup.user.addr('097555')  // zonal head
                 .inputs(
-                    'start',
+                    {session_event: 'new'},
                     '3',  // initial_state_zonal_head
                     '4342',  // add_emis_school_monitoring
                     '1',  // monitor_school_visit_complete
@@ -5433,7 +5433,7 @@ describe("test metric firing in various places", function() {
             return tester
                 .setup.user.addr('097555')  // zonal head
                 .inputs(
-                    'start',
+                    {session_event: 'new'},
                     '3',  // initial_state_zonal_head
                     '4342',  // add_emis_school_monitoring
                     '1',  // monitor_school_visit_complete
@@ -5466,7 +5466,7 @@ describe("test metric firing in various places", function() {
             return tester
                 .setup.user.addr('097444')
                 .inputs(
-                    'start',
+                    {session_event: 'new'},
                     '2',  // initial_state_district_official
                     '0001',  // add_emis_perf_learner_boys_total
                     '52', // perf_learner_boys_total
@@ -5501,7 +5501,7 @@ describe("test metric firing in various places", function() {
             return tester
                 .setup.user.addr('097555')
                 .inputs(
-                    'start',
+                    {session_event: 'new'},
                     '1',  // initial_state_head_teacher
                     '106',  // perf_teacher_ts_number
                     '2',  // perf_teacher_gender
@@ -5534,7 +5534,7 @@ describe("test metric firing in various places", function() {
             return tester
                 .setup.user.addr('097555')  // zonal head
                 .inputs(
-                    'start',
+                    {session_event: 'new'},
                     '3',  // initial_state_zonal_head
                     '4342',  // add_emis_school_monitoring
                     '1',  // monitor_school_visit_complete
@@ -5565,7 +5565,7 @@ describe("test metric firing in various places", function() {
             return tester
                 .setup.user.addr('097555')  // zonal head
                 .inputs(
-                    'start',
+                    {session_event: 'new'},
                     '3',  // initial_state_zonal_head
                     '4342',  // add_emis_school_monitoring
                     '1',  // monitor_school_visit_complete
@@ -5586,7 +5586,7 @@ describe("test metric firing in various places", function() {
             return tester
                 .setup.user.addr('097123')
                 .inputs(
-                    'start',
+                    {session_event: 'new'},
                     '1',  // initial_state
                     '0001',  // reg_emis
                     '1',  // reg_emis_validates
