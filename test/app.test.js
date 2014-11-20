@@ -5127,7 +5127,7 @@ describe("test metric firing in various places", function() {
                     )
                     .check(function(api) {
                         var metrics = api.metrics.stores.test_metric_store;
-                        assert.deepEqual(metrics['sum.sessions.ProVince'].values, [1]);
+                        assert.deepEqual(metrics['sum.sessions.province'].values, [1]);
                     })
                     .run();
             });
