@@ -59,7 +59,7 @@ go.utils = {
                 emis: "/api/v1/school/emis/" + parseInt(im.user.answers.manage_change_emis, 10) + "/"
             };
             return go.utils
-                .cms_put("data/headteacher/" + contact.extra.rts_id + "/", headteacher_data, im)
+                .cms_patch("data/headteacher/" + contact.extra.rts_id + "/", headteacher_data, im)
                 .then(function(result) {
                     return go.utils.cms_update_school_and_contact(result, im, contact);
                 });
@@ -97,6 +97,20 @@ go.utils = {
         var json_api = new JsonApi(im);
         var url = im.config.cms_api_root + path;
         return json_api.post(
+            url,
+            {
+                data: data,
+                headers:{
+                    'Content-Type': ['application/json']
+                }
+            }
+        );
+    },
+
+    cms_patch: function(path, data, im) {
+        var json_api = new JsonApi(im);
+        var url = im.config.cms_api_root + path;
+        return json_api.patch(
             url,
             {
                 data: data,

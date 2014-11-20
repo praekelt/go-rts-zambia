@@ -46,7 +46,7 @@ go.cm = function() {
                                             msisdn: im.user.addr
                                         };
                                         return go.utils
-                                            .cms_put("data/headteacher/" + headteacher_id + "/", data, im)
+                                            .cms_patch("data/headteacher/" + headteacher_id + "/", data, im)
                                             .then(function() {
                                                 return 'manage_change_msisdn_emis_validates';
                                             });
