@@ -25,8 +25,8 @@
         {
             "type": "diamondash.widgets.graph.GraphWidget",
             "name": "12 month Unique Users",
-            "time_range": "12m",
-            "bucket_size": "1d",
+            "time_range": "360d",
+            "bucket_size": "30d",
             "width": 6,
             "metrics": [
                 {
@@ -68,7 +68,7 @@
         {
             "type": "diamondash.widgets.graph.GraphWidget",
             "name": "12 month Head Teacher Registrations",
-            "time_range": "12m",
+            "time_range": "365d",
             "bucket_size": "1d",
             "width": 6,
             "metrics": [
@@ -294,7 +294,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.sessions.test_province",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -305,7 +305,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.sessions.NorthernProvince",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -316,7 +316,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.sessions.Northern",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -327,7 +327,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.sessions.QAProvince",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
 
@@ -337,7 +337,7 @@
             "type": "diamondash.widgets.graph.GraphWidget",
             "name": "12 month Sessions per Province",
             "time_range": "12m",
-            "bucket_size": "1d",
+            "bucket_size": "1m",
             "width": 12,
             "metrics": [
                 {
@@ -346,7 +346,7 @@
                         "metric_type": "account",
                         "store": "rts_ussd_qa",
                         "name": "sum.sessions.test_province",
-                        "aggregator": "sum"
+                        "aggregator": "last"
                     }
                 },
                 {
@@ -355,7 +355,7 @@
                         "metric_type": "account",
                         "store": "rts_ussd_qa",
                         "name": "sum.sessions.NorthernProvince",
-                        "aggregator": "sum"
+                        "aggregator": "last"
                     }
                 },
                 {
@@ -364,7 +364,7 @@
                         "metric_type": "account",
                         "store": "rts_ussd_qa",
                         "name": "sum.sessions.Northern",
-                        "aggregator": "sum"
+                        "aggregator": "last"
                     }
                 },
                 {
@@ -373,7 +373,7 @@
                         "metric_type": "account",
                         "store": "rts_ussd_qa",
                         "name": "sum.sessions.QAProvince",
-                        "aggregator": "sum"
+                        "aggregator": "last"
                     }
                 }
             ]
@@ -389,7 +389,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_emis.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -400,7 +400,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_emis_validates.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -411,7 +411,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_exit_emis.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -422,7 +422,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_school_name.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -433,7 +433,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_first_name.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -444,7 +444,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_surname.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -455,7 +455,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_date_of_birth.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -466,7 +466,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_gender.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -477,7 +477,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_school_boys.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -488,7 +488,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_school_girls.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -499,7 +499,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_school_classrooms.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -510,7 +510,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_school_teachers.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -521,7 +521,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_school_teachers_g1.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -532,7 +532,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_school_teachers_g2.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -543,7 +543,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_school_students_g2_boys.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -554,7 +554,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_school_students_g2_girls.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -565,7 +565,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_zonal_head.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -576,7 +576,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_zonal_head_name.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -587,7 +587,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_thanks_zonal_head.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         },
         {
@@ -598,7 +598,7 @@
                 "metric_type": "account",
                 "store": "rts_ussd_qa",
                 "name": "sum.reg_thanks_head_teacher.exits",
-                "aggregator": "sum"
+                "aggregator": "last"
             }
         }
     ]
