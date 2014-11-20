@@ -542,10 +542,10 @@ module.exports = function() {
     },
 
 
-        // change cellphone number - put new msisdn in headteacher (manage_change_msisdn_emis)
+        // change cellphone number - patch msisdn in headteacher (manage_change_msisdn_emis)
     {
         "request": {
-            "method": "PUT",
+            "method": "PATCH",
             "headers": {
                 'Content-Type': ['application/json']
             },
@@ -595,10 +595,10 @@ module.exports = function() {
 
 
 
-        // change school - put new emis in headteacher (manage_change_emis)
+        // change school - patch emis in headteacher (manage_change_emis)
     {
         "request": {
-            "method": "PUT",
+            "method": "PATCH",
             "headers": {
                 'Content-Type': ['application/json']
             },
