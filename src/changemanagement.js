@@ -39,7 +39,7 @@ go.cm = function() {
                             if (result === true) {
                                 var emis = parseInt(content, 10);
                                 return go.utils
-                                    .cms_get("data/headteacher/?emis__emis=" + emis, im)
+                                    .cms_get("data/headteacher/", {"emis__emis": emis}, im)
                                     .then(function(result) {
                                         var headteacher_id = result.data.objects[0].id;
                                         var data = {

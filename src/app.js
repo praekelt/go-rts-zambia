@@ -67,7 +67,7 @@ go.utils = {
         } else if (contact.extra.registration_origin === "manage_update_school_data") {
             // Registered head teacher started process with "Update my school's registration data"
             return go.utils
-                .cms_get("data/headteacher/?emis__emis=" + contact.extra.rts_emis, im)
+                .cms_get("data/headteacher/", {"emis__emis": contact.extra.rts_emis}, im)
                 .then(function(result) {
                     return go.utils.cms_update_school_and_contact(result, im, contact);
                 });
@@ -87,10 +87,10 @@ go.utils = {
     // SHARED HELPERS
     // --------------
 
-    cms_get: function(path, im) {
+    cms_get: function(path, params, im) {
         var json_api = new JsonApi(im);
         var url = im.config.cms_api_root + path;
-        return json_api.get(url);
+        return json_api.get(url, {params:params});
     },
 
     cms_post: function(path, data, im) {
@@ -173,7 +173,7 @@ go.utils = {
     check_valid_emis: function(user_emis, im) {
         // returns false if fails to find
          return go.utils
-            .cms_get("hierarchy/", im)
+            .cms_get("hierarchy/", {}, im)
             .then(function(result) {
                 var numbers_only = new RegExp('^\\d+$');
                 if (numbers_only.test(user_emis)) {
@@ -333,9 +333,12 @@ go.utils = {
     },
 
     get_province: function(im, contact) {
-        path = "school?emis=" + contact.extra.rts_emis;
+        path = "school";
+        params = {
+            "emis": contact.extra.rts_emis
+        };
         return go.utils
-            .cms_get(path, im)
+            .cms_get(path, params, im)
             .then(function(result) {
                 var contact_province = result.data.objects[0].zone.district.province.name;
                 return contact_province;

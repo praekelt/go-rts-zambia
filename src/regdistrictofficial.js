@@ -15,7 +15,7 @@ go.rdo = function() {
             var choices = [];
 
             return go.utils
-                .cms_get("district/", im)
+                .cms_get("district/", {}, im)
                 .then(function(result) {
                     var districts = result.data.objects;
                     districts.sort(
