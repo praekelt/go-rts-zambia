@@ -12,15 +12,16 @@ go.lp = function() {
 
         add_emis_perf_learner_boys_total: function(name, $, contact, im) {
             var error = $("The emis does not exist, please try again. " +
-                        "This should have 4-6 digits e.g 4351.");
+                        "This should have 4-8 digits e.g 4351.");
 
             var question = $("Please enter the school's EMIS number that you would " +
-                            "like to report on. This should have 4-6 digits e.g 4351.");
+                            "like to report on. This should have 4-8 digits e.g 4351.");
 
             return new FreeText(name, {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     return go.utils
                         .check_valid_emis(content, im)
                         .then(function(result) {
@@ -31,6 +32,7 @@ go.lp = function() {
                 },
 
                 next: function(content) {
+                    content = content.trim();
                     contact.extra.rts_emis = content;
                     return im.contacts
                         .save(contact)
@@ -51,12 +53,14 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false) {
                         return error;
                     }
                 },
 
                 next: function(content) {
+                    content = content.trim();
                     return {
                         name: 'perf_learner_boys_outstanding',
                         creator_opts: {
@@ -99,12 +103,14 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false) {
                         return error;
                     }
                 },
 
                 next: function(content) {
+                    content = content.trim();
                     opts = go.utils.update_calculated_totals(opts, content);
 
                     if (opts.current_sum > opts.target_sum) {
@@ -132,12 +138,14 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false) {
                         return error;
                     }
                 },
 
                 next: function(content) {
+                    content = content.trim();
                     opts = go.utils.update_calculated_totals(opts, content);
 
                     if (opts.current_sum > opts.target_sum) {
@@ -165,12 +173,14 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false) {
                         return error;
                     }
                 },
 
                 next: function(content) {
+                    content = content.trim();
                     opts = go.utils.update_calculated_totals(opts, content);
 
                     if (opts.current_sum > opts.target_sum) {
@@ -198,12 +208,14 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false) {
                         return error;
                     }
                 },
 
                 next: function(content) {
+                    content = content.trim();
                     opts = go.utils.update_calculated_totals(opts, content);
 
                     if (opts.current_sum !== opts.target_sum) {
@@ -230,12 +242,14 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false) {
                         return error;
                     }
                 },
 
                 next: function(content) {
+                    content = content.trim();
                     return {
                         name: 'perf_learner_girls_outstanding',
                         creator_opts: {
@@ -278,12 +292,14 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false) {
                         return error;
                     }
                 },
 
                 next: function(content) {
+                    content = content.trim();
                     opts = go.utils.update_calculated_totals(opts, content);
 
                     if (opts.current_sum > opts.target_sum) {
@@ -311,12 +327,14 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false) {
                         return error;
                     }
                 },
 
                 next: function(content) {
+                    content = content.trim();
                     opts = go.utils.update_calculated_totals(opts, content);
 
                     if (opts.current_sum > opts.target_sum) {
@@ -344,12 +362,14 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false) {
                         return error;
                     }
                 },
 
                 next: function(content) {
+                    content = content.trim();
                     opts = go.utils.update_calculated_totals(opts, content);
 
                     if (opts.current_sum > opts.target_sum) {
@@ -377,12 +397,14 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false) {
                         return error;
                     }
                 },
 
                 next: function(content) {
+                    content = content.trim();
                     opts = go.utils.update_calculated_totals(opts, content);
 
                     if (opts.current_sum !== opts.target_sum) {
@@ -411,6 +433,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(boys_total, 10) < parseInt(content, 10))) {
                         return error;
@@ -432,6 +455,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(girls_total, 10) < parseInt(content, 10))) {
                         return error;
@@ -453,6 +477,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(boys_total, 10) < parseInt(content, 10))) {
                         return error;
@@ -474,6 +499,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(girls_total, 10) < parseInt(content, 10))) {
                         return error;
@@ -495,6 +521,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(boys_total, 10) < parseInt(content, 10))) {
                         return error;
@@ -516,6 +543,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(girls_total, 10) < parseInt(content, 10))) {
                         return error;
@@ -537,6 +565,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(boys_total, 10) < parseInt(content, 10))) {
                         return error;
@@ -558,6 +587,7 @@ go.lp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if ((go.utils.check_valid_number(content) === false) ||
                             (parseInt(girls_total, 10) < parseInt(content, 10))) {
                         return error;

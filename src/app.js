@@ -202,24 +202,24 @@ go.utils = {
     },
 
     registration_official_admin_collect: function(im) {
-        var dob = go.utils.check_and_parse_date(im.user.answers.reg_district_official_dob);
+        var dob = go.utils.check_and_parse_date(im.user.answers.reg_district_official_dob.trim());
 
         var district_admin_data = {
-            "first_name": im.user.answers.reg_district_official_first_name,
-            "last_name": im.user.answers.reg_district_official_surname,
+            "first_name": im.user.answers.reg_district_official_first_name.trim(),
+            "last_name": im.user.answers.reg_district_official_surname.trim(),
             "date_of_birth": moment(dob).format('YYYY-MM-DD'),
             "district": "/api/v1/district/" + im.user.answers.reg_district_official + "/",
-            "id_number": im.user.answers.reg_district_official_id_number
+            "id_number": im.user.answers.reg_district_official_id_number.trim()
         };
         return district_admin_data;
     },
 
     registration_data_headteacher_collect: function(im) {
-        var dob = go.utils.check_and_parse_date(im.user.answers.reg_date_of_birth);
+        var dob = go.utils.check_and_parse_date(im.user.answers.reg_date_of_birth.trim());
 
         var headteacher_data = {
-            "first_name": im.user.answers.reg_first_name,
-            "last_name": im.user.answers.reg_surname,
+            "first_name": im.user.answers.reg_first_name.trim(),
+            "last_name": im.user.answers.reg_surname.trim(),
             "msisdn": im.user.addr,
             "date_of_birth": moment(dob).format('YYYY-MM-DD'),
             "gender": im.user.answers.reg_gender,
@@ -227,7 +227,7 @@ go.utils = {
         };
 
         if (im.user.answers.reg_zonal_head === "reg_zonal_head_name") {
-            headteacher_data.zonal_head_name = im.user.answers.reg_zonal_head_name;
+            headteacher_data.zonal_head_name = im.user.answers.reg_zonal_head_name.trim();
             headteacher_data.is_zonal_head = false;
         } else {
             headteacher_data.zonal_head_name = "self";
@@ -239,46 +239,49 @@ go.utils = {
 
     registration_data_school_collect: function(im) {
         var school_data = {
-            "name": im.user.answers.reg_school_name,
+            "boys": parseInt(im.user.answers.reg_school_boys,10),  // should this really be a number? the other values are text
+            "girls": parseInt(im.user.answers.reg_school_girls,10),
             "classrooms": parseInt(im.user.answers.reg_school_classrooms,10),
             "teachers": parseInt(im.user.answers.reg_school_teachers,10),
             "teachers_g1": parseInt(im.user.answers.reg_school_teachers_g1,10),
             "teachers_g2": parseInt(im.user.answers.reg_school_teachers_g2,10),
             "boys_g2": parseInt(im.user.answers.reg_school_students_g2_boys,10),
-            "girls_g2": parseInt(im.user.answers.reg_school_students_g2_girls,10),
-            "boys": parseInt(im.user.answers.reg_school_boys,10),
-            "girls": parseInt(im.user.answers.reg_school_girls,10)
+            "girls_g2": parseInt(im.user.answers.reg_school_students_g2_girls,10)
         };
-
+        if (!_.isUndefined(im.user.answers.reg_school_name)) {
+            school_data.name = im.user.answers.reg_school_name.trim();
+        } else {
+            school_data.name = undefined;
+        }
         return school_data;
     },
 
     performance_data_learner_collect: function(emis, im) {
         var data_boys = {
             "gender": "boys",
-            "total_number_pupils": im.user.answers.perf_learner_boys_total,
-            "phonetic_awareness": im.user.answers.perf_learner_boys_phonics,
-            "vocabulary": im.user.answers.perf_learner_boys_vocab,
-            "reading_comprehension": im.user.answers.perf_learner_boys_comprehension,
-            "writing_diction": im.user.answers.perf_learner_boys_writing,
-            "outstanding_results": im.user.answers.perf_learner_boys_outstanding,
-            "desirable_results": im.user.answers.perf_learner_boys_desirable,
-            "minimum_results": im.user.answers.perf_learner_boys_minimum,
-            "below_minimum_results": im.user.answers.perf_learner_boys_below_minimum,
+            "total_number_pupils": im.user.answers.perf_learner_boys_total.trim(),  // should this really be text? the other values are numbers
+            "phonetic_awareness": im.user.answers.perf_learner_boys_phonics.trim(),
+            "vocabulary": im.user.answers.perf_learner_boys_vocab.trim(),
+            "reading_comprehension": im.user.answers.perf_learner_boys_comprehension.trim(),
+            "writing_diction": im.user.answers.perf_learner_boys_writing.trim(),
+            "outstanding_results": im.user.answers.perf_learner_boys_outstanding.trim(),
+            "desirable_results": im.user.answers.perf_learner_boys_desirable.trim(),
+            "minimum_results": im.user.answers.perf_learner_boys_minimum.trim(),
+            "below_minimum_results": im.user.answers.perf_learner_boys_below_minimum.trim(),
             "emis": "/api/v1/school/emis/" + emis + "/"
         };
 
         var data_girls = {
             "gender": "girls",
-            "total_number_pupils": im.user.answers.perf_learner_girls_total,
-            "phonetic_awareness": im.user.answers.perf_learner_girls_phonics,
-            "vocabulary": im.user.answers.perf_learner_girls_vocab,
-            "reading_comprehension": im.user.answers.perf_learner_girls_comprehension,
-            "writing_diction": im.user.answers.perf_learner_girls_writing,
-            "outstanding_results": im.user.answers.perf_learner_girls_outstanding,
-            "desirable_results": im.user.answers.perf_learner_girls_desirable,
-            "minimum_results": im.user.answers.perf_learner_girls_minimum,
-            "below_minimum_results": im.user.answers.perf_learner_girls_below_minimum,
+            "total_number_pupils": im.user.answers.perf_learner_girls_total.trim(),
+            "phonetic_awareness": im.user.answers.perf_learner_girls_phonics.trim(),
+            "vocabulary": im.user.answers.perf_learner_girls_vocab.trim(),
+            "reading_comprehension": im.user.answers.perf_learner_girls_comprehension.trim(),
+            "writing_diction": im.user.answers.perf_learner_girls_writing.trim(),
+            "outstanding_results": im.user.answers.perf_learner_girls_outstanding.trim(),
+            "desirable_results": im.user.answers.perf_learner_girls_desirable.trim(),
+            "minimum_results": im.user.answers.perf_learner_girls_minimum.trim(),
+            "below_minimum_results": im.user.answers.perf_learner_girls_below_minimum.trim(),
             "emis": "/api/v1/school/emis/" + emis + "/"
         };
 
@@ -287,24 +290,24 @@ go.utils = {
 
     performance_data_teacher_collect: function(emis, im) {
         var data = {
-            "ts_number": im.user.answers.perf_teacher_ts_number,
+            "ts_number": im.user.answers.perf_teacher_ts_number.trim(),
             "gender": im.user.answers.perf_teacher_gender,
-            "age": im.user.answers.perf_teacher_age,
-            "years_experience": im.user.answers.perf_teacher_years_experience,
-            "g2_pupils_present": im.user.answers.perf_teacher_g2_pupils_present,
-            "g2_pupils_registered": im.user.answers.perf_teacher_g2_pupils_registered,
-            "classroom_environment_score": im.user.answers.perf_teacher_classroom_environment_score,
-            "t_l_materials": im.user.answers.perf_teacher_t_l_materials,
-            "pupils_materials_score": im.user.answers.perf_teacher_pupils_materials_score,
-            "pupils_books_number": im.user.answers.perf_teacher_pupils_books_number,
-            "reading_lesson": im.user.answers.perf_teacher_reading_lesson,
-            "pupil_engagement_score": im.user.answers.perf_teacher_pupil_engagement_score,
-            "attitudes_and_beliefs": im.user.answers.perf_teacher_attitudes_and_beliefs,
-            "training_subtotal": im.user.answers.perf_teacher_training_subtotal,
+            "age": im.user.answers.perf_teacher_age.trim(),
             "academic_level": "/api/v1/data/achievement/" +
-                                im.user.answers.perf_teacher_academic_level + "/",
-            "reading_assessment": im.user.answers.perf_teacher_reading_assessment,
-            "reading_total": im.user.answers.perf_teacher_reading_total,
+                                im.user.answers.perf_teacher_academic_level.trim() + "/",
+            "years_experience": im.user.answers.perf_teacher_years_experience,
+            "g2_pupils_present": im.user.answers.perf_teacher_g2_pupils_present.trim(),
+            "g2_pupils_registered": im.user.answers.perf_teacher_g2_pupils_registered.trim(),
+            "classroom_environment_score": im.user.answers.perf_teacher_classroom_environment_score.trim(),
+            "t_l_materials": im.user.answers.perf_teacher_t_l_materials.trim(),
+            "pupils_books_number": im.user.answers.perf_teacher_pupils_books_number.trim(),
+            "pupils_materials_score": im.user.answers.perf_teacher_pupils_materials_score.trim(),
+            "reading_lesson": im.user.answers.perf_teacher_reading_lesson.trim(),
+            "pupil_engagement_score": im.user.answers.perf_teacher_pupil_engagement_score.trim(),
+            "attitudes_and_beliefs": im.user.answers.perf_teacher_attitudes_and_beliefs.trim(),
+            "training_subtotal": im.user.answers.perf_teacher_training_subtotal.trim(),
+            "reading_assessment": im.user.answers.perf_teacher_reading_assessment.trim(),
+            "reading_total": im.user.answers.perf_teacher_reading_total.trim(),
             "emis": "/api/v1/school/emis/" + emis + "/"
         };
 

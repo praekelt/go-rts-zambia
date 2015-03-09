@@ -76,6 +76,7 @@ go.rdo = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_and_parse_date(content) === false) {
                         return error;
                     }
