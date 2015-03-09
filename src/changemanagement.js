@@ -30,9 +30,10 @@ go.cm = function() {
         manage_change_msisdn_emis: function(name, $, opts, im) {
             return new FreeText(name, {
                 question: $("Please enter the school's EMIS number that you are currently " +
-                            "registered with. This should have 4-6 digits e.g 4351."),
+                            "registered with. This should have 4-8 digits e.g 4351."),
 
                 next: function(content) {
+                    content = content.trim();
                     return go.utils
                         .check_valid_emis(content, im)
                         .then(function(result) {
@@ -100,10 +101,11 @@ go.cm = function() {
 
         manage_change_emis: function(name, $, opts, contact, im) {
             return new FreeText(name, {
-                question: $("Please enter your school's EMIS number. This should have 4-6 " +
+                question: $("Please enter your school's EMIS number. This should have 4-8 " +
                             "digits e.g 4351."),
 
                 next: function(content) {
+                    content = content.trim();
                     return go.utils
                         .check_valid_emis(content, im)
                         .then(function(result) {

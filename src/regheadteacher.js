@@ -13,9 +13,10 @@ go.rht = function() {
             return new FreeText(name, {
                 question:
                     $("Please enter your school's EMIS number. " +
-                    "This should have 4-6 digits e.g. 4351."),
+                    "This should have 4-8 digits e.g. 4351."),
 
                 next: function(content) {
+                    content = content.trim();
                     return go.utils
                         .check_valid_emis(content, im)
                         .then(function(result) {
@@ -114,6 +115,7 @@ go.rht = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_and_parse_date(content) === false) {
                         return error;
                     }
@@ -145,6 +147,7 @@ go.rht = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (!go.utils.check_valid_number(content)) {
                         return error;
                     }
@@ -163,6 +166,7 @@ go.rht = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (!go.utils.check_valid_number(content)) {
                         return error;
                     }
@@ -181,6 +185,7 @@ go.rht = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (!go.utils.check_valid_number(content)) {
                         return error;
                     }
@@ -201,6 +206,7 @@ go.rht = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (!go.utils.check_valid_number(content)) {
                         return error;
                     }
@@ -220,6 +226,7 @@ go.rht = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (!go.utils.check_valid_number(content)) {
                         return error;
                     }
@@ -239,6 +246,7 @@ go.rht = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (!go.utils.check_valid_number(content)) {
                         return error;
                     }
@@ -257,6 +265,7 @@ go.rht = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (!go.utils.check_valid_number(content)) {
                         return error;
                     }
@@ -275,6 +284,7 @@ go.rht = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (!go.utils.check_valid_number(content)) {
                         return error;
                     }

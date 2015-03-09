@@ -11,15 +11,16 @@ go.tp = function() {
 
         add_emis_perf_teacher_ts_number: function(name, $, contact, im) {
             var error = $("The emis does not exist, please try again. " +
-                        "This should have 4-6 digits e.g 4351.");
+                        "This should have 4-8 digits e.g 4351.");
 
             var question = $("Please enter the school's EMIS number that you would " +
-                            "like to report on. This should have 4-6 digits e.g 4351.");
+                            "like to report on. This should have 4-8 digits e.g 4351.");
 
             return new FreeText(name, {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     return go.utils
                         .check_valid_emis(content, im)
                         .then(function(result) {
@@ -30,6 +31,7 @@ go.tp = function() {
                 },
 
                 next: function(content) {
+                    content = content.trim();
                     contact.extra.rts_emis = content;
                     return im.contacts
                         .save(contact)
@@ -50,6 +52,7 @@ go.tp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false) {
                         return error;
                     }
@@ -81,6 +84,7 @@ go.tp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false ||
                             parseInt(content, 10) >= 76 || parseInt(content, 10) <= 19) {
                         return error;
@@ -136,6 +140,7 @@ go.tp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false) {
                         return error;
                     }
@@ -155,6 +160,7 @@ go.tp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false) {
                         return error;
                     }
@@ -175,6 +181,7 @@ go.tp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false ||
                             parseInt(content, 10) < 0 || parseInt(content, 10) > 8) {
                         return error;
@@ -196,6 +203,7 @@ go.tp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false ||
                             parseInt(content, 10) < 0 || parseInt(content, 10) > 7) {
                         return error;
@@ -216,6 +224,7 @@ go.tp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false) {
                         return error;
                     }
@@ -235,6 +244,7 @@ go.tp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false ||
                             parseInt(content, 10) < 0 || parseInt(content, 10) > 6) {
                         return error;
@@ -256,6 +266,7 @@ go.tp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false ||
                             parseInt(content, 10) < 0 || parseInt(content, 10) > 14) {
                         return error;
@@ -276,6 +287,7 @@ go.tp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false ||
                             parseInt(content, 10) < 0 || parseInt(content, 10) > 17) {
                         return error;
@@ -297,6 +309,7 @@ go.tp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false ||
                             parseInt(content, 10) < 0 || parseInt(content, 10) > 16) {
                         return error;
@@ -318,6 +331,7 @@ go.tp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false ||
                             parseInt(content, 10) < 0 || parseInt(content, 10) > 3) {
                         return error;
@@ -339,6 +353,7 @@ go.tp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false ||
                             parseInt(content, 10) < 0 || parseInt(content, 10) > 10) {
                         return error;
@@ -360,6 +375,7 @@ go.tp = function() {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     if (go.utils.check_valid_number(content) === false) {
                         return error;
                     }

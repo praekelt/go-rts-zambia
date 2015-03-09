@@ -11,15 +11,16 @@ go.sp = function() {
 
         add_emis_school_monitoring: function(name, $, contact, im) {
             var error = $("The emis does not exist, please try again. " +
-                        "This should have 4-6 digits e.g 4351.");
+                        "This should have 4-8 digits e.g 4351.");
 
             var question = $("Please enter the school's EMIS number that you would " +
-                            "like to report on. This should have 4-6 digits e.g 4351.");
+                            "like to report on. This should have 4-8 digits e.g 4351.");
 
             return new FreeText(name, {
                 question: question,
 
                 check: function(content) {
+                    content = content.trim();
                     return go.utils
                         .check_valid_emis(content, im)
                         .then(function(result) {
@@ -30,6 +31,7 @@ go.sp = function() {
                 },
 
                 next: function(content) {
+                    content = content.trim();
                     contact.extra.school_monitoring_emis = content;
                     return im.contacts
                         .save(contact)

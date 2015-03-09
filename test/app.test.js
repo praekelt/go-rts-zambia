@@ -126,7 +126,7 @@ describe("when an unregistered user logs on", function() {
                     state: 'reg_emis',
                     reply:
                         "Please enter your school's EMIS number. " +
-                        "This should have 4-6 digits e.g. 4351."
+                        "This should have 4-8 digits e.g. 4351."
                 })
                 .run();
         });
@@ -210,7 +210,7 @@ describe("when an unregistered user logs on", function() {
                         .check.interaction({
                             state: 'reg_emis',
                             reply: "Please enter your school's EMIS number. " +
-                                    "This should have 4-6 digits e.g. 4351."
+                                    "This should have 4-8 digits e.g. 4351."
                         })
                         .run();
                 });
@@ -1328,7 +1328,7 @@ describe("when an unregistered user logs on", function() {
                     state: 'manage_change_msisdn_emis',
                     reply:
                         "Please enter the school's EMIS number that you are currently " +
-                        "registered with. This should have 4-6 digits e.g 4351.",
+                        "registered with. This should have 4-8 digits e.g 4351.",
                 })
                 .run();
         });
@@ -1411,7 +1411,7 @@ describe("when an unregistered user logs on", function() {
                             state: 'manage_change_msisdn_emis',
                             reply:
                                 "Please enter the school's EMIS number that you are currently " +
-                                "registered with. This should have 4-6 digits e.g 4351."
+                                "registered with. This should have 4-8 digits e.g 4351."
                         })
                         .run();
                 });
@@ -1546,7 +1546,7 @@ describe("when a registered user logs on", function() {
                         state: 'add_emis_perf_teacher_ts_number',
                         reply:
                             "Please enter the school's EMIS number that you would like " +
-                            "to report on. This should have 4-6 digits e.g 4351."
+                            "to report on. This should have 4-8 digits e.g 4351."
                     })
                     .run();
             });
@@ -1566,7 +1566,7 @@ describe("when a registered user logs on", function() {
                                 state: 'add_emis_perf_teacher_ts_number',
                                 reply:
                                     "The emis does not exist, please try again. This " +
-                                    "should have 4-6 digits e.g 4351."
+                                    "should have 4-8 digits e.g 4351."
                             })
                             .run();
                     });
@@ -1579,7 +1579,7 @@ describe("when a registered user logs on", function() {
                             .inputs(
                                 {session_event: 'new'},
                                 '1',  // initial_state_district_official
-                                '0001'  // add_emis_perf_teacher_ts_number
+                                ' 0001 '  // add_emis_perf_teacher_ts_number
                             )
                             .check.interaction({
                                 state: 'perf_teacher_ts_number',
@@ -1595,7 +1595,7 @@ describe("when a registered user logs on", function() {
                             .inputs(
                                 {session_event: 'new'},
                                 '1',  // initial_state_district_official
-                                '0001'  // add_emis_perf_teacher_ts_number
+                                ' 0001 \n'  // add_emis_perf_teacher_ts_number
                             )
                             .check(function(api) {
                                 var contact = api.contacts.store[0];
@@ -2631,7 +2631,7 @@ describe("when a registered user logs on", function() {
                         state: 'add_emis_perf_learner_boys_total',
                         reply:
                             "Please enter the school's EMIS number that you would like " +
-                            "to report on. This should have 4-6 digits e.g 4351."
+                            "to report on. This should have 4-8 digits e.g 4351."
                     })
                     .run();
             });
@@ -2651,7 +2651,7 @@ describe("when a registered user logs on", function() {
                                 state: 'add_emis_perf_learner_boys_total',
                                 reply:
                                     "The emis does not exist, please try again. This " +
-                                    "should have 4-6 digits e.g 4351."
+                                    "should have 4-8 digits e.g 4351."
                             })
                             .run();
                     });
@@ -3986,7 +3986,7 @@ describe("when a registered user logs on", function() {
                         state: 'add_emis_school_monitoring',
                         reply:
                             "Please enter the school's EMIS number that you would " +
-                            "like to report on. This should have 4-6 digits e.g 4351."
+                            "like to report on. This should have 4-8 digits e.g 4351."
                     })
                     .run();
             });
@@ -4004,7 +4004,7 @@ describe("when a registered user logs on", function() {
                         state: 'add_emis_school_monitoring',
                         reply:
                             "Please enter the school's EMIS number that you would " +
-                            "like to report on. This should have 4-6 digits e.g 4351."
+                            "like to report on. This should have 4-8 digits e.g 4351."
                     })
                     .run();
             });
@@ -4024,7 +4024,7 @@ describe("when a registered user logs on", function() {
                             state: 'add_emis_school_monitoring',
                             reply:
                                 "The emis does not exist, please try again. " +
-                                "This should have 4-6 digits e.g 4351."
+                                "This should have 4-8 digits e.g 4351."
                         })
                         .run();
                 });
@@ -4037,7 +4037,7 @@ describe("when a registered user logs on", function() {
                         .inputs(
                             {session_event: 'new'},
                             '3',  // initial_state_zonal_head
-                            '4342'  // add_emis_school_monitoring
+                            '4342 '  // add_emis_school_monitoring
                         )
                         .check.interaction({
                             state: 'monitor_school_visit_complete',
@@ -4057,7 +4057,7 @@ describe("when a registered user logs on", function() {
                         .inputs(
                             {session_event: 'new'},
                             '3',  // initial_state_zonal_head
-                            '4342'  // add_emis_school_monitoring
+                            '  4342'  // add_emis_school_monitoring
                         )
                         .check(function(api) {
                             var contact = api.contacts.store[1];
@@ -4726,7 +4726,7 @@ describe("when a registered user logs on", function() {
                             state: 'add_emis_school_monitoring',
                             reply:
                                 "Please enter the school's EMIS number that you would " +
-                                "like to report on. This should have 4-6 digits e.g 4351."
+                                "like to report on. This should have 4-8 digits e.g 4351."
                         })
                         .run();
                 });
@@ -4826,7 +4826,7 @@ describe("when a registered user logs on", function() {
                 .check.interaction({
                     state: 'manage_change_emis',
                     reply:
-                        "Please enter your school's EMIS number. This should have 4-6 " +
+                        "Please enter your school's EMIS number. This should have 4-8 " +
                         "digits e.g 4351.",
                 })
                 .run();
@@ -4961,7 +4961,7 @@ describe("when a registered user logs on", function() {
                         .check.interaction({
                             state: 'manage_change_emis',
                             reply:
-                                "Please enter your school's EMIS number. This should have 4-6 " +
+                                "Please enter your school's EMIS number. This should have 4-8 " +
                                 "digits e.g 4351.",
                         })
                         .run();
