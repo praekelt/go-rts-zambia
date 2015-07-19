@@ -353,9 +353,9 @@ go.utils = {
         // else if province is saved against contact use contact extra
         } else if (!_.isUndefined(contact.extra.province)) {
             var contact_province = contact.extra.province;
-            // strip spaces from province name for metric
-            contact_province = contact_province.replace(/\s/g,'');
-            return im.metrics.fire.inc(['sum', 'sessions', contact_province].join('.'), 1);
+            // strip spaces from province name and convert to lowercase for metric
+            contact_province = contact_province.replace(/\s/g,'').toLowerCase();
+            return im.metrics.fire.inc(['sum', 'sessions', contact_province].join('.'), {amount: 1});
 
         // else look up the province, use that, and save province against their contact for future
         } else {
@@ -363,10 +363,10 @@ go.utils = {
                 .get_province(im, contact)
                 .then(function(contact_province) {
                     contact.extra.province = contact_province;
-                    contact_province = contact_province.replace(/\s/g,'');
+                    contact_province = contact_province.replace(/\s/g,'').toLowerCase();
                     return Q.all([
                         im.contacts.save(contact),
-                        im.metrics.fire.inc(['sum', 'sessions', contact_province].join('.'), 1)
+                        im.metrics.fire.inc(['sum', 'sessions', contact_province].join('.'), {amount: 1})
                     ]);
                 });
         }
@@ -546,7 +546,7 @@ go.app = function() {
 
             // Navigation tracking to measure drop-offs
             self.im.on('state:exit', function(e) {
-                return self.im.metrics.fire.inc(['sum', e.state.name, 'exits'].join('.'), 1);
+                return self.im.metrics.fire.inc(['sum', e.state.name, 'exits'].join('.'), {amount: 1});
             });
 
             // Measure sessions per province
